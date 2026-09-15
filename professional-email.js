@@ -1,557 +1,239 @@
+```javascript
 /* ============================================================
    AUNG SALES MANAGER PRO
    PROFESSIONAL EMAIL WRITER
-   Version 1.0 Professional
+   Version 2.0 Professional
    ============================================================ */
 
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "aung_sales_manager_professional_emails_v1";
+  const STORAGE_KEY = "aung_sales_manager_professional_emails_v2";
 
-  const emailTypes = {
-    salesReport: {
+  /* ============================================================
+     EMAIL TYPES
+     ============================================================ */
+
+  const EMAIL_TYPES = {
+
+    sales_report: {
       name: "Sales Report",
       icon: "📊",
-      instruction:
-        "Create a complete professional sales report covering background, current performance, target, achievement, gap, business impact, actions taken, next actions and management recommendation."
+      subject: "Sales Performance Report"
     },
 
-    salesPerformance: {
-      name: "Sales Performance Update",
-      icon: "📈",
-      instruction:
-        "Create a detailed professional sales performance update with current achievement, gap, key drivers, team execution, customer situation, actions and next steps."
-    },
-
-    targetGap: {
+    target_gap: {
       name: "Target Achievement / Gap",
       icon: "🎯",
-      instruction:
-        "Create a professional email explaining target achievement, remaining gap, days remaining, required run rate, actions and recovery plan."
+      subject: "Sales Target Achievement Update"
     },
 
     promotion: {
       name: "Promotion / Trade Promotion",
       icon: "🎁",
-      instruction:
-        "Create a detailed professional promotion email covering promotion objective, product, offer, eligibility, period, expected sales impact, execution plan, risks, controls and approval required."
+      subject: "Promotion Proposal for Approval"
     },
 
-    priceDiscount: {
+    price_discount: {
       name: "Price / Discount Proposal",
       icon: "💰",
-      instruction:
-        "Create a professional price or discount proposal explaining background, proposed price or discount, business reason, expected benefit, risk and approval required."
+      subject: "Price / Discount Proposal"
     },
 
     order: {
       name: "Order / Order Confirmation",
       icon: "🧾",
-      instruction:
-        "Create a professional order communication covering customer, products, quantities, delivery requirements, commercial details and next action."
+      subject: "Order Confirmation / Update"
     },
 
     stock: {
       name: "Stock / Availability",
       icon: "📦",
-      instruction:
-        "Create a professional stock availability email explaining current stock situation, affected products or customers, business impact and required action."
+      subject: "Stock Availability Update"
     },
 
     distributor: {
       name: "Distributor Communication",
       icon: "🏢",
-      instruction:
-        "Create a detailed distributor communication covering performance, stock, order, credit, collection, execution issues and required actions."
+      subject: "Distributor Business Update"
     },
 
     collection: {
       name: "Payment / Collection",
       icon: "💵",
-      instruction:
-        "Create a professional collection email covering outstanding amount, due date, customer situation, business impact and collection action."
+      subject: "Collection Follow-up"
     },
 
     customer: {
       name: "Customer Communication",
       icon: "🤝",
-      instruction:
-        "Create a professional customer communication that is clear, respectful, commercially appropriate and action oriented."
+      subject: "Customer Business Update"
     },
 
-    newCustomer: {
+    new_customer: {
       name: "New Customer / Outlet Proposal",
       icon: "🏪",
-      instruction:
-        "Create a detailed business proposal for a new customer or outlet including opportunity, potential, products, expected sales and recommended next action."
+      subject: "New Customer / Outlet Proposal"
     },
 
     followup: {
       name: "Follow-up",
       icon: "🔄",
-      instruction:
-        "Create a professional follow-up email referring to the previous discussion, current status, pending action, deadline and requested response."
+      subject: "Follow-up on Previous Discussion"
     },
 
     request: {
       name: "Request",
       icon: "🙏",
-      instruction:
-        "Create a professional request email explaining background, reason, business need, requested support and expected outcome."
+      subject: "Business Request"
     },
 
     approval: {
       name: "Approval Request",
       icon: "✅",
-      instruction:
-        "Create a detailed approval request covering background, proposal, business justification, expected benefit, risks, controls and specific approval required."
+      subject: "Approval Request"
     },
 
     situation: {
       name: "Situation / Issue",
       icon: "⚠️",
-      instruction:
-        "Create a professional situation update explaining what happened, current condition, business impact, action already taken and recommended next action."
+      subject: "Business Situation / Issue Update"
     },
 
     escalation: {
       name: "Escalation",
       icon: "🚨",
-      instruction:
-        "Create a firm but professional escalation email explaining the issue, impact, previous actions, urgency and management support required."
+      subject: "Business Issue Escalation"
     },
 
     feedback: {
       name: "Feedback",
       icon: "💬",
-      instruction:
-        "Create a constructive professional feedback email with observation, impact, positive points, improvement areas and agreed next steps."
+      subject: "Business Feedback"
     },
 
     meeting: {
       name: "Meeting Request",
       icon: "📅",
-      instruction:
-        "Create a professional meeting request explaining purpose, discussion topics, expected participants and proposed next action."
+      subject: "Meeting Request"
     },
 
-    actionPlan: {
+    action_plan: {
       name: "Action Plan",
       icon: "📝",
-      instruction:
-        "Create a detailed action plan email covering issue, actions, owner, deadline, expected result and follow-up mechanism."
+      subject: "Action Plan Update"
     },
 
     recommendation: {
       name: "Recommendation",
       icon: "📌",
-      instruction:
-        "Create a professional recommendation email with situation, analysis, recommendation, business benefit, risk and proposed next steps."
+      subject: "Business Recommendation"
     },
 
     reminder: {
       name: "Reminder",
       icon: "🔔",
-      instruction:
-        "Create a polite but clear professional reminder referring to the pending matter, expected action and deadline."
+      subject: "Business Reminder"
     },
 
     urgent: {
       name: "Urgent Action",
       icon: "⏰",
-      instruction:
-        "Create a professional urgent-action email explaining the issue, business impact, urgency and immediate action required."
+      subject: "Urgent Action Required"
     },
 
     team: {
       name: "Team Communication",
       icon: "👥",
-      instruction:
-        "Create a professional team communication that clearly explains objective, expectations, responsibilities, execution standards and follow-up."
+      subject: "Team Communication"
     },
 
-    teamTarget: {
+    team_target: {
       name: "Team Target",
       icon: "🎯",
-      instruction:
-        "Create a motivating but professional team target communication covering target, achievement, gap, daily requirement, priorities and expected ownership."
+      subject: "Team Target & Execution Plan"
     },
 
     recognition: {
       name: "Performance Recognition",
       icon: "🏆",
-      instruction:
-        "Create a professional recognition email appreciating performance, specific achievement, business contribution and encouragement for continued performance."
+      subject: "Team Performance Recognition"
     },
 
     coaching: {
       name: "Coaching / Training",
       icon: "📚",
-      instruction:
-        "Create a professional coaching or training communication covering observed behavior, development area, expectation, support and follow-up."
+      subject: "Coaching / Training Update"
     },
 
-    improvement: {
+    performance_improvement: {
       name: "Performance Improvement",
       icon: "⚠️",
-      instruction:
-        "Create a firm but constructive performance improvement communication covering current gap, expected standard, required action and follow-up."
+      subject: "Performance Improvement Discussion"
     },
 
     announcement: {
       name: "Announcement",
       icon: "📢",
-      instruction:
-        "Create a clear professional business announcement explaining what is changing, why it matters, effective date and required action."
+      subject: "Business Announcement"
     },
 
     partnership: {
       name: "Partnership / Business Proposal",
       icon: "🤝",
-      instruction:
-        "Create a professional partnership proposal covering opportunity, business value, proposed cooperation, commercial benefit and next steps."
+      subject: "Business Partnership Proposal"
     },
 
     general: {
       name: "General Business Email",
       icon: "📄",
-      instruction:
-        "Create a complete professional business email with clear background, current situation, key details, action required and closing."
+      subject: "Business Update"
     }
   };
 
-  const tones = {
-    professional: "Professional and balanced",
-    formal: "Formal and corporate",
-    polite: "Polite and respectful",
-    firm: "Firm and action-oriented",
-    executive: "Executive and concise",
-    friendly: "Professional but friendly"
-  };
+  /* ============================================================
+     DOM HELPERS
+     ============================================================ */
 
-  const details = {
-    standard: "Standard professional detail",
-    detailed: "Detailed business communication",
-    executive: "Executive management style"
-  };
-
-  function $(id) {
-    return document.getElementById(id);
-  }
-
-  function escapeHTML(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+  function $(selector) {
+    return document.querySelector(selector);
   }
 
   function getValue(id) {
-    const el = $(id);
-    return el ? String(el.value || "").trim() : "";
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : "";
   }
 
-  function selectedType() {
-    return getValue("professionalEmailType") || "general";
+  function setValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
   }
 
-  function selectedTone() {
-    return getValue("professionalEmailTone") || "professional";
+  function showToast(message) {
+    const toast = $("#toast");
+    const toastMessage = $("#toastMessage");
+
+    if (toast && toastMessage) {
+      toastMessage.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    } else {
+      alert(message);
+    }
   }
 
-  function selectedDetail() {
-    return getValue("professionalEmailDetail") || "detailed";
-  }
+  /* ============================================================
+     TEXT HELPERS
+     ============================================================ */
 
-  function selectedLanguage() {
-    return getValue("professionalEmailLanguage") || "english";
-  }
-
-  function getTypeData() {
-    return emailTypes[selectedType()] || emailTypes.general;
-  }
-
-  /*
-   * IMPORTANT:
-   * The user's short Myanmar notes are NOT shortened.
-   * They are expanded into a complete business email.
-   */
-
-  function cleanInput(text) {
+  function cleanText(text) {
     return String(text || "")
       .replace(/\r/g, "")
-      .replace(/[ \t]+/g, " ")
       .replace(/\n{3,}/g, "\n\n")
       .trim();
-  }
-
-  function splitNotes(text) {
-    const cleaned = cleanInput(text);
-
-    if (!cleaned) return [];
-
-    return cleaned
-      .split(/\n|။|၊|;/)
-      .map(x => x.trim())
-      .filter(Boolean);
-  }
-
-  function detectNumbers(text) {
-    const numbers = text.match(
-      /(?:\d+(?:\.\d+)?\s*(?:%|ကျပ်|သိန်း|လakh|L|case|cases|days?|ရက်|လ|months?))/gi
-    );
-
-    return numbers || [];
-  }
-
-  function buildMyanmarEmail() {
-    const input = cleanInput(getValue("professionalEmailInput"));
-    const type = getTypeData();
-    const sender = getValue("professionalEmailSender");
-    const recipient = getValue("professionalEmailRecipient");
-    const company = getValue("professionalEmailCompany");
-
-    const notes = splitNotes(input);
-    const numbers = detectNumbers(input);
-
-    const subject = generateMyanmarSubject(input, type);
-
-    let body = "";
-
-    body += "မင်္ဂလာပါခင်ဗျာ။\n\n";
-
-    if (recipient) {
-      body += `${recipient} ခင်ဗျာ၊\n\n`;
-    }
-
-    body += "အောက်ပါကိစ္စနှင့်ပတ်သက်၍ လက်ရှိအခြေအနေ၊ ဆောင်ရွက်ပြီးသည့်အချက်များနှင့် ဆက်လက်ဆောင်ရွက်မည့် Plan များကို အသိပေးတင်ပြလိုပါသည်။\n\n";
-
-    body += "၁။ နောက်ခံအခြေအနေ\n";
-    body += `${input}\n\n`;
-
-    body += "၂။ လက်ရှိအခြေအနေ\n";
-
-    if (notes.length) {
-      notes.forEach((note, index) => {
-        body += `${index + 1}. ${note}\n`;
-      });
-    } else {
-      body += "လက်ရှိအခြေအနေမှာ အထက်ဖော်ပြပါအတိုင်း ဖြစ်ပါသည်။\n";
-    }
-
-    body += "\n၃။ အဓိကအချက်များ\n";
-
-    if (numbers.length) {
-      numbers.forEach((number, index) => {
-        body += `${index + 1}. ${number}\n`;
-      });
-    } else {
-      body += "• လက်ရှိလုပ်ငန်းအခြေအနေကို ဆက်လက်စောင့်ကြည့်ပြီး လိုအပ်သည့်လုပ်ဆောင်ချက်များကို ဆက်လက်အကောင်အထည်ဖော်မည်ဖြစ်ပါသည်။\n";
-    }
-
-    body += "\n၄။ လုပ်ဆောင်ပြီးသည့်အချက်များ\n";
-    body += "• သက်ဆိုင်ရာ Team / Customer / Distributor များနှင့် ဆက်သွယ်ညှိနှိုင်းထားပါသည်။\n";
-    body += "• လိုအပ်သည့် Follow-up နှင့် Field Execution များကို ဆက်လက်လုပ်ဆောင်နေပါသည်။\n";
-
-    body += "\n၅။ ဆက်လက်ဆောင်ရွက်မည့်အချက်များ\n";
-    body += "• လက်ရှိ Gap နှင့် Business Priority များအပေါ် အခြေခံ၍ Action Plan ကို ဆက်လက်အကောင်အထည်ဖော်မည်ဖြစ်ပါသည်။\n";
-    body += "• Team နှင့် သက်ဆိုင်ရာ Stakeholders များကို Follow-up ပြုလုပ်ပြီး Result ကို ပြန်လည်တင်ပြမည်ဖြစ်ပါသည်။\n";
-
-    body += "\n၆။ တောင်းခံလိုသည့် Support / Approval\n";
-    body += "လုပ်ငန်းရလဒ်ကို အကောင်းဆုံးရရှိနိုင်ရန် လိုအပ်သည့် Support / Guidance / Approval များကို ပေးအပ်နိုင်ပါရန် တင်ပြအပ်ပါသည်။\n";
-
-    body += "\n၇။ နိဂုံးချုပ်\n";
-    body += "အထက်ဖော်ပြပါအတိုင်း လက်ရှိအခြေအနေကို စီမံခန့်ခွဲဆောင်ရွက်နေပြီး သတ်မှတ်ထားသော Business Objective ကို ရရှိနိုင်ရန် ဆက်လက်အာရုံစိုက်လုပ်ဆောင်သွားမည်ဖြစ်ပါသည်။\n\n";
-
-    body += "ကျေးဇူးတင်ပါသည်။\n";
-
-    if (sender) {
-      body += `\n${sender}`;
-    }
-
-    if (company) {
-      body += `\n${company}`;
-    }
-
-    return {
-      subject,
-      body
-    };
-  }
-
-  function generateMyanmarSubject(input, type) {
-    const lower = input.toLowerCase();
-
-    if (type === emailTypes.promotion || lower.includes("promotion")) {
-      return "Promotion အစီအစဉ်နှင့် Approval တင်ပြခြင်း";
-    }
-
-    if (type === emailTypes.targetGap || lower.includes("target")) {
-      return "Sales Target Achievement နှင့် Gap အခြေအနေ တင်ပြခြင်း";
-    }
-
-    if (type === emailTypes.salesPerformance) {
-      return "Sales Performance Update တင်ပြခြင်း";
-    }
-
-    if (type === emailTypes.collection) {
-      return "Collection အခြေအနေ နှင့် Follow-up တင်ပြခြင်း";
-    }
-
-    if (type === emailTypes.distributor) {
-      return "Distributor Business Update တင်ပြခြင်း";
-    }
-
-    if (type === emailTypes.approval) {
-      return "Approval တောင်းခံခြင်း";
-    }
-
-    if (type === emailTypes.escalation) {
-      return "Urgent Business Issue Escalation";
-    }
-
-    return `${type.name} - Business Communication`;
-  }
-
-  function generateSubject(input, type) {
-    const lower = input.toLowerCase();
-
-    if (type === emailTypes.promotion || lower.includes("promotion")) {
-      return "Promotion Proposal and Approval Request";
-    }
-
-    if (type === emailTypes.targetGap || lower.includes("target")) {
-      return "Sales Target Achievement and Gap Update";
-    }
-
-    if (type === emailTypes.salesPerformance) {
-      return "Sales Performance Update";
-    }
-
-    if (type === emailTypes.collection) {
-      return "Collection Status and Follow-up";
-    }
-
-    if (type === emailTypes.distributor) {
-      return "Distributor Business Update";
-    }
-
-    if (type === emailTypes.approval) {
-      return "Approval Request";
-    }
-
-    if (type === emailTypes.escalation) {
-      return "Urgent Business Issue Escalation";
-    }
-
-    if (type === emailTypes.meeting) {
-      return "Meeting Request";
-    }
-
-    if (type === emailTypes.teamTarget) {
-      return "Team Sales Target and Execution Plan";
-    }
-
-    return type.name;
-  }
-
-  function buildEnglishEmail() {
-    const input = cleanInput(getValue("professionalEmailInput"));
-    const type = getTypeData();
-    const sender = getValue("professionalEmailSender");
-    const recipient = getValue("professionalEmailRecipient");
-    const company = getValue("professionalEmailCompany");
-
-    if (!input) {
-      return {
-        subject: "Professional Business Email",
-        body:
-          "Please enter the business situation or key points you would like to communicate."
-      };
-    }
-
-    const notes = splitNotes(input);
-    const numbers = detectNumbers(input);
-
-    let body = "";
-
-    body += "Dear ";
-
-    if (recipient) {
-      body += recipient;
-    } else {
-      body += "Sir / Madam";
-    }
-
-    body += ",\n\n";
-
-    body += "I would like to provide an update regarding the following business matter.\n\n";
-
-    body += "1. Background\n";
-    body += `${input}\n\n`;
-
-    body += "2. Current Situation\n";
-
-    if (notes.length) {
-      notes.forEach((note, index) => {
-        body += `${index + 1}. ${capitalizeFirst(note)}.\n`;
-      });
-    } else {
-      body += "The current situation is being closely monitored based on the information available.\n";
-    }
-
-    body += "\n3. Key Business Details\n";
-
-    if (numbers.length) {
-      numbers.forEach((number, index) => {
-        body += `• Key figure ${index + 1}: ${number}\n`;
-      });
-    } else {
-      body += "• The current business situation is being reviewed against the agreed objectives and execution priorities.\n";
-      body += "• Relevant customers, team members and business stakeholders are being followed up accordingly.\n";
-    }
-
-    body += "\n4. Business Impact\n";
-    body +=
-      "The current situation may have an impact on business performance and achievement if not addressed in a timely manner. Therefore, close monitoring and focused execution are required.\n";
-
-    body += "\n5. Actions Already Taken\n";
-    body += "• The relevant team members / customers / distributors have been contacted and aligned.\n";
-    body += "• Follow-up actions have been initiated based on the current business priority.\n";
-    body += "• Field execution and progress are being monitored closely.\n";
-
-    body += "\n6. Next Actions\n";
-    body += "• Continue focused execution against the identified business priority.\n";
-    body += "• Follow up with the responsible team members and stakeholders.\n";
-    body += "• Review progress regularly and take corrective action where required.\n";
-
-    body += "\n7. Recommendation / Support Required\n";
-    body +=
-      "I recommend maintaining close follow-up on this matter and providing the necessary support or guidance to ensure the expected business result is achieved.\n";
-
-    body += "\n8. Closing\n";
-    body +=
-      "I will continue to monitor the situation closely and provide further updates based on the progress and final outcome.\n\n";
-
-    body += "Thank you for your support and guidance.\n\n";
-
-    if (sender) {
-      body += `Best regards,\n${sender}`;
-    } else {
-      body += "Best regards,\nSales Manager";
-    }
-
-    if (company) {
-      body += `\n${company}`;
-    }
-
-    return {
-      subject: generateSubject(input, type),
-      body
-    };
   }
 
   function capitalizeFirst(text) {
@@ -559,352 +241,818 @@
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
-  function renderOutput(result) {
-    const output = $("professionalEmailOutput");
+  function todayText() {
+    const date = new Date();
 
-    if (!output) return;
-
-    output.innerHTML = `
-      <div class="email-result-card">
-        <div class="email-result-header">
-          <div>
-            <span class="email-result-label">SUBJECT</span>
-            <h3>${escapeHTML(result.subject)}</h3>
-          </div>
-          <button type="button" class="email-copy-subject" id="copyEmailSubjectBtn">
-            Copy Subject
-          </button>
-        </div>
-
-        <div class="email-result-divider"></div>
-
-        <div class="email-result-body">
-          ${escapeHTML(result.body).replace(/\n/g, "<br>")}
-        </div>
-      </div>
-    `;
-
-    const actions = $("professionalEmailActions");
-
-    if (actions) {
-      actions.style.display = "flex";
-      actions.innerHTML = `
-        <button type="button" class="btn-primary" id="copyProfessionalEmailBtn">
-          📋 Copy Email
-        </button>
-
-        <button type="button" class="btn-secondary" id="rewriteProfessionalEmailBtn">
-          🔄 Rewrite
-        </button>
-
-        <button type="button" class="btn-secondary" id="clearProfessionalEmailBtn">
-          🗑 Clear
-        </button>
-      `;
-
-      $("copyProfessionalEmailBtn")?.addEventListener(
-        "click",
-        copyEmail
-      );
-
-      $("copyEmailSubjectBtn")?.addEventListener(
-        "click",
-        copySubject
-      );
-
-      $("rewriteProfessionalEmailBtn")?.addEventListener(
-        "click",
-        writeProfessionalEmail
-      );
-
-      $("clearProfessionalEmailBtn")?.addEventListener(
-        "click",
-        clearEmailWriter
-      );
-    }
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
   }
 
-  async function copyEmail() {
-    const result = getCurrentResult();
-
-    if (!result) return;
-
-    const fullText =
-      `Subject: ${result.subject}\n\n${result.body}`;
-
-    try {
-      await navigator.clipboard.writeText(fullText);
-      showToast("Professional email copied successfully.");
-    } catch (error) {
-      fallbackCopy(fullText);
-    }
+  function getRecipient() {
+    return getValue("professionalEmailRecipient") || "Dear Sir/Madam";
   }
 
-  async function copySubject() {
-    const result = getCurrentResult();
-
-    if (!result) return;
-
-    try {
-      await navigator.clipboard.writeText(result.subject);
-      showToast("Subject copied.");
-    } catch (error) {
-      fallbackCopy(result.subject);
-    }
+  function getSender() {
+    return getValue("professionalEmailSender") || "Aung Zar Ni Win";
   }
 
-  function fallbackCopy(text) {
-    const textarea = document.createElement("textarea");
-
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.left = "-9999px";
-
-    document.body.appendChild(textarea);
-    textarea.select();
-
-    try {
-      document.execCommand("copy");
-      showToast("Copied successfully.");
-    } catch (error) {
-      showToast("Copy failed. Please copy manually.");
-    }
-
-    document.body.removeChild(textarea);
+  function getCompany() {
+    return getValue("professionalEmailCompany") || "";
   }
 
-  function getCurrentResult() {
-    const output = $("professionalEmailOutput");
+  function getType() {
+    return getValue("professionalEmailType") || "general";
+  }
 
-    if (!output) return null;
+  function getTone() {
+    return getValue("professionalEmailTone") || "professional";
+  }
 
-    const subjectElement = output.querySelector(
-      ".email-result-header h3"
-    );
+  function getLanguage() {
+    return getValue("professionalEmailLanguage") || "english";
+  }
 
-    const bodyElement = output.querySelector(
-      ".email-result-body"
-    );
+  /* ============================================================
+     INFORMATION EXTRACTION
+     ============================================================ */
 
-    if (!subjectElement || !bodyElement) return null;
+  function extractNumbers(text) {
+    return text.match(
+      /(?:\d+(?:\.\d+)?\s*%|\d+(?:\.\d+)?\s*(?:lakh|သိန်း|case|cases|days?|ရက်|ကျပ်|MMK))/gi
+    ) || [];
+  }
+
+  function detectSalesInfo(text) {
+    const lower = text.toLowerCase();
 
     return {
-      subject: subjectElement.textContent.trim(),
-      body: bodyElement.innerText.trim()
+      hasTarget: lower.includes("target") || text.includes("ရည်မှန်း"),
+      hasAchievement:
+        lower.includes("achievement") ||
+        lower.includes("%") ||
+        text.includes("ရောက်"),
+      hasCustomer:
+        lower.includes("customer") ||
+        text.includes("customer") ||
+        text.includes("ဖောက်သည်"),
+      hasTeam:
+        lower.includes("team") ||
+        text.includes("team") ||
+        text.includes("အဖွဲ့"),
+      hasPromotion:
+        lower.includes("promotion") ||
+        text.includes("promo") ||
+        text.includes("free") ||
+        text.includes("ပရိုမိုးရှင်း"),
+      hasApproval:
+        lower.includes("approval") ||
+        lower.includes("approve") ||
+        text.includes("ခွင့်ပြု") ||
+        text.includes("အတည်ပြု"),
+      hasCollection:
+        lower.includes("collection") ||
+        lower.includes("payment") ||
+        text.includes("ငွေကောက်") ||
+        text.includes("ငွေပေး"),
+      hasDistributor:
+        lower.includes("distributor") ||
+        text.includes("distributor") ||
+        text.includes("ဖြန့်ချိရေး"),
+      numbers: extractNumbers(text)
     };
   }
 
+  /* ============================================================
+     SUBJECT GENERATOR
+     ============================================================ */
+
+  function generateSubject(input, type, language) {
+
+    const info = detectSalesInfo(input);
+    const data = EMAIL_TYPES[type] || EMAIL_TYPES.general;
+
+    if (language === "myanmar") {
+
+      const subjects = {
+        sales_report: "Sales Performance Report တင်ပြခြင်း",
+        target_gap: "Sales Target Achievement နှင့် Gap Update",
+        promotion: "Promotion Proposal အတည်ပြုချက် တောင်းခံခြင်း",
+        price_discount: "Price / Discount Proposal တင်ပြခြင်း",
+        order: "Order Confirmation / Update",
+        stock: "Stock Availability Update",
+        distributor: "Distributor Business Update",
+        collection: "Collection Follow-up",
+        customer: "Customer Business Update",
+        new_customer: "New Customer / Outlet Proposal",
+        followup: "ယခင်ဆွေးနွေးမှုအပေါ် Follow-up ပြုလုပ်ခြင်း",
+        request: "Business Request တင်ပြခြင်း",
+        approval: "Approval Request တင်ပြခြင်း",
+        situation: "Business Situation / Issue Update",
+        escalation: "Business Issue Escalation",
+        feedback: "Business Feedback တင်ပြခြင်း",
+        meeting: "Meeting Request",
+        action_plan: "Action Plan Update",
+        recommendation: "Business Recommendation",
+        reminder: "Business Reminder",
+        urgent: "Urgent Action Required",
+        team: "Team Communication",
+        team_target: "Team Target & Execution Plan",
+        recognition: "Team Performance Recognition",
+        coaching: "Coaching / Training Update",
+        performance_improvement: "Performance Improvement Discussion",
+        announcement: "Business Announcement",
+        partnership: "Business Partnership Proposal",
+        general: "Business Update"
+      };
+
+      return subjects[type] || "Business Update";
+    }
+
+    if (language === "bilingual") {
+      return `${data.subject} / လုပ်ငန်းဆိုင်ရာ Update`;
+    }
+
+    /* Dynamic subject improvement */
+    if (type === "target_gap" && info.numbers.length) {
+      return "Sales Target Achievement & Gap Update";
+    }
+
+    if (type === "promotion") {
+      return "Promotion Proposal for Approval";
+    }
+
+    return data.subject;
+  }
+
+  /* ============================================================
+     ENGLISH EMAIL BUILDER
+     ============================================================ */
+
+  function buildEnglishEmail(input, type, tone, detail) {
+
+    const sender = getSender();
+    const recipient = getRecipient();
+    const company = getCompany();
+    const info = detectSalesInfo(input);
+
+    const greeting =
+      tone === "formal"
+        ? `Dear ${recipient},`
+        : tone === "friendly"
+          ? `Hi ${recipient},`
+          : `Dear ${recipient},`;
+
+    let body = "";
+
+    /* ------------------------------------------------------------
+       OPENING
+       ------------------------------------------------------------ */
+
+    body += `I would like to provide an update regarding ${getTopic(type)}.\n\n`;
+
+    /* ------------------------------------------------------------
+       BACKGROUND
+       ------------------------------------------------------------ */
+
+    body += `Background\n`;
+    body += `Based on the current business situation, I would like to share the following information for your review and consideration. The purpose of this email is to provide a clear update on the current situation, actions taken, and the proposed next steps.\n\n`;
+
+    /* ------------------------------------------------------------
+       CURRENT SITUATION
+       ------------------------------------------------------------ */
+
+    body += `Current Situation\n`;
+    body += `${capitalizeFirst(input)}\n\n`;
+
+    /* ------------------------------------------------------------
+       KEY DETAILS
+       ------------------------------------------------------------ */
+
+    body += `Key Details\n`;
+
+    if (info.numbers.length) {
+      body += `• The key figures currently available are: ${info.numbers.join(", ")}.\n`;
+    }
+
+    body += `• The situation is currently being monitored closely.\n`;
+    body += `• Relevant team members and business stakeholders are being aligned accordingly.\n`;
+
+    if (info.hasCustomer) {
+      body += `• Customer visits and customer-level execution are being strengthened to improve business results.\n`;
+    }
+
+    if (info.hasTeam) {
+      body += `• The sales team has been informed and is being guided on the required actions and priorities.\n`;
+    }
+
+    if (info.hasDistributor) {
+      body += `• Distributor execution and market availability are being reviewed to ensure proper implementation.\n`;
+    }
+
+    if (info.hasCollection) {
+      body += `• Collection and outstanding payment follow-up are being monitored to minimize financial risk.\n`;
+    }
+
+    body += `\n`;
+
+    /* ------------------------------------------------------------
+       BUSINESS IMPACT
+       ------------------------------------------------------------ */
+
+    body += `Business Impact\n`;
+    body += `The current situation may have an impact on sales performance, target achievement, customer execution, and overall business results if it is not addressed in a timely manner. Therefore, focused execution and close follow-up are important during the remaining period.\n\n`;
+
+    /* ------------------------------------------------------------
+       ACTION TAKEN
+       ------------------------------------------------------------ */
+
+    body += `Action Taken\n`;
+    body += `• The current situation has been reviewed.\n`;
+    body += `• Priorities have been communicated to the relevant team members.\n`;
+    body += `• Customer and market activities are being followed up closely.\n`;
+
+    if (info.hasTeam) {
+      body += `• The team has been instructed to increase execution and maintain close daily follow-up.\n`;
+    }
+
+    if (info.hasPromotion) {
+      body += `• The proposed promotion mechanics and expected business impact are being considered for execution.\n`;
+    }
+
+    body += `\n`;
+
+    /* ------------------------------------------------------------
+       NEXT ACTION
+       ------------------------------------------------------------ */
+
+    body += `Next Action\n`;
+    body += `Moving forward, we will continue to monitor the situation closely and take the necessary actions to improve execution and achieve the required business objective. Progress will be reviewed regularly, and further updates will be shared when necessary.\n\n`;
+
+    /* ------------------------------------------------------------
+       REQUEST / RECOMMENDATION
+       ------------------------------------------------------------ */
+
+    body += `Request / Recommendation\n`;
+
+    if (info.hasApproval || type === "approval" || type === "promotion") {
+      body += `Your review and approval of the above proposal/action would be highly appreciated so that the team can proceed with the implementation accordingly.\n\n`;
+    } else if (type === "escalation" || type === "urgent") {
+      body += `Your guidance and support on the above matter would be appreciated so that we can take the necessary action without further delay.\n\n`;
+    } else {
+      body += `Your feedback, guidance, and support would be appreciated. Please let me know if any additional information or action is required from my side.\n\n`;
+    }
+
+    /* ------------------------------------------------------------
+       CLOSING
+       ------------------------------------------------------------ */
+
+    body += `Thank you for your support and consideration.\n\n`;
+    body += `Best regards,\n${sender}`;
+
+    if (company) {
+      body += `\n${company}`;
+    }
+
+    return `${greeting}\n\n${body}`;
+  }
+
+  /* ============================================================
+     SPECIAL PROMOTION EMAIL
+     ============================================================ */
+
+  function buildPromotionEmail(input) {
+
+    const sender = getSender();
+    const recipient = getRecipient();
+    const company = getCompany();
+
+    return `Dear ${recipient},
+
+Subject: Promotion Proposal for Approval
+
+Background
+
+I would like to propose a sales promotion initiative to support sales growth, improve customer engagement, and strengthen product movement during the proposed promotion period.
+
+Promotion Proposal
+
+Based on the current business requirement, the proposed promotion is as follows:
+
+• Promotion Mechanic: ${input}
+• Objective: To increase sales volume, improve customer participation, and support achievement of the monthly sales target.
+• Target Customers: Relevant distributors, customers, and outlets based on the agreed eligibility criteria.
+• Promotion Period: As proposed in the above details.
+
+Expected Business Impact
+
+The proposed promotion is expected to improve product movement and customer purchase frequency while supporting the sales team in achieving the required monthly target. It may also help strengthen customer relationships and improve market execution during the promotion period.
+
+Execution Plan
+
+If approved, the sales team will communicate the promotion clearly to the relevant customers and ensure that the agreed promotion mechanics are implemented consistently. Sales performance and customer participation will be monitored throughout the promotion period.
+
+Risk & Control
+
+To ensure proper control, promotion eligibility, quantity requirements, free-goods entitlement, and implementation conditions should be clearly communicated and monitored. Any exceptions should be reviewed and approved before execution.
+
+Approval Required
+
+I would appreciate your review and approval of this promotion proposal so that we can proceed with the required execution plan.
+
+Please let me know if any further information or adjustment is required.
+
+Thank you for your support.
+
+Best regards,
+${sender}${company ? `\n${company}` : ""}`;
+  }
+
+  /* ============================================================
+     MYANMAR EMAIL BUILDER
+     ============================================================ */
+
+  function buildMyanmarEmail(input, type, tone, detail) {
+
+    const sender = getSender();
+    const recipient = getRecipient();
+    const company = getCompany();
+
+    let body = "";
+
+    body += `လေးစားအပ်ပါသော ${recipient} ခင်ဗျာ/ရှင်၊\n\n`;
+
+    body += `${getMyanmarTopic(type)} နှင့်ပတ်သက်၍ လက်ရှိအခြေအနေ၊ ဆောင်ရွက်ထားရှိမှုနှင့် ဆက်လက်ဆောင်ရွက်မည့် အစီအစဉ်များကို အောက်ပါအတိုင်း တင်ပြအပ်ပါသည်။\n\n`;
+
+    body += `လက်ရှိအခြေအနေ\n`;
+    body += `${input}\n\n`;
+
+    body += `အဓိကအချက်များ\n`;
+    body += `• လက်ရှိအခြေအနေကို သက်ဆိုင်ရာအဖွဲ့နှင့်အတူ စောင့်ကြည့်သုံးသပ်လျက်ရှိပါသည်။\n`;
+    body += `• လိုအပ်သော လုပ်ဆောင်ချက်များကို သက်ဆိုင်ရာ Team Member များအား အသိပေးထားပါသည်။\n`;
+    body += `• Sales Execution နှင့် Customer Follow-up များကို ပိုမိုအာရုံစိုက် ဆောင်ရွက်လျက်ရှိပါသည်။\n\n`;
+
+    body += `လုပ်ငန်းအပေါ် သက်ရောက်မှု\n`;
+    body += `လက်ရှိအခြေအနေသည် Sales Performance၊ Target Achievement နှင့် Customer Execution အပေါ် သက်ရောက်မှုရှိနိုင်သဖြင့် အချိန်မီ Follow-up ပြုလုပ်ပြီး လိုအပ်သည့် Action များကို ဆက်လက်ဆောင်ရွက်ရန် လိုအပ်ပါသည်။\n\n`;
+
+    body += `ဆောင်ရွက်ထားရှိမှု\n`;
+    body += `• လက်ရှိအခြေအနေကို ပြန်လည်သုံးသပ်ထားပါသည်။\n`;
+    body += `• သက်ဆိုင်ရာ Team Member များအား လိုအပ်သည့် Priority များကို အသိပေးထားပါသည်။\n`;
+    body += `• Customer နှင့် Market Execution များကို အနီးကပ် Follow-up ပြုလုပ်လျက်ရှိပါသည်။\n\n`;
+
+    body += `ဆက်လက်ဆောင်ရွက်မည့် အစီအစဉ်\n`;
+    body += `လာမည့်ကာလအတွင်း လက်ရှိအခြေအနေကို ဆက်လက်စောင့်ကြည့်ပြီး သတ်မှတ်ထားသော Business Objective နှင့် Sales Target များ ရရှိစေရန် လိုအပ်သည့် Action များကို ဆက်လက်ဆောင်ရွက်သွားမည်ဖြစ်ပါသည်။\n\n`;
+
+    body += `အကြံပြုချက် / လိုအပ်ချက်\n`;
+    body += `အထက်ပါအခြေအနေအပေါ် သုံးသပ်ပေးခြင်း၊ လမ်းညွှန်ပေးခြင်းနှင့် လိုအပ်ပါက Approval / Support ပေးခြင်းတို့ကို မေတ္တာရပ်ခံအပ်ပါသည်။\n\n`;
+
+    body += `ကျေးဇူးတင်ရှိပါသည်။\n\n`;
+    body += `လေးစားစွာဖြင့်\n${sender}`;
+
+    if (company) {
+      body += `\n${company}`;
+    }
+
+    return body;
+  }
+
+  /* ============================================================
+     BILINGUAL
+     ============================================================ */
+
+  function buildBilingualEmail(input, type, tone, detail) {
+
+    const english = buildEnglishEmail(input, type, tone, detail);
+
+    const myanmar = buildMyanmarEmail(input, type, tone, detail);
+
+    return `${english}\n\n────────────────────────────\n\n${myanmar}`;
+  }
+
+  /* ============================================================
+     TOPIC HELPERS
+     ============================================================ */
+
+  function getTopic(type) {
+
+    const topics = {
+      sales_report: "the latest sales performance",
+      target_gap: "the current sales target achievement and gap",
+      promotion: "the proposed sales promotion",
+      price_discount: "the proposed price or discount arrangement",
+      order: "the order status",
+      stock: "stock availability",
+      distributor: "the distributor business situation",
+      collection: "customer payment and collection",
+      customer: "customer business development",
+      new_customer: "a new customer or outlet opportunity",
+      followup: "our previous discussion",
+      request: "a business request",
+      approval: "an approval request",
+      situation: "a current business situation",
+      escalation: "an important business issue",
+      feedback: "business feedback",
+      meeting: "a meeting request",
+      action_plan: "the proposed action plan",
+      recommendation: "a business recommendation",
+      reminder: "an important business reminder",
+      urgent: "an urgent business matter",
+      team: "team communication",
+      team_target: "team target and execution",
+      recognition: "team performance recognition",
+      coaching: "team coaching and training",
+      performance_improvement: "performance improvement",
+      announcement: "a business announcement",
+      partnership: "a business partnership proposal",
+      general: "a business update"
+    };
+
+    return topics[type] || "the current business matter";
+  }
+
+  function getMyanmarTopic(type) {
+
+    const topics = {
+      sales_report: "Sales Performance Report",
+      target_gap: "Sales Target Achievement နှင့် Gap",
+      promotion: "Promotion Proposal",
+      price_discount: "Price / Discount Proposal",
+      order: "Order Update",
+      stock: "Stock Availability",
+      distributor: "Distributor Business Update",
+      collection: "Payment / Collection",
+      customer: "Customer Business",
+      new_customer: "New Customer / Outlet",
+      followup: "ယခင်ဆွေးနွေးထားသော Business Matter",
+      request: "Business Request",
+      approval: "Approval Request",
+      situation: "Business Situation / Issue",
+      escalation: "Business Issue Escalation",
+      feedback: "Business Feedback",
+      meeting: "Meeting Request",
+      action_plan: "Action Plan",
+      recommendation: "Business Recommendation",
+      reminder: "Business Reminder",
+      urgent: "Urgent Action",
+      team: "Team Communication",
+      team_target: "Team Target",
+      recognition: "Team Performance",
+      coaching: "Coaching / Training",
+      performance_improvement: "Performance Improvement",
+      announcement: "Business Announcement",
+      partnership: "Business Partnership",
+      general: "Business Update"
+    };
+
+    return topics[type] || "Business Matter";
+  }
+
+  /* ============================================================
+     RENDER OUTPUT
+     ============================================================ */
+
+  function renderOutput(subject, body) {
+
+    const subjectEl = document.getElementById("professionalEmailSubject");
+    const outputEl = document.getElementById("professionalEmailOutput");
+    const actionsEl = document.getElementById("professionalEmailActions");
+
+    if (subjectEl) {
+      subjectEl.value = subject;
+    }
+
+    if (outputEl) {
+      outputEl.value = body;
+    }
+
+    if (actionsEl) {
+      actionsEl.style.display = "flex";
+    }
+  }
+
+  /* ============================================================
+     GENERATE EMAIL
+     ============================================================ */
+
   function writeProfessionalEmail() {
-    const input = cleanInput(getValue("professionalEmailInput"));
+
+    const input = getValue("professionalEmailInput");
 
     if (!input) {
-      showToast("Please enter your situation or key points first.");
-      $("professionalEmailInput")?.focus();
+      showToast("Please enter your situation or notes first.");
       return;
     }
 
-    const language = selectedLanguage();
+    const type = getType();
+    const tone = getTone();
+    const language = getLanguage();
+    const detail = getValue("professionalEmailDetail") || "detailed";
 
-    const result =
-      language === "myanmar"
-        ? buildMyanmarEmail()
-        : buildEnglishEmail();
+    let body = "";
 
-    renderOutput(result);
-    saveEmailHistory(result);
-    showToast("Professional email created.");
+    if (type === "promotion" && language === "english") {
+      body = buildPromotionEmail(input);
+    } else if (language === "myanmar") {
+      body = buildMyanmarEmail(input, type, tone, detail);
+    } else if (language === "bilingual") {
+      body = buildBilingualEmail(input, type, tone, detail);
+    } else {
+      body = buildEnglishEmail(input, type, tone, detail);
+    }
+
+    const subject = generateSubject(input, type, language);
+
+    renderOutput(subject, body);
+
+    saveEmailHistory(subject, body, input, type);
+
+    showToast("Professional email created successfully.");
   }
+
+  /* ============================================================
+     REWRITE
+     ============================================================ */
 
   function rewriteEmail() {
-    writeProfessionalEmail();
+
+    const input = getValue("professionalEmailInput");
+
+    if (!input) {
+      showToast("Please enter your notes first.");
+      return;
+    }
+
+    const type = getType();
+    const tone = getTone();
+    const language = getLanguage();
+    const detail = "detailed";
+
+    let improvedInput =
+      `${input}\n\nPlease make the email more structured, professional, detailed and business-focused while keeping the original meaning unchanged.`;
+
+    let body;
+
+    if (type === "promotion" && language === "english") {
+      body = buildPromotionEmail(improvedInput);
+    } else if (language === "myanmar") {
+      body = buildMyanmarEmail(improvedInput, type, tone, detail);
+    } else if (language === "bilingual") {
+      body = buildBilingualEmail(improvedInput, type, tone, detail);
+    } else {
+      body = buildEnglishEmail(improvedInput, type, tone, detail);
+    }
+
+    const subject = generateSubject(input, type, language);
+
+    renderOutput(subject, body);
+
+    showToast("Email rewritten with more professional detail.");
   }
+
+  /* ============================================================
+     COPY EMAIL
+     ============================================================ */
+
+  async function copyEmail() {
+
+    const subject = getValue("professionalEmailSubject");
+    const body = getValue("professionalEmailOutput");
+
+    if (!body) {
+      showToast("Please create an email first.");
+      return;
+    }
+
+    const fullText = `Subject: ${subject}\n\n${body}`;
+
+    try {
+
+      await navigator.clipboard.writeText(fullText);
+
+      showToast("Email copied to clipboard.");
+
+    } catch (error) {
+
+      const textarea = document.createElement("textarea");
+      textarea.value = fullText;
+
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand("copy");
+        showToast("Email copied to clipboard.");
+      } catch (e) {
+        showToast("Copy failed. Please copy manually.");
+      }
+
+      textarea.remove();
+    }
+  }
+
+  /* ============================================================
+     CLEAR
+     ============================================================ */
 
   function clearEmailWriter() {
-    const input = $("professionalEmailInput");
 
-    if (input) {
-      input.value = "";
-      input.focus();
+    setValue("professionalEmailInput", "");
+    setValue("professionalEmailSubject", "");
+    setValue("professionalEmailOutput", "");
+
+    const actionsEl = document.getElementById("professionalEmailActions");
+
+    if (actionsEl) {
+      actionsEl.style.display = "none";
     }
 
-    const output = $("professionalEmailOutput");
-
-    if (output) {
-      output.innerHTML = `
-        <div class="email-empty-state">
-          <div class="email-empty-icon">✉️</div>
-          <h3>Your professional email will appear here</h3>
-          <p>
-            Write your situation in short Myanmar notes.
-            The system will expand it into a complete professional email.
-          </p>
-        </div>
-      `;
-    }
-
-    const actions = $("professionalEmailActions");
-
-    if (actions) {
-      actions.style.display = "none";
-      actions.innerHTML = "";
-    }
+    showToast("Email writer cleared.");
   }
 
-  function saveEmailHistory(result) {
-    try {
-      const history = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-      );
+  /* ============================================================
+     SAVE HISTORY
+     ============================================================ */
 
-      history.unshift({
-        subject: result.subject,
-        body: result.body,
-        type: selectedType(),
-        language: selectedLanguage(),
-        createdAt: new Date().toISOString()
+  function saveEmailHistory(subject, body, input, type) {
+
+    try {
+
+      const existing =
+        JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+      existing.unshift({
+        id: Date.now(),
+        date: new Date().toISOString(),
+        subject,
+        body,
+        input,
+        type
       });
 
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify(history.slice(0, 20))
+        JSON.stringify(existing.slice(0, 30))
       );
+
     } catch (error) {
-      console.warn("Unable to save email history.", error);
+      console.warn("Could not save email history.", error);
     }
   }
 
-  function showToast(message) {
-    const toast = $("toast");
-    const toastMessage = $("toastMessage");
+  /* ============================================================
+     QUICK EXAMPLES
+     ============================================================ */
 
-    if (toast && toastMessage) {
-      toastMessage.textContent = message;
-      toast.classList.add("show");
+  function useExample(example) {
 
-      clearTimeout(window.__professionalEmailToastTimer);
+    const input = document.getElementById("professionalEmailInput");
 
-      window.__professionalEmailToastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2200);
+    if (!input) return;
 
-      return;
+    const examples = {
+
+      target:
+        "ဒီလ sales target မပြည့်သေးဘူး။ လက်ရှိ 77% ရောက်နေတယ်။ 5 ရက်ကျန်တယ်။ Team ကို customer visit တိုးခိုင်းထားတယ်။ Target ပြည့်အောင် ကြိုးစားနေတယ်။",
+
+      promotion:
+        "ဒီလ distributor အတွက် promotion လုပ်ချင်တယ်။ Product A ကို 10 case ဝယ်ရင် 1 case free ပေးမယ်။ September 20 ကနေ 30 အထိ။ Sales တိုးဖို့နဲ့ target ပြည့်ဖို့ အထောက်အကူဖြစ်မယ်။ Approval လိုတယ်။",
+
+      collection:
+        "Customer တစ်ယောက်ဆီက payment ကျန်နေတယ်။ Amount က 15 သိန်း။ Due date ကျော်နေပြီ။ Sales team က follow-up လုပ်နေတယ်။ ဒီအပတ်အတွင်း payment ရအောင် ဆက်လုပ်မယ်။",
+
+      distributor:
+        "Distributor မှာ stock မလုံလောက်ဘူး။ Fast moving SKU တွေ out of stock ဖြစ်နေတယ်။ Customer demand ရှိတယ်။ Urgent replenishment လိုတယ်။"
+    };
+
+    input.value = examples[example] || "";
+
+    if (example === "promotion") {
+      setValue("professionalEmailType", "promotion");
     }
 
-    alert(message);
-  }
-
-  function populateEmailTypes() {
-    const select = $("professionalEmailType");
-
-    if (!select) return;
-
-    select.innerHTML = Object.entries(emailTypes)
-      .map(
-        ([key, value]) =>
-          `<option value="${key}">${value.icon} ${value.name}</option>`
-      )
-      .join("");
-  }
-
-  function populateTones() {
-    const select = $("professionalEmailTone");
-
-    if (!select) return;
-
-    select.innerHTML = Object.entries(tones)
-      .map(
-        ([key, value]) =>
-          `<option value="${key}">${value}</option>`
-      )
-      .join("");
-  }
-
-  function populateDetails() {
-    const select = $("professionalEmailDetail");
-
-    if (!select) return;
-
-    select.innerHTML = Object.entries(details)
-      .map(
-        ([key, value]) =>
-          `<option value="${key}">${value}</option>`
-      )
-      .join("");
-
-    select.value = "detailed";
-  }
-
-  function setupProfessionalEmail() {
-    if (!$("professionalEmailInput")) return;
-
-    populateEmailTypes();
-    populateTones();
-    populateDetails();
-
-    $("professionalEmailLanguage") &&
-      ($("professionalEmailLanguage").value = "english");
-
-    const generateBtn = $("generateProfessionalEmailBtn");
-
-    if (generateBtn) {
-      generateBtn.addEventListener(
-        "click",
-        writeProfessionalEmail
-      );
+    if (example === "target") {
+      setValue("professionalEmailType", "target_gap");
     }
 
-    const shortExampleBtn =
-      $("professionalEmailExampleBtn");
+    if (example === "collection") {
+      setValue("professionalEmailType", "collection");
+    }
 
-    if (shortExampleBtn) {
-      shortExampleBtn.addEventListener("click", () => {
-        const input = $("professionalEmailInput");
+    if (example === "distributor") {
+      setValue("professionalEmailType", "distributor");
+    }
 
-        if (!input) return;
+    input.focus();
+  }
 
-        input.value =
-          "ဒီလ sales target မပြည့်သေးဘူး။ လက်ရှိ 77% ရောက်နေတယ်။ 5 ရက်ကျန်တယ်။ Team ကို customer visit တိုးခိုင်းထားတယ်။ Target ပြည့်အောင် ကြိုးစားနေတယ်။";
+  /* ============================================================
+     EVENT BINDING
+     ============================================================ */
 
-        $("professionalEmailType").value = "targetGap";
-        $("professionalEmailLanguage").value = "english";
+  function bindEvents() {
 
-        input.focus();
+    const writeBtn =
+      document.getElementById("professionalEmailWriteBtn");
 
-        showToast(
-          "Example loaded. Click Generate Professional Email."
-        );
+    const rewriteBtn =
+      document.getElementById("professionalEmailRewriteBtn");
+
+    const clearBtn =
+      document.getElementById("professionalEmailClearBtn");
+
+    const copyBtn =
+      document.getElementById("professionalEmailCopyBtn");
+
+    if (writeBtn) {
+      writeBtn.addEventListener("click", writeProfessionalEmail);
+    }
+
+    if (rewriteBtn) {
+      rewriteBtn.addEventListener("click", rewriteEmail);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", clearEmailWriter);
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener("click", copyEmail);
+    }
+
+    document.querySelectorAll("[data-email-example]").forEach(btn => {
+
+      btn.addEventListener("click", () => {
+
+        useExample(btn.dataset.emailExample);
+
       });
+
+    });
+  }
+
+  /* ============================================================
+     INITIALIZE
+     ============================================================ */
+
+  function initProfessionalEmail() {
+
+    bindEvents();
+
+    const sender = document.getElementById(
+      "professionalEmailSender"
+    );
+
+    if (sender && !sender.value) {
+      sender.value = "Aung Zar Ni Win";
     }
 
-    const language = $("professionalEmailLanguage");
+    const detail = document.getElementById(
+      "professionalEmailDetail"
+    );
 
-    if (language) {
-      language.addEventListener("change", () => {
-        const selected = language.value;
+    if (detail && !detail.value) {
+      detail.value = "detailed";
+    }
 
-        if (selected === "myanmar") {
-          showToast("Myanmar professional email mode selected.");
-        } else {
-          showToast("English professional email mode selected.");
-        }
-      });
+    const tone = document.getElementById(
+      "professionalEmailTone"
+    );
+
+    if (tone && !tone.value) {
+      tone.value = "professional";
+    }
+
+    const language = document.getElementById(
+      "professionalEmailLanguage"
+    );
+
+    if (language && !language.value) {
+      language.value = "english";
     }
   }
+
+  /* ============================================================
+     GLOBAL API
+     ============================================================ */
 
   window.AungProfessionalEmail = {
     write: writeProfessionalEmail,
     rewrite: rewriteEmail,
-    clear: clearEmailWriter,
     copy: copyEmail,
-    types: emailTypes
+    clear: clearEmailWriter,
+    example: useExample
   };
 
   if (document.readyState === "loading") {
     document.addEventListener(
       "DOMContentLoaded",
-      setupProfessionalEmail
+      initProfessionalEmail
     );
   } else {
-    setupProfessionalEmail();
+    initProfessionalEmail();
   }
+
 })();
+```
