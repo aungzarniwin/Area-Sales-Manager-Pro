@@ -1,1300 +1,1330 @@
-```javascript
+
 /* =========================================================
    AUNG SALES MANAGER PRO
-   APP.JS — PROFESSIONAL UI V2
+   app.js
+   Clean JavaScript Version 1.0
    ========================================================= */
 
-"use strict";
+(function () {
+  "use strict";
 
-/* =========================================================
-   APP STATE
-   ========================================================= */
+  /* =======================================================
+     STORAGE
+     ======================================================= */
 
-const STORAGE_KEY = "aung_sales_manager_pro_v2";
+  const STORAGE_KEY = "aung_sales_manager_pro_v1";
 
-const defaultData = {
-  currentPage: "dashboard",
-
-  daily: {
-    morning: false,
-    customer: false,
-    team: false,
-    distributor: false,
-    collection: false,
-    competitor: false,
-    eod: false,
-    action: false
-  },
-
-  forms: {},
-
-  dashboard: {
+  const defaultData = {
     target: 500,
     actual: 385,
-    team: 4
-  }
-};
-
-let appData = loadData();
-
-let toastTimer = null;
-
-
-/* =========================================================
-   INITIALIZATION
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  initializeNavigation();
-  initializeDailyManager();
-  initializeMobileSidebar();
-  initializeDashboardActions();
-  initializeSearch();
-  initializeNotifications();
-
-  loadFormValues();
-  updateDailyProgress();
-  updateDashboard();
-
-  showPage(appData.currentPage);
-
-});
-
-
-/* =========================================================
-   STORAGE
-   ========================================================= */
-
-function loadData() {
-
-  try {
-
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (!saved) {
-      return structuredClone(defaultData);
+    team: 4,
+    daily: {
+      morning: {},
+      customer: {},
+      team: {},
+      distributor: {},
+      collection: {},
+      competitor: {},
+      eod: {},
+      action: {}
     }
+  };
 
-    const parsed = JSON.parse(saved);
+  let appData = loadData();
 
-    return {
-      ...structuredClone(defaultData),
-      ...parsed,
-      daily: {
-        ...structuredClone(defaultData.daily),
-        ...(parsed.daily || {})
-      },
-      forms: parsed.forms || {},
-      dashboard: {
-        ...structuredClone(defaultData.dashboard),
-        ...(parsed.dashboard || {})
+
+  /* =======================================================
+     START APP
+     ======================================================= */
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    initializeNavigation();
+
+    initializeMobileMenu();
+
+    initializeDailyManager();
+
+    initializeDashboardActions();
+
+    initializeSearch();
+
+    initializeNotification();
+
+    initializeDate();
+
+    updateDashboard();
+
+    loadDailyForms();
+
+    updateDailyProgress();
+
+  });
+
+
+  /* =======================================================
+     LOCAL STORAGE
+     ======================================================= */
+
+  function loadData() {
+
+    try {
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) {
+        return JSON.parse(JSON.stringify(defaultData));
       }
-    };
 
-  } catch (error) {
+      const parsed = JSON.parse(saved);
 
-    console.error("Unable to load application data:", error);
+      return {
+        ...JSON.parse(JSON.stringify(defaultData)),
+        ...parsed,
+        daily: {
+          ...JSON.parse(JSON.stringify(defaultData.daily)),
+          ...(parsed.daily || {})
+        }
+      };
 
-    return structuredClone(defaultData);
-  }
-}
+    } catch (error) {
 
+      console.error("Storage load error:", error);
 
-function saveData() {
-
-  try {
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(appData)
-    );
-
-  } catch (error) {
-
-    console.error("Unable to save application data:", error);
-
-    showToast(
-      "Storage Error",
-      "Unable to save data on this device.",
-      "error"
-    );
-  }
-}
-
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-function initializeNavigation() {
-
-  document.querySelectorAll(".nav-item[data-page]").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      const page = button.dataset.page;
-
-      if (!page) return;
-
-      showPage(page);
-
-      closeMobileSidebar();
-
-    });
-
-  });
-
-
-  document.querySelectorAll("[data-page-action]").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      const page = button.dataset.pageAction;
-
-      if (!page) return;
-
-      showPage(page);
-
-      closeMobileSidebar();
-
-    });
-
-  });
-
-}
-
-
-function showPage(pageName) {
-
-  const page = document.getElementById(`page-${pageName}`);
-
-  if (!page) {
-
-    console.warn(`Page not found: ${pageName}`);
-
-    return;
-  }
-
-
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
-
-
-  page.classList.add("active");
-
-
-  document.querySelectorAll(".nav-item[data-page]").forEach(button => {
-
-    button.classList.toggle(
-      "active",
-      button.dataset.page === pageName
-    );
-
-  });
-
-
-  const pageTitle = getPageTitle(pageName);
-
-  const breadcrumb = document.getElementById("breadcrumbPage");
-
-  if (breadcrumb) {
-    breadcrumb.textContent = pageTitle;
-  }
-
-
-  appData.currentPage = pageName;
-
-  saveData();
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-
-function getPageTitle(pageName) {
-
-  const titles = {
-
-    dashboard: "Dashboard",
-
-    "daily-manager": "Daily Manager",
-
-    "sales-target": "Sales Target",
-
-    "team-kpi": "Team KPI",
-
-    distributor: "Distributor",
-
-    territory: "Territory",
-
-    forecast: "Sales Forecast",
-
-    tools: "Manager Tools",
-
-    reports: "Reports",
-
-    "problem-solver": "Problem Solver",
-
-    "ai-coach": "AI Sales Coach",
-
-    academy: "Sales Academy",
-
-    settings: "Settings"
-
-  };
-
-  return titles[pageName] || "Dashboard";
-}
-
-
-/* =========================================================
-   MOBILE SIDEBAR
-   ========================================================= */
-
-function initializeMobileSidebar() {
-
-  const menuButton =
-    document.getElementById("mobileMenuBtn");
-
-  const closeButton =
-    document.getElementById("sidebarClose");
-
-  const overlay =
-    document.getElementById("sidebarOverlay");
-
-  if (menuButton) {
-
-    menuButton.addEventListener("click", () => {
-
-      openMobileSidebar();
-
-    });
-
-  }
-
-
-  if (closeButton) {
-
-    closeButton.addEventListener("click", () => {
-
-      closeMobileSidebar();
-
-    });
-
-  }
-
-
-  if (overlay) {
-
-    overlay.addEventListener("click", () => {
-
-      closeMobileSidebar();
-
-    });
-
-  }
-
-}
-
-
-function openMobileSidebar() {
-
-  const sidebar =
-    document.getElementById("sidebar");
-
-  const overlay =
-    document.getElementById("sidebarOverlay");
-
-  if (sidebar) {
-    sidebar.classList.add("open");
-  }
-
-  if (overlay) {
-    overlay.classList.add("show");
-  }
-
-  document.body.style.overflow = "hidden";
-}
-
-
-function closeMobileSidebar() {
-
-  const sidebar =
-    document.getElementById("sidebar");
-
-  const overlay =
-    document.getElementById("sidebarOverlay");
-
-  if (sidebar) {
-    sidebar.classList.remove("open");
-  }
-
-  if (overlay) {
-    overlay.classList.remove("show");
-  }
-
-  document.body.style.overflow = "";
-}
-
-
-/* =========================================================
-   DAILY MANAGER
-   ========================================================= */
-
-function initializeDailyManager() {
-
-  document.querySelectorAll("[data-save]").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      const section = button.dataset.save;
-
-      saveDailySection(section);
-
-    });
-
-  });
-
-
-  const resetButton =
-    document.getElementById("resetDailyBtn");
-
-  if (resetButton) {
-
-    resetButton.addEventListener("click", () => {
-
-      resetDailyPlan();
-
-    });
-
-  }
-
-}
-
-
-/* =========================================================
-   DAILY SAVE ROUTER
-   ========================================================= */
-
-function saveDailySection(section) {
-
-  const values = getSectionValues(section);
-
-  if (!values) {
-
-    showToast(
-      "Unable to Save",
-      "This section could not be processed.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  if (!hasMeaningfulValue(values)) {
-
-    showToast(
-      "Information Required",
-      "Please enter some information before saving.",
-      "warning"
-    );
-
-    return;
-  }
-
-
-  appData.forms[section] = values;
-
-  appData.daily[section] = true;
-
-  saveData();
-
-  updateDailyProgress();
-
-  loadFormValues();
-
-  showToast(
-    "Saved Successfully",
-    `${getSectionName(section)} has been updated.`,
-    "success"
-  );
-
-}
-
-
-/* =========================================================
-   GET DAILY SECTION VALUES
-   ========================================================= */
-
-function getSectionValues(section) {
-
-  const map = {
-
-    morning: {
-      priority: getValue("morningPriority"),
-      sales: getValue("morningSales"),
-      customers: getValue("morningCustomers")
-    },
-
-    customer: {
-      name: getValue("customerName"),
-      objective: getValue("customerObjective"),
-      notes: getValue("customerNotes")
-    },
-
-    team: {
-      member: getValue("teamMember"),
-      followType: getValue("teamFollowType"),
-      notes: getValue("teamNotes")
-    },
-
-    distributor: {
-      name: getValue("distributorName"),
-      issue: getValue("distributorIssue"),
-      notes: getValue("distributorNotes")
-    },
-
-    collection: {
-      customer: getValue("collectionCustomer"),
-      amount: getValue("collectionAmount"),
-      notes: getValue("collectionNotes")
-    },
-
-    competitor: {
-      name: getValue("competitorName"),
-      type: getValue("competitorType"),
-      notes: getValue("competitorNotes")
-    },
-
-    eod: {
-      sales: getValue("eodSales"),
-      achievement: getValue("eodAchievement"),
-      visits: getValue("eodVisits"),
-      win: getValue("eodWin"),
-      improve: getValue("eodImprove")
-    },
-
-    action: {
-      plan: getValue("actionPlan"),
-      owner: getValue("actionOwner"),
-      priority: getValue("actionPriority")
-    }
-
-  };
-
-  return map[section] || null;
-}
-
-
-/* =========================================================
-   DAILY SECTION NAMES
-   ========================================================= */
-
-function getSectionName(section) {
-
-  const names = {
-
-    morning: "Morning Manager Plan",
-
-    customer: "Customer Visit Plan",
-
-    team: "Team Follow-up",
-
-    distributor: "Distributor Action",
-
-    collection: "Collection Action",
-
-    competitor: "Market Intelligence",
-
-    eod: "End-of-Day Review",
-
-    action: "Tomorrow's Action Plan"
-
-  };
-
-  return names[section] || "Manager Plan";
-}
-
-
-/* =========================================================
-   VALUE HELPERS
-   ========================================================= */
-
-function getValue(id) {
-
-  const element = document.getElementById(id);
-
-  if (!element) return "";
-
-  return element.value.trim();
-}
-
-
-function hasMeaningfulValue(object) {
-
-  return Object.values(object).some(value => {
-
-    return String(value).trim() !== "";
-
-  });
-
-}
-
-
-/* =========================================================
-   LOAD SAVED FORM VALUES
-   ========================================================= */
-
-function loadFormValues() {
-
-  Object.entries(appData.forms).forEach(([section, values]) => {
-
-    if (!values) return;
-
-    Object.entries(values).forEach(([key, value]) => {
-
-      const id = getFieldId(section, key);
-
-      if (!id) return;
-
-      const element =
-        document.getElementById(id);
-
-      if (!element) return;
-
-      element.value = value ?? "";
-
-    });
-
-  });
-
-}
-
-
-/* =========================================================
-   FIELD MAPPING
-   ========================================================= */
-
-function getFieldId(section, key) {
-
-  const map = {
-
-    morning: {
-      priority: "morningPriority",
-      sales: "morningSales",
-      customers: "morningCustomers"
-    },
-
-    customer: {
-      name: "customerName",
-      objective: "customerObjective",
-      notes: "customerNotes"
-    },
-
-    team: {
-      member: "teamMember",
-      followType: "teamFollowType",
-      notes: "teamNotes"
-    },
-
-    distributor: {
-      name: "distributorName",
-      issue: "distributorIssue",
-      notes: "distributorNotes"
-    },
-
-    collection: {
-      customer: "collectionCustomer",
-      amount: "collectionAmount",
-      notes: "collectionNotes"
-    },
-
-    competitor: {
-      name: "competitorName",
-      type: "competitorType",
-      notes: "competitorNotes"
-    },
-
-    eod: {
-      sales: "eodSales",
-      achievement: "eodAchievement",
-      visits: "eodVisits",
-      win: "eodWin",
-      improve: "eodImprove"
-    },
-
-    action: {
-      plan: "actionPlan",
-      owner: "actionOwner",
-      priority: "actionPriority"
-    }
-
-  };
-
-  return map[section]?.[key] || null;
-}
-
-
-/* =========================================================
-   DAILY PROGRESS
-   ========================================================= */
-
-function updateDailyProgress() {
-
-  const sections = Object.keys(appData.daily);
-
-  const completed =
-    sections.filter(section => appData.daily[section]).length;
-
-  const total = sections.length;
-
-  const percentage =
-    total === 0
-      ? 0
-      : Math.round((completed / total) * 100);
-
-
-  const dailyText =
-    document.getElementById("dailyCompletionText");
-
-  const dailyBar =
-    document.getElementById("dailyCompletionBar");
-
-  const dashboardStatus =
-    document.getElementById("dashboardDailyStatus");
-
-  const focusText =
-    document.getElementById("focusProgressText");
-
-  const focusBar =
-    document.getElementById("focusProgressBar");
-
-
-  if (dailyText) {
-    dailyText.textContent = `${percentage}%`;
-  }
-
-  if (dailyBar) {
-    dailyBar.style.width = `${percentage}%`;
-  }
-
-  if (dashboardStatus) {
-    dashboardStatus.textContent =
-      `${percentage}% Complete`;
-  }
-
-  if (focusText) {
-    focusText.textContent =
-      `${percentage}%`;
-  }
-
-  if (focusBar) {
-    focusBar.style.width =
-      `${percentage}%`;
-  }
-
-
-  sections.forEach(section => {
-
-    const status =
-      document.getElementById(`status-${section}`);
-
-    if (!status) return;
-
-    if (appData.daily[section]) {
-
-      status.textContent = "Completed";
-
-      status.classList.add("completed");
-
-    } else {
-
-      status.textContent = "Pending";
-
-      status.classList.remove("completed");
+      return JSON.parse(JSON.stringify(defaultData));
 
     }
 
-  });
-
-}
+  }
 
 
-/* =========================================================
-   RESET DAILY PLAN
-   ========================================================= */
+  function saveData() {
 
-function resetDailyPlan() {
+    try {
 
-  const confirmed =
-    window.confirm(
-      "Reset today's manager plan?\n\nSaved daily form information will also be cleared."
-    );
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(appData)
+      );
 
-  if (!confirmed) return;
+    } catch (error) {
 
+      console.error("Storage save error:", error);
 
-  Object.keys(appData.daily).forEach(section => {
-
-    appData.daily[section] = false;
-
-  });
-
-
-  appData.forms = {};
-
-  saveData();
-
-  clearAllDailyFields();
-
-  updateDailyProgress();
-
-  showToast(
-    "Daily Plan Reset",
-    "Today's management plan has been cleared.",
-    "success"
-  );
-
-}
-
-
-function clearAllDailyFields() {
-
-  const ids = [
-
-    "morningPriority",
-    "morningSales",
-    "morningCustomers",
-
-    "customerName",
-    "customerObjective",
-    "customerNotes",
-
-    "teamMember",
-    "teamFollowType",
-    "teamNotes",
-
-    "distributorName",
-    "distributorIssue",
-    "distributorNotes",
-
-    "collectionCustomer",
-    "collectionAmount",
-    "collectionNotes",
-
-    "competitorName",
-    "competitorType",
-    "competitorNotes",
-
-    "eodSales",
-    "eodAchievement",
-    "eodVisits",
-    "eodWin",
-    "eodImprove",
-
-    "actionPlan",
-    "actionOwner",
-    "actionPriority"
-
-  ];
-
-
-  ids.forEach(id => {
-
-    const element =
-      document.getElementById(id);
-
-    if (!element) return;
-
-    element.value = "";
-
-  });
-
-}
-
-
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
-
-function updateDashboard() {
-
-  const target =
-    Number(appData.dashboard.target) || 0;
-
-  const actual =
-    Number(appData.dashboard.actual) || 0;
-
-  const team =
-    Number(appData.dashboard.team) || 0;
-
-
-  const achievement =
-    target > 0
-      ? Math.round((actual / target) * 100)
-      : 0;
-
-  const gap =
-    Math.max(target - actual, 0);
-
-
-  setText(
-    "kpiTarget",
-    `${formatNumber(target)} L`
-  );
-
-  setText(
-    "kpiActual",
-    `${formatNumber(actual)} L`
-  );
-
-  setText(
-    "kpiAchievement",
-    `${achievement}%`
-  );
-
-  setText(
-    "kpiGap",
-    `${formatNumber(gap)} L`
-  );
-
-  setText(
-    "kpiTeam",
-    String(team)
-  );
-
-
-  const achievementBar =
-    document.getElementById("achievementBar");
-
-  if (achievementBar) {
-
-    achievementBar.style.width =
-      `${Math.min(achievement, 100)}%`;
+    }
 
   }
 
 
-  updateDateDisplays();
+  /* =======================================================
+     NAVIGATION
+     ======================================================= */
 
-}
+  function initializeNavigation() {
 
+    const navItems = document.querySelectorAll("[data-page]");
 
-/* =========================================================
-   DATE DISPLAY
-   ========================================================= */
+    navItems.forEach(function (button) {
 
-function updateDateDisplays() {
+      button.addEventListener("click", function () {
 
-  const now = new Date();
+        const pageName = button.getAttribute("data-page");
 
-  const dashboardDate =
-    document.getElementById("dashboardDate");
+        if (!pageName) {
+          return;
+        }
 
-  const dailyDateText =
-    document.getElementById("dailyDateText");
+        showPage(pageName);
 
+        closeMobileSidebar();
 
-  if (dashboardDate) {
-
-    dashboardDate.textContent =
-      formatDate(now, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        year: "numeric"
       });
 
-  }
+    });
 
 
-  if (dailyDateText) {
+    const pageActions = document.querySelectorAll(
+      "[data-page-action]"
+    );
 
-    dailyDateText.textContent =
-      formatDate(now, {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric"
+    pageActions.forEach(function (button) {
+
+      button.addEventListener("click", function () {
+
+        const pageName =
+          button.getAttribute("data-page-action");
+
+        if (!pageName) {
+          return;
+        }
+
+        showPage(pageName);
+
+        closeMobileSidebar();
+
       });
 
-  }
-
-
-  const calendarIcon =
-    document.querySelector(".calendar-icon");
-
-  if (calendarIcon) {
-
-    calendarIcon.textContent =
-      now.getDate();
+    });
 
   }
 
-}
+
+  function showPage(pageName) {
+
+    const pages = document.querySelectorAll(".page");
+
+    pages.forEach(function (page) {
+
+      page.classList.remove("active-page");
+
+    });
 
 
-/* =========================================================
-   SEARCH
-   ========================================================= */
+    const targetPage =
+      document.getElementById("page-" + pageName);
 
-function initializeSearch() {
+    if (!targetPage) {
 
-  const search =
-    document.getElementById("globalSearch");
+      console.warn(
+        "Page not found:",
+        pageName
+      );
 
-  if (!search) return;
+      return;
 
+    }
 
-  search.addEventListener("keydown", event => {
-
-    if (event.key !== "Enter") return;
-
-    const query =
-      search.value.trim().toLowerCase();
-
-    if (!query) return;
+    targetPage.classList.add("active-page");
 
 
-    const pages = {
+    const navItems =
+      document.querySelectorAll(".nav-item");
 
-      dashboard: ["dashboard", "home", "command center"],
+    navItems.forEach(function (item) {
 
-      "daily-manager": [
-        "daily",
-        "plan",
-        "today",
-        "daily manager"
-      ],
-
-      "sales-target": [
-        "target",
-        "sales target"
-      ],
-
-      "team-kpi": [
-        "team",
-        "kpi",
-        "performance"
-      ],
-
-      distributor: [
-        "distributor",
-        "channel"
-      ],
-
-      territory: [
-        "territory",
-        "area",
-        "market"
-      ],
-
-      forecast: [
-        "forecast",
-        "projection"
-      ],
-
-      tools: [
-        "tools",
-        "calculator"
-      ],
-
-      reports: [
-        "report",
-        "reports"
-      ],
-
-      "problem-solver": [
-        "problem",
-        "issue",
-        "solver"
-      ],
-
-      "ai-coach": [
-        "ai",
-        "coach"
-      ],
-
-      academy: [
-        "academy",
-        "training",
-        "learning"
-      ],
-
-      settings: [
-        "setting"
-      ]
-
-    };
-
-
-    for (const [page, keywords] of Object.entries(pages)) {
+      item.classList.remove("active");
 
       if (
-        keywords.some(keyword =>
-          keyword.includes(query) ||
-          query.includes(keyword)
-        )
+        item.getAttribute("data-page") === pageName
       ) {
 
-        showPage(page);
+        item.classList.add("active");
 
-        search.value = "";
-
-        showToast(
-          "Search",
-          `Opened ${getPageTitle(page)}.`,
-          "success"
-        );
-
-        return;
       }
+
+    });
+
+
+    updateBreadcrumb(pageName);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* =======================================================
+     BREADCRUMB
+     ======================================================= */
+
+  function updateBreadcrumb(pageName) {
+
+    const breadcrumb =
+      document.getElementById("breadcrumbCurrent");
+
+    if (!breadcrumb) {
+      return;
+    }
+
+    const names = {
+
+      dashboard: "Dashboard",
+
+      "daily-manager": "Daily Manager",
+
+      "sales-target": "Sales Target",
+
+      "team-kpi": "Team KPI",
+
+      distributor: "Distributor",
+
+      territory: "Territory",
+
+      "sales-forecast": "Sales Forecast",
+
+      "manager-tools": "Manager Tools",
+
+      reports: "Reports",
+
+      "problem-solver": "Problem Solver",
+
+      "ai-coach": "AI Sales Coach",
+
+      academy: "Sales Academy",
+
+      settings: "Settings"
+
+    };
+
+    breadcrumb.textContent =
+      names[pageName] || "Dashboard";
+
+  }
+
+
+  /* =======================================================
+     MOBILE MENU
+     ======================================================= */
+
+  function initializeMobileMenu() {
+
+    const menuButton =
+      document.getElementById("mobileMenuBtn");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const overlay =
+      document.getElementById("sidebarOverlay");
+
+
+    if (menuButton) {
+
+      menuButton.addEventListener(
+        "click",
+        function () {
+
+          if (!sidebar) {
+            return;
+          }
+
+          sidebar.classList.toggle("mobile-open");
+
+          if (overlay) {
+            overlay.classList.toggle(
+              "active"
+            );
+          }
+
+        }
+      );
 
     }
 
 
-    showToast(
-      "No Result",
-      `No manager module found for "${search.value}".`,
-      "warning"
-    );
+    if (overlay) {
 
-  });
+      overlay.addEventListener(
+        "click",
+        function () {
 
-}
+          closeMobileSidebar();
 
+        }
+      );
 
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
+    }
 
-function initializeNotifications() {
-
-  const button =
-    document.getElementById("notificationBtn");
-
-  if (!button) return;
+  }
 
 
-  button.addEventListener("click", () => {
+  function closeMobileSidebar() {
 
-    const target =
-      Number(appData.dashboard.target) || 0;
+    const sidebar =
+      document.getElementById("sidebar");
 
-    const actual =
-      Number(appData.dashboard.actual) || 0;
-
-    const gap =
-      Math.max(target - actual, 0);
+    const overlay =
+      document.getElementById("sidebarOverlay");
 
 
-    showToast(
-      "Manager Alerts",
-      `${formatNumber(gap)} L target gap requires attention.`,
-      "warning"
-    );
+    if (sidebar) {
+      sidebar.classList.remove(
+        "mobile-open"
+      );
+    }
 
-  });
+    if (overlay) {
+      overlay.classList.remove(
+        "active"
+      );
+    }
 
-}
+  }
 
 
-/* =========================================================
-   UTILITY BUTTONS
-   ========================================================= */
+  /* =======================================================
+     DAILY MANAGER
+     ======================================================= */
 
-function initializeDashboardActions() {
+  function initializeDailyManager() {
 
-  const period =
-    document.getElementById("performancePeriod");
+    const saveButtons =
+      document.querySelectorAll(
+        "[data-save-section]"
+      );
 
-  if (period) {
 
-    period.addEventListener("change", () => {
+    saveButtons.forEach(function (button) {
 
-      showToast(
-        "Performance View",
-        `${period.value} selected.`,
-        "success"
+      button.addEventListener(
+        "click",
+        function () {
+
+          const section =
+            button.getAttribute(
+              "data-save-section"
+            );
+
+          saveDailySection(section);
+
+        }
       );
 
     });
 
-  }
 
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-function showToast(
-  title,
-  message,
-  type = "success"
-) {
-
-  const toast =
-    document.getElementById("toast");
-
-  const toastTitle =
-    document.getElementById("toastTitle");
-
-  const toastMessage =
-    document.getElementById("toastMessage");
-
-  const toastIcon =
-    toast?.querySelector(".toast-icon");
+    const resetButton =
+      document.getElementById(
+        "resetDailyBtn"
+      );
 
 
-  if (!toast) return;
+    if (resetButton) {
 
+      resetButton.addEventListener(
+        "click",
+        function () {
 
-  if (toastTitle) {
-    toastTitle.textContent = title;
-  }
+          resetDailyPlan();
 
-  if (toastMessage) {
-    toastMessage.textContent = message;
-  }
+        }
+      );
 
-
-  if (toastIcon) {
-
-    if (type === "error") {
-      toastIcon.textContent = "!";
-    } else if (type === "warning") {
-      toastIcon.textContent = "!";
-    } else {
-      toastIcon.textContent = "✓";
     }
 
   }
 
 
-  toast.classList.add("show");
+  function saveDailySection(section) {
+
+    if (!appData.daily[section]) {
+
+      appData.daily[section] = {};
+
+    }
 
 
-  clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(() => {
-
-    toast.classList.remove("show");
-
-  }, 3000);
-
-}
+    let values = {};
 
 
-/* =========================================================
-   TEXT HELPER
-   ========================================================= */
+    if (section === "morning") {
 
-function setText(id, value) {
+      values = {
 
-  const element =
-    document.getElementById(id);
+        priority:
+          getValue("morningPriority"),
 
-  if (element) {
-    element.textContent = value;
+        sales:
+          getValue("morningSales"),
+
+        customers:
+          getValue("morningCustomers")
+
+      };
+
+    }
+
+
+    if (section === "customer") {
+
+      values = {
+
+        customer:
+          getValue("customerName"),
+
+        objective:
+          getValue("customerObjective"),
+
+        notes:
+          getValue("customerNotes")
+
+      };
+
+    }
+
+
+    if (section === "team") {
+
+      values = {
+
+        member:
+          getValue("teamMember"),
+
+        followType:
+          getValue("teamFollowType"),
+
+        notes:
+          getValue("teamNotes")
+
+      };
+
+    }
+
+
+    if (section === "distributor") {
+
+      values = {
+
+        distributor:
+          getValue("distributorName"),
+
+        issue:
+          getValue("distributorIssue"),
+
+        notes:
+          getValue("distributorNotes")
+
+      };
+
+    }
+
+
+    if (section === "collection") {
+
+      values = {
+
+        customer:
+          getValue("collectionCustomer"),
+
+        amount:
+          getValue("collectionAmount"),
+
+        notes:
+          getValue("collectionNotes")
+
+      };
+
+    }
+
+
+    if (section === "competitor") {
+
+      values = {
+
+        competitor:
+          getValue("competitorName"),
+
+        type:
+          getValue("competitorType"),
+
+        notes:
+          getValue("competitorNotes")
+
+      };
+
+    }
+
+
+    if (section === "eod") {
+
+      values = {
+
+        sales:
+          getValue("eodSales"),
+
+        achievement:
+          getValue("eodAchievement"),
+
+        visits:
+          getValue("eodVisits"),
+
+        win:
+          getValue("eodWin"),
+
+        improve:
+          getValue("eodImprove")
+
+      };
+
+    }
+
+
+    if (section === "action") {
+
+      values = {
+
+        action:
+          getValue("actionPlan"),
+
+        owner:
+          getValue("actionOwner"),
+
+        priority:
+          getValue("actionPriority")
+
+      };
+
+    }
+
+
+    appData.daily[section] = values;
+
+    saveData();
+
+    updateDailyProgress();
+
+    showToast(
+      getSectionName(section) +
+      " saved successfully."
+    );
+
   }
 
-}
+
+  function getSectionName(section) {
+
+    const names = {
+
+      morning: "Morning Plan",
+
+      customer: "Customer Visit Plan",
+
+      team: "Team Follow-up",
+
+      distributor: "Distributor Issue",
+
+      collection: "Collection Plan",
+
+      competitor: "Market Intelligence",
+
+      eod: "End-of-Day Review",
+
+      action: "Manager Action Plan"
+
+    };
+
+    return names[section] || "Plan";
+
+  }
 
 
-/* =========================================================
-   NUMBER FORMAT
-   ========================================================= */
+  function getValue(id) {
 
-function formatNumber(number) {
+    const element =
+      document.getElementById(id);
 
-  return Number(number).toLocaleString(
-    "en-US",
-    {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1
+    if (!element) {
+      return "";
+    }
+
+    return element.value.trim();
+
+  }
+
+
+  /* =======================================================
+     LOAD DAILY FORMS
+     ======================================================= */
+
+  function loadDailyForms() {
+
+    const d = appData.daily;
+
+
+    setValue(
+      "morningPriority",
+      d.morning.priority
+    );
+
+    setValue(
+      "morningSales",
+      d.morning.sales
+    );
+
+    setValue(
+      "morningCustomers",
+      d.morning.customers
+    );
+
+
+    setValue(
+      "customerName",
+      d.customer.customer
+    );
+
+    setValue(
+      "customerObjective",
+      d.customer.objective
+    );
+
+    setValue(
+      "customerNotes",
+      d.customer.notes
+    );
+
+
+    setValue(
+      "teamMember",
+      d.team.member
+    );
+
+    setValue(
+      "teamFollowType",
+      d.team.followType
+    );
+
+    setValue(
+      "teamNotes",
+      d.team.notes
+    );
+
+
+    setValue(
+      "distributorName",
+      d.distributor.distributor
+    );
+
+    setValue(
+      "distributorIssue",
+      d.distributor.issue
+    );
+
+    setValue(
+      "distributorNotes",
+      d.distributor.notes
+    );
+
+
+    setValue(
+      "collectionCustomer",
+      d.collection.customer
+    );
+
+    setValue(
+      "collectionAmount",
+      d.collection.amount
+    );
+
+    setValue(
+      "collectionNotes",
+      d.collection.notes
+    );
+
+
+    setValue(
+      "competitorName",
+      d.competitor.competitor
+    );
+
+    setValue(
+      "competitorType",
+      d.competitor.type
+    );
+
+    setValue(
+      "competitorNotes",
+      d.competitor.notes
+    );
+
+
+    setValue(
+      "eodSales",
+      d.eod.sales
+    );
+
+    setValue(
+      "eodAchievement",
+      d.eod.achievement
+    );
+
+    setValue(
+      "eodVisits",
+      d.eod.visits
+    );
+
+    setValue(
+      "eodWin",
+      d.eod.win
+    );
+
+    setValue(
+      "eodImprove",
+      d.eod.improve
+    );
+
+
+    setValue(
+      "actionPlan",
+      d.action.action
+    );
+
+    setValue(
+      "actionOwner",
+      d.action.owner
+    );
+
+    setValue(
+      "actionPriority",
+      d.action.priority
+    );
+
+  }
+
+
+  function setValue(id, value) {
+
+    const element =
+      document.getElementById(id);
+
+    if (
+      element &&
+      value !== undefined &&
+      value !== null
+    ) {
+
+      element.value = value;
+
+    }
+
+  }
+
+
+  /* =======================================================
+     DAILY PROGRESS
+     ======================================================= */
+
+  function updateDailyProgress() {
+
+    const sections = [
+      "morning",
+      "customer",
+      "team",
+      "distributor",
+      "collection",
+      "competitor",
+      "eod",
+      "action"
+    ];
+
+
+    let completed = 0;
+
+
+    sections.forEach(function (section) {
+
+      const data =
+        appData.daily[section];
+
+      if (
+        data &&
+        Object.keys(data).length > 0
+      ) {
+
+        const hasValue =
+          Object.values(data).some(
+            function (value) {
+              return String(value).trim() !== "";
+            }
+          );
+
+        if (hasValue) {
+          completed++;
+        }
+
+      }
+
+    });
+
+
+    const percentage =
+      Math.round(
+        (completed / sections.length) * 100
+      );
+
+
+    const progress =
+      document.getElementById(
+        "dailyProgress"
+      );
+
+    const text =
+      document.getElementById(
+        "dailyCompletionText"
+      );
+
+
+    if (progress) {
+
+      progress.style.width =
+        percentage + "%";
+
+    }
+
+
+    if (text) {
+
+      text.textContent =
+        percentage + "%";
+
+    }
+
+  }
+
+
+  function resetDailyPlan() {
+
+    const confirmed =
+      window.confirm(
+        "Reset today's entire manager plan?"
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    appData.daily = {
+
+      morning: {},
+      customer: {},
+      team: {},
+      distributor: {},
+      collection: {},
+      competitor: {},
+      eod: {},
+      action: {}
+
+    };
+
+
+    saveData();
+
+
+    const inputs =
+      document.querySelectorAll(
+        "#page-daily-manager input, " +
+        "#page-daily-manager textarea, " +
+        "#page-daily-manager select"
+      );
+
+
+    inputs.forEach(function (input) {
+
+      input.value = "";
+
+    });
+
+
+    updateDailyProgress();
+
+    showToast(
+      "Today's plan has been reset."
+    );
+
+  }
+
+
+  /* =======================================================
+     DASHBOARD
+     ======================================================= */
+
+  function initializeDashboardActions() {
+
+    /*
+      Dashboard action buttons are handled
+      by the common data-page-action system.
+    */
+
+  }
+
+
+  function updateDashboard() {
+
+    const target =
+      Number(appData.target) || 0;
+
+    const actual =
+      Number(appData.actual) || 0;
+
+    const team =
+      Number(appData.team) || 0;
+
+
+    let achievement = 0;
+
+    if (target > 0) {
+
+      achievement =
+        Math.round(
+          (actual / target) * 100
+        );
+
+    }
+
+
+    const gap =
+      Math.max(
+        target - actual,
+        0
+      );
+
+
+    setText(
+      "kpiTarget",
+      formatNumber(target) + " L"
+    );
+
+    setText(
+      "kpiActual",
+      formatNumber(actual) + " L"
+    );
+
+    setText(
+      "kpiAchievement",
+      achievement + "%"
+    );
+
+    setText(
+      "kpiGap",
+      formatNumber(gap) + " L"
+    );
+
+    setText(
+      "kpiTeam",
+      String(team)
+    );
+
+
+    setText(
+      "performanceActual",
+      formatNumber(actual) + " L"
+    );
+
+    setText(
+      "performanceTarget",
+      formatNumber(target) + " L"
+    );
+
+    setText(
+      "performanceGap",
+      formatNumber(gap) + " L"
+    );
+
+    setText(
+      "performancePercent",
+      achievement + "%"
+    );
+
+
+    setText(
+      "achievementBadge",
+      achievement + "% Achieved"
+    );
+
+
+    const progress =
+      document.getElementById(
+        "performanceProgress"
+      );
+
+    if (progress) {
+
+      progress.style.width =
+        Math.min(achievement, 100) + "%";
+
+    }
+
+
+    const actualBar =
+      document.getElementById(
+        "actualBar"
+      );
+
+    if (actualBar) {
+
+      actualBar.style.width =
+        Math.min(achievement, 100) + "%";
+
+    }
+
+  }
+
+
+  function setText(id, value) {
+
+    const element =
+      document.getElementById(id);
+
+    if (element) {
+
+      element.textContent =
+        value;
+
+    }
+
+  }
+
+
+  function formatNumber(number) {
+
+    return Number(number).toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     DATE
+     ======================================================= */
+
+  function initializeDate() {
+
+    const dateElement =
+      document.getElementById(
+        "todayDate"
+      );
+
+
+    if (!dateElement) {
+      return;
+    }
+
+
+    const now = new Date();
+
+
+    const formatted =
+      now.toLocaleDateString(
+        "en-US",
+        {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        }
+      );
+
+
+    dateElement.textContent =
+      formatted;
+
+  }
+
+
+  /* =======================================================
+     SEARCH
+     ======================================================= */
+
+  function initializeSearch() {
+
+    const search =
+      document.getElementById(
+        "globalSearch"
+      );
+
+
+    if (!search) {
+      return;
+    }
+
+
+    search.addEventListener(
+      "input",
+      function () {
+
+        const keyword =
+          search.value
+            .trim()
+            .toLowerCase();
+
+
+        if (!keyword) {
+          return;
+        }
+
+
+        const navItems =
+          document.querySelectorAll(
+            ".nav-item"
+          );
+
+
+        let found = null;
+
+
+        navItems.forEach(
+          function (item) {
+
+            const text =
+              item.textContent
+                .toLowerCase();
+
+
+            if (
+              !found &&
+              text.includes(keyword)
+            ) {
+
+              found = item;
+
+            }
+
+          }
+        );
+
+
+        if (found) {
+
+          const page =
+            found.getAttribute(
+              "data-page"
+            );
+
+          if (page) {
+
+            showPage(page);
+
+          }
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     NOTIFICATION
+     ======================================================= */
+
+  function initializeNotification() {
+
+    const button =
+      document.getElementById(
+        "notificationBtn"
+      );
+
+
+    if (!button) {
+      return;
+    }
+
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        showToast(
+          "You have 3 manager alerts."
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     TOAST
+     ======================================================= */
+
+  function showToast(message) {
+
+    const toast =
+      document.getElementById(
+        "toast"
+      );
+
+    const toastMessage =
+      document.getElementById(
+        "toastMessage"
+      );
+
+
+    if (!toast) {
+      return;
+    }
+
+
+    if (toastMessage) {
+
+      toastMessage.textContent =
+        message;
+
+    }
+
+
+    toast.classList.add("show");
+
+
+    window.clearTimeout(
+      showToast.timer
+    );
+
+
+    showToast.timer =
+      window.setTimeout(
+        function () {
+
+          toast.classList.remove(
+            "show"
+          );
+
+        },
+        2500
+      );
+
+  }
+
+
+  /* =======================================================
+     KEYBOARD SHORTCUTS
+     ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      /*
+        Ctrl + D = Dashboard
+        Ctrl + M = Daily Manager
+      */
+
+      if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "d"
+      ) {
+
+        event.preventDefault();
+
+        showPage("dashboard");
+
+      }
+
+
+      if (
+        event.ctrlKey &&
+        event.key.toLowerCase() === "m"
+      ) {
+
+        event.preventDefault();
+
+        showPage("daily-manager");
+
+      }
+
     }
   );
 
-}
 
-
-/* =========================================================
-   DATE FORMAT
-   ========================================================= */
-
-function formatDate(date, options) {
-
-  return new Intl.DateTimeFormat(
-    "en-US",
-    options
-  ).format(date);
-
-}
-
-
-/* =========================================================
-   KEYBOARD SHORTCUT
-   ========================================================= */
-
-document.addEventListener("keydown", event => {
-
-  /* Escape closes mobile menu */
-
-  if (event.key === "Escape") {
-
-    closeMobileSidebar();
-
-  }
-
-
-  /* Ctrl/Cmd + K focuses search */
-
-  if (
-    (event.ctrlKey || event.metaKey) &&
-    event.key.toLowerCase() === "k"
-  ) {
-
-    event.preventDefault();
-
-    const search =
-      document.getElementById("globalSearch");
-
-    if (search) {
-
-      search.focus();
-
-    }
-
-  }
-
-});
-
-
-/* =========================================================
-   PREVENT ACCIDENTAL FORM SUBMISSION
-   ========================================================= */
-
-document.addEventListener("submit", event => {
-
-  event.preventDefault();
-
-});
-
-
-/* =========================================================
-   APP READY
-   ========================================================= */
-
-console.log(
-  "Aung Sales Manager Pro v1.0 Professional loaded successfully."
-);
+})();
 ```
