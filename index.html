@@ -1,171 +1,251 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f172a">
+
   <title>Aung Sales Manager Pro</title>
+
+  <meta name="description"
+        content="Professional Sales Management & Leadership System">
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="app-shell">
+  <!-- ==============================
+       MOBILE OVERLAY
+  =============================== -->
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+  <!-- ==============================
+       SIDEBAR
+  =============================== -->
+  <aside id="sidebar" class="sidebar">
 
-      <div class="brand">
-        <div class="brand-logo">ASM</div>
-        <div>
-          <h1>Aung Sales Manager</h1>
-          <span>PROFESSIONAL EDITION</span>
-        </div>
+    <div class="brand">
+      <div class="brand-logo">ASM</div>
+
+      <div class="brand-text">
+        <strong>Aung Sales</strong>
+        <span>Manager Pro</span>
       </div>
-
-      <div class="profile-card">
-        <div class="avatar">AZ</div>
-        <div>
-          <strong>Aung Zar Ni Win</strong>
-          <small>Sales Manager</small>
-        </div>
-      </div>
-
-      <nav class="navigation">
-
-        <div class="nav-title">MANAGEMENT</div>
-
-        <button class="nav-item active" data-page="dashboard">
-          <span>🏠</span>
-          <span>Command Center</span>
-        </button>
-
-        <button class="nav-item" data-page="daily">
-          <span>📅</span>
-          <span>Daily Manager</span>
-        </button>
-
-        <button class="nav-item" data-page="targets">
-          <span>🎯</span>
-          <span>Target & Forecast</span>
-        </button>
-
-        <button class="nav-item" data-page="team">
-          <span>👥</span>
-          <span>Team Performance</span>
-        </button>
-
-        <button class="nav-item" data-page="kpi">
-          <span>📊</span>
-          <span>KPI Center</span>
-        </button>
-
-        <div class="nav-title">CUSTOMER & SALES</div>
-
-        <button class="nav-item" data-page="territory">
-          <span>🗺️</span>
-          <span>Territory</span>
-        </button>
-
-        <button class="nav-item" data-page="customers">
-          <span>🤝</span>
-          <span>Customers</span>
-        </button>
-
-        <button class="nav-item" data-page="distributor">
-          <span>🏢</span>
-          <span>Distributor</span>
-        </button>
-
-        <button class="nav-item" data-page="ar">
-          <span>💰</span>
-          <span>AR & Collection</span>
-        </button>
-
-        <div class="nav-title">MANAGER TOOLS</div>
-
-        <button class="nav-item" data-page="problems">
-          <span>🧠</span>
-          <span>Problem Solver</span>
-        </button>
-
-        <button class="nav-item" data-page="coach">
-          <span>🤖</span>
-          <span>AI Sales Coach</span>
-        </button>
-
-        <button class="nav-item" data-page="tools">
-          <span>🧮</span>
-          <span>Sales Tools</span>
-        </button>
-
-        <button class="nav-item" data-page="academy">
-          <span>📚</span>
-          <span>Manager Academy</span>
-        </button>
-
-        <button class="nav-item" data-page="reports">
-          <span>📑</span>
-          <span>Reports</span>
-        </button>
-
-        <div class="nav-title">SYSTEM</div>
-
-        <button class="nav-item" data-page="settings">
-          <span>⚙️</span>
-          <span>Settings</span>
-        </button>
-
-      </nav>
-
-      <div class="sidebar-footer">
-        <span>Version 1.0</span>
-        <span>© Aung Business</span>
-      </div>
-
-    </aside>
-
-
-    <!-- MAIN -->
-    <main class="main">
-
-      <header class="topbar">
-
-        <button class="mobile-menu" id="mobileMenu">☰</button>
-
-        <div>
-          <div class="breadcrumb">Sales Management / <strong id="pageTitle">Command Center</strong></div>
-          <h2 id="headerTitle">Good morning, Manager 👋</h2>
-        </div>
-
-        <div class="top-actions">
-          <button class="icon-button" id="notificationBtn">🔔</button>
-          <div class="date-box" id="currentDate"></div>
-        </div>
-
-      </header>
-
-
-      <!-- PAGE CONTENT -->
-      <section id="appContent" class="content"></section>
-
-    </main>
-
-  </div>
-
-
-  <!-- MODAL -->
-  <div class="modal-overlay hidden" id="modalOverlay">
-    <div class="modal">
-      <button class="modal-close" id="modalClose">×</button>
-      <div id="modalContent"></div>
     </div>
+
+    <div class="sidebar-section">
+      MANAGEMENT
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </button>
+
+      <button class="nav-item" data-page="daily">
+        <span class="nav-icon">📅</span>
+        <span>Daily Manager</span>
+      </button>
+
+      <button class="nav-item" data-page="target">
+        <span class="nav-icon">🎯</span>
+        <span>Sales Target</span>
+      </button>
+
+      <button class="nav-item" data-page="team">
+        <span class="nav-icon">👥</span>
+        <span>Team KPI</span>
+      </button>
+
+      <button class="nav-item" data-page="distributor">
+        <span class="nav-icon">🏢</span>
+        <span>Distributor</span>
+      </button>
+
+      <button class="nav-item" data-page="territory">
+        <span class="nav-icon">🗺️</span>
+        <span>Territory</span>
+      </button>
+
+      <button class="nav-item" data-page="forecast">
+        <span class="nav-icon">📈</span>
+        <span>Sales Forecast</span>
+      </button>
+
+    </nav>
+
+    <div class="sidebar-section">
+      MANAGER CENTER
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <button class="nav-item" data-page="tools">
+        <span class="nav-icon">🧮</span>
+        <span>Manager Tools</span>
+      </button>
+
+      <button class="nav-item" data-page="reports">
+        <span class="nav-icon">📋</span>
+        <span>Reports</span>
+      </button>
+
+      <button class="nav-item" data-page="problem">
+        <span class="nav-icon">🧩</span>
+        <span>Problem Solver</span>
+      </button>
+
+      <button class="nav-item" data-page="coach">
+        <span class="nav-icon">🤖</span>
+        <span>AI Sales Coach</span>
+      </button>
+
+      <button class="nav-item" data-page="academy">
+        <span class="nav-icon">🎓</span>
+        <span>Sales Academy</span>
+      </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+      <button class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+
+      <div class="version">
+        Aung Sales Manager Pro<br>
+        <span>Version 1.0 Professional</span>
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ==============================
+       MAIN AREA
+  =============================== -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button id="menuBtn" class="menu-btn">
+          ☰
+        </button>
+
+        <div>
+          <div id="pageTitle" class="page-title">
+            Manager Dashboard
+          </div>
+
+          <div id="pageSubtitle" class="page-subtitle">
+            Sales performance at a glance
+          </div>
+        </div>
+
+      </div>
+
+      <div class="topbar-right">
+
+        <div class="today">
+          <span>Today</span>
+          <strong id="currentDate">--</strong>
+        </div>
+
+        <button class="notification-btn" id="notificationBtn">
+          🔔
+          <span class="notification-dot"></span>
+        </button>
+
+        <div class="profile">
+
+          <div class="profile-avatar">
+            AZ
+          </div>
+
+          <div class="profile-info">
+            <strong>Aung Zar Ni Win</strong>
+            <span>Sales Manager</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ==============================
+         CONTENT
+    =============================== -->
+    <section id="appContent" class="content">
+
+      <!-- DASHBOARD WILL LOAD HERE -->
+
+    </section>
+
+  </main>
+
+
+  <!-- ==============================
+       MODAL
+  =============================== -->
+  <div id="modal" class="modal">
+
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+
+        <div>
+          <h3 id="modalTitle">Add Record</h3>
+          <p id="modalSubtitle">Enter information below</p>
+        </div>
+
+        <button id="modalClose" class="modal-close">
+          ×
+        </button>
+
+      </div>
+
+      <div id="modalBody" class="modal-body">
+      </div>
+
+    </div>
+
   </div>
 
 
-  <div class="toast" id="toast"></div>
+  <!-- ==============================
+       TOAST
+  =============================== -->
+  <div id="toast" class="toast">
+
+    <span id="toastIcon">✓</span>
+
+    <div>
+      <strong id="toastTitle">Success</strong>
+      <p id="toastMessage">Saved successfully.</p>
+    </div>
+
+  </div>
+
+
+  <!-- ==============================
+       JAVASCRIPT
+  =============================== -->
 
   <script src="app.js"></script>
 
 </body>
 </html>
+```
