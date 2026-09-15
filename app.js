@@ -49,10 +49,9 @@
     }
   };
 
-  let state = loadState();
 
   /* =========================================================
-     BASIC HELPERS
+     HELPERS
   ========================================================= */
 
   function $(selector) {
@@ -63,156 +62,89 @@
     return Array.from(document.querySelectorAll(selector));
   }
 
+  function cloneDefaultState() {
+    return JSON.parse(
+      JSON.stringify(defaultState)
+    );
+  }
+
   function safeNumber(value) {
     const number = parseFloat(value);
-    return Number.isFinite(number) ? number : 0;
+
+    return Number.isFinite(number)
+      ? number
+      : 0;
   }
 
   function formatNumber(value, decimals = 1) {
-    return safeNumber(value).toLocaleString("en-US", {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
-    });
+    return safeNumber(value).toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }
+    );
   }
 
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+
+  /* =========================================================
+     STORAGE
+  ========================================================= */
 
   function loadState() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved =
+        localStorage.getItem(STORAGE_KEY);
 
       if (!saved) {
-        return structuredClone
-          ? structuredClone(defaultState)
-          : JSON.parse(JSON.stringify(defaultState));
+        return cloneDefaultState();
       }
 
       const parsed = JSON.parse(saved);
 
       return {
-        ...defaultState,
+        ...cloneDefaultState(),
         ...parsed,
+
         dashboard: {
           ...defaultState.dashboard,
           ...(parsed.dashboard || {})
         },
+
         dailyManager: {
           ...defaultState.dailyManager,
           ...(parsed.dailyManager || {})
         }
       };
+
     } catch (error) {
-      console.error("State loading error:", error);
-      return JSON.parse(JSON.stringify(defaultState));
+      console.error(
+        "Aung Sales Manager state error:",
+        error
+      );
+
+      return cloneDefaultState();
     }
   }
+
 
   function saveState() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+      );
     } catch (error) {
-      console.error("State saving error:", error);
+      console.error(
+        "Unable to save state:",
+        error
+      );
     }
   }
 
-  /* =========================================================
-     DATE / TIME
-  ========================================================= */
 
-  function updateDate() {
-    const now = new Date();
+  let state = loadState();
 
-    const dateText = now.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-
-    const elements = [
-      "#todayDate",
-      "#currentDate",
-      ".today-date",
-      "[data-current-date]"
-    ];
-
-    elements.forEach(selector => {
-      $$(selector).forEach(element => {
-        element.textContent = dateText;
-      });
-    });
-  }
-
-  /* =========================================================
-     TOAST
-  ========================================================= */
-
-  function showToast(message, type = "success") {
-    let toast = $("#toast");
-
-    if (!toast) {
-      toast = document.createElement("div");
-      toast.id = "toast";
-      document.body.appendChild(toast);
-    }
-
-    toast.textContent = message;
-
-    toast.className = "toast show";
-
-    if (type === "error") {
-      toast.classList.add("toast-error");
-    }
-
-    if (type === "warning") {
-      toast.classList.add("toast-warning");
-    }
-
-    clearTimeout(window.__toastTimer);
-
-    window.__toastTimer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2500);
-  }
-
-  /* =========================================================
-     SIDEBAR
-  ========================================================= */
-
-  function openSidebar() {
-    document.body.classList.add("sidebar-open");
-
-    const overlay = $("#sidebarOverlay");
-
-    if (overlay) {
-      overlay.classList.add("active");
-    }
-  }
-
-  function closeSidebar() {
-    document.body.classList.remove("sidebar-open");
-
-    const overlay = $("#sidebarOverlay");
-
-    if (overlay) {
-      overlay.classList.remove("active");
-    }
-  }
-
-  function toggleSidebar() {
-    if (document.body.classList.contains("sidebar-open")) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
-  }
 
   /* =========================================================
      PAGE CONFIG
@@ -220,7 +152,7 @@
 
   const pageNames = {
     dashboard: "Dashboard",
-    daily: "Daily Manager",
+    "daily-manager": "Daily Manager",
     "sales-target": "Sales Target",
     "team-kpi": "Team KPI",
     distributor: "Distributor",
@@ -234,105 +166,295 @@
     settings: "Settings"
   };
 
-  function getPageTitle(page) {
-    return pageNames[page] || "Dashboard";
+
+  /* =========================================================
+     TOAST
+  ========================================================= */
+
+  function showToast(
+    message,
+    type = "success"
+  ) {
+    const toast = $("#toast");
+
+    if (!toast) {
+      return;
+    }
+
+    const messageElement =
+      $("#toastMessage");
+
+    if (messageElement) {
+      messageElement.textContent =
+        message;
+    } else {
+      toast.textContent = message;
+    }
+
+    toast.classList.remove(
+      "toast-error",
+      "toast-warning"
+    );
+
+    if (type === "error") {
+      toast.classList.add(
+        "toast-error"
+      );
+    }
+
+    if (type === "warning") {
+      toast.classList.add(
+        "toast-warning"
+      );
+    }
+
+    toast.classList.add("show");
+
+    clearTimeout(
+      window.__asmToastTimer
+    );
+
+    window.__asmToastTimer =
+      setTimeout(() => {
+        toast.classList.remove(
+          "show"
+        );
+      }, 2500);
   }
+
+
+  /* =========================================================
+     SIDEBAR
+  ========================================================= */
+
+  function openSidebar() {
+    document.body.classList.add(
+      "sidebar-open"
+    );
+
+    const overlay =
+      $("#sidebarOverlay");
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+  }
+
+
+  function closeSidebar() {
+    document.body.classList.remove(
+      "sidebar-open"
+    );
+
+    const overlay =
+      $("#sidebarOverlay");
+
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
+  }
+
+
+  function toggleSidebar() {
+    if (
+      document.body.classList.contains(
+        "sidebar-open"
+      )
+    ) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  }
+
 
   /* =========================================================
      NAVIGATION
   ========================================================= */
 
   function showPage(pageName) {
-    if (!pageName) {
+
+    if (!pageNames[pageName]) {
       pageName = "dashboard";
     }
 
-    const pages = $$(".page");
+    /* Hide all pages */
 
-    pages.forEach(page => {
-      page.classList.remove("active");
+    $$(".page").forEach(page => {
+      page.classList.remove(
+        "active",
+        "active-page"
+      );
+    });
 
-      const pageId = page.dataset.page;
 
-      if (pageId === pageName) {
-        page.classList.add("active");
+    /* Show selected page */
+
+    const selectedPage =
+      document.getElementById(
+        `page-${pageName}`
+      );
+
+    if (selectedPage) {
+
+      selectedPage.classList.add(
+        "active"
+      );
+
+      selectedPage.classList.add(
+        "active-page"
+      );
+
+    } else {
+
+      const dashboard =
+        $("#page-dashboard");
+
+      if (dashboard) {
+        dashboard.classList.add(
+          "active",
+          "active-page"
+        );
+      }
+
+      pageName = "dashboard";
+    }
+
+
+    /* Update sidebar active state */
+
+    $$(".nav-item").forEach(item => {
+
+      item.classList.remove(
+        "active"
+      );
+
+      if (
+        item.dataset.page ===
+        pageName
+      ) {
+        item.classList.add(
+          "active"
+        );
       }
     });
 
-    const navItems = $$("[data-page]");
 
-    navItems.forEach(item => {
-      item.classList.remove("active");
+    /* Save current page */
 
-      if (item.dataset.page === pageName) {
-        item.classList.add("active");
-      }
-    });
+    state.currentPage =
+      pageName;
 
-    state.currentPage = pageName;
     saveState();
 
-    updateBreadcrumb(pageName);
+
+    /* Breadcrumb */
+
+    updateBreadcrumb(
+      pageName
+    );
+
+
+    /* Close mobile sidebar */
 
     closeSidebar();
+
+
+    /* Scroll top */
 
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
 
-    refreshPageData(pageName);
+
+    /* Refresh page */
+
+    refreshPage(
+      pageName
+    );
   }
 
-  function updateBreadcrumb(pageName) {
-    const title = getPageTitle(pageName);
 
-    const breadcrumb = $("[data-breadcrumb]");
+  function updateBreadcrumb(
+    pageName
+  ) {
+
+    const title =
+      pageNames[pageName] ||
+      "Dashboard";
+
+    const breadcrumb =
+      $("#breadcrumbCurrent");
 
     if (breadcrumb) {
-      breadcrumb.textContent = title;
-    }
-
-    const breadcrumbElements = [
-      "#breadcrumb",
-      "#pageTitle",
-      ".breadcrumb-current"
-    ];
-
-    breadcrumbElements.forEach(selector => {
-      $$(selector).forEach(element => {
-        if (
-          element.id === "pageTitle" &&
-          pageName === "dashboard"
-        ) {
-          return;
-        }
-
-        element.textContent = title;
-      });
-    });
-
-    const titleElement = $("#topbarPageTitle");
-
-    if (titleElement) {
-      titleElement.textContent = title;
+      breadcrumb.textContent =
+        title;
     }
   }
+
+
+  /* =========================================================
+     DATE
+  ========================================================= */
+
+  function updateDate() {
+
+    const today =
+      new Date();
+
+    const dateText =
+      today.toLocaleDateString(
+        "en-US",
+        {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        }
+      );
+
+    const dateElement =
+      $("#todayDate");
+
+    if (dateElement) {
+      dateElement.textContent =
+        dateText;
+    }
+  }
+
 
   /* =========================================================
      DASHBOARD
   ========================================================= */
 
-  function calculateDashboard() {
-    const target = safeNumber(state.dashboard.target);
-    const actual = safeNumber(state.dashboard.actual);
-    const team = safeNumber(state.dashboard.team);
+  function getDashboardData() {
 
-    const achievement = target > 0
-      ? (actual / target) * 100
-      : 0;
+    const target =
+      safeNumber(
+        state.dashboard.target
+      );
 
-    const gap = Math.max(target - actual, 0);
+    const actual =
+      safeNumber(
+        state.dashboard.actual
+      );
+
+    const team =
+      safeNumber(
+        state.dashboard.team
+      );
+
+    const achievement =
+      target > 0
+        ? (actual / target) * 100
+        : 0;
+
+    const gap =
+      Math.max(
+        target - actual,
+        0
+      );
 
     return {
       target,
@@ -343,90 +465,139 @@
     };
   }
 
+
   function updateDashboard() {
-    const data = calculateDashboard();
 
-    const values = {
-      target: formatNumber(data.target),
-      actual: formatNumber(data.actual),
-      achievement: `${Math.round(data.achievement)}%`,
-      gap: formatNumber(data.gap),
-      team: String(data.team)
-    };
+    const data =
+      getDashboardData();
 
-    const mapping = {
-      target: [
-        "#monthlyTarget",
-        "[data-kpi='target']",
-        "[data-value='target']"
-      ],
+    /* KPI */
 
-      actual: [
-        "#actualSales",
-        "[data-kpi='actual']",
-        "[data-value='actual']"
-      ],
+    const kpiTarget =
+      $("#kpiTarget");
 
-      achievement: [
-        "#achievement",
-        "[data-kpi='achievement']",
-        "[data-value='achievement']"
-      ],
+    if (kpiTarget) {
+      kpiTarget.textContent =
+        `${formatNumber(data.target)} L`;
+    }
 
-      gap: [
-        "#targetGap",
-        "[data-kpi='gap']",
-        "[data-value='gap']"
-      ],
 
-      team: [
-        "#teamMembers",
-        "[data-kpi='team']",
-        "[data-value='team']"
-      ]
-    };
+    const kpiActual =
+      $("#kpiActual");
 
-    Object.keys(mapping).forEach(key => {
-      mapping[key].forEach(selector => {
-        $$(selector).forEach(element => {
-          element.textContent = values[key];
-        });
-      });
-    });
+    if (kpiActual) {
+      kpiActual.textContent =
+        `${formatNumber(data.actual)} L`;
+    }
 
-    updateProgressBars(data.achievement);
-  }
 
-  function updateProgressBars(achievement) {
-    const percentage = Math.max(
-      0,
-      Math.min(achievement, 100)
-    );
+    const kpiAchievement =
+      $("#kpiAchievement");
 
-    $$("[data-progress]").forEach(bar => {
-      bar.style.width = `${percentage}%`;
-    });
+    if (kpiAchievement) {
+      kpiAchievement.textContent =
+        `${Math.round(data.achievement)}%`;
+    }
 
-    $$(".progress-fill").forEach(bar => {
-      const currentWidth = bar.dataset.width;
 
-      if (currentWidth) {
-        bar.style.width = currentWidth;
-      }
-    });
+    const kpiGap =
+      $("#kpiGap");
 
-    const dashboardProgress = $(
-      "#monthlyProgress"
-    );
+    if (kpiGap) {
+      kpiGap.textContent =
+        `${formatNumber(data.gap)} L`;
+    }
 
-    if (dashboardProgress) {
-      dashboardProgress.style.width =
+
+    const kpiTeam =
+      $("#kpiTeam");
+
+    if (kpiTeam) {
+      kpiTeam.textContent =
+        String(data.team);
+    }
+
+
+    /* Performance summary */
+
+    const performanceActual =
+      $("#performanceActual");
+
+    if (performanceActual) {
+      performanceActual.textContent =
+        `${formatNumber(data.actual)} L`;
+    }
+
+
+    const performanceTarget =
+      $("#performanceTarget");
+
+    if (performanceTarget) {
+      performanceTarget.textContent =
+        `${formatNumber(data.target)} L`;
+    }
+
+
+    const performanceGap =
+      $("#performanceGap");
+
+    if (performanceGap) {
+      performanceGap.textContent =
+        `${formatNumber(data.gap)} L`;
+    }
+
+
+    const performancePercent =
+      $("#performancePercent");
+
+    if (performancePercent) {
+      performancePercent.textContent =
+        `${Math.round(data.achievement)}%`;
+    }
+
+
+    const achievementBadge =
+      $("#achievementBadge");
+
+    if (achievementBadge) {
+      achievementBadge.textContent =
+        `${Math.round(data.achievement)}% Achieved`;
+    }
+
+
+    /* Progress */
+
+    const percentage =
+      Math.max(
+        0,
+        Math.min(
+          data.achievement,
+          100
+        )
+      );
+
+
+    const performanceProgress =
+      $("#performanceProgress");
+
+    if (performanceProgress) {
+      performanceProgress.style.width =
+        `${percentage}%`;
+    }
+
+
+    const actualBar =
+      $("#actualBar");
+
+    if (actualBar) {
+      actualBar.style.width =
         `${percentage}%`;
     }
   }
 
+
   /* =========================================================
-     DAILY MANAGER
+     DAILY MANAGER FIELDS
   ========================================================= */
 
   const dailyFields = [
@@ -465,31 +636,51 @@
     "actionPriority"
   ];
 
-  function getFieldValue(fieldName) {
-    const element = $(`#${fieldName}`);
 
-    if (!element) {
-      return "";
-    }
+  function loadDailyManager() {
 
-    return element.value ?? "";
+    dailyFields.forEach(
+      fieldName => {
+
+        const element =
+          document.getElementById(
+            fieldName
+          );
+
+        if (!element) {
+          return;
+        }
+
+        element.value =
+          state.dailyManager[
+            fieldName
+          ] || "";
+      }
+    );
+
+    updateDailyProgress();
   }
 
-  function setFieldValue(fieldName, value) {
-    const element = $(`#${fieldName}`);
-
-    if (!element) {
-      return;
-    }
-
-    element.value = value ?? "";
-  }
 
   function saveDailyManager() {
-    dailyFields.forEach(field => {
-      state.dailyManager[field] =
-        getFieldValue(field);
-    });
+
+    dailyFields.forEach(
+      fieldName => {
+
+        const element =
+          document.getElementById(
+            fieldName
+          );
+
+        if (!element) {
+          return;
+        }
+
+        state.dailyManager[
+          fieldName
+        ] = element.value;
+      }
+    );
 
     saveState();
 
@@ -500,62 +691,66 @@
     );
   }
 
-  function loadDailyManager() {
-    dailyFields.forEach(field => {
-      setFieldValue(
-        field,
-        state.dailyManager[field]
-      );
-    });
-
-    updateDailyProgress();
-  }
 
   function updateDailyProgress() {
-    const total = dailyFields.length;
 
     let completed = 0;
 
-    dailyFields.forEach(field => {
-      const value =
-        state.dailyManager[field];
+    dailyFields.forEach(
+      fieldName => {
 
-      if (
-        value !== undefined &&
-        value !== null &&
-        String(value).trim() !== ""
-      ) {
-        completed++;
+        const value =
+          state.dailyManager[
+            fieldName
+          ];
+
+        if (
+          value !== undefined &&
+          value !== null &&
+          String(value).trim() !== ""
+        ) {
+          completed++;
+        }
       }
-    });
+    );
 
-    const percentage = total > 0
-      ? Math.round((completed / total) * 100)
-      : 0;
 
-    const progressText =
-      `${completed}/${total} completed`;
+    const total =
+      dailyFields.length;
 
-    $$("[data-daily-progress]").forEach(element => {
-      element.textContent =
+    const percentage =
+      total > 0
+        ? Math.round(
+            (completed / total) * 100
+          )
+        : 0;
+
+
+    const completionText =
+      $("#dailyCompletionText");
+
+    if (completionText) {
+      completionText.textContent =
         `${percentage}%`;
-    });
+    }
 
-    $$("[data-daily-completed]").forEach(element => {
-      element.textContent =
-        progressText;
-    });
 
-    $$("[data-daily-bar]").forEach(element => {
-      element.style.width =
+    const progress =
+      $("#dailyProgress");
+
+    if (progress) {
+      progress.style.width =
         `${percentage}%`;
-    });
+    }
   }
 
+
   function resetDailyManager() {
-    const confirmed = window.confirm(
-      "Reset today's Daily Manager plan?"
-    );
+
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to reset today's Daily Manager plan?"
+      );
 
     if (!confirmed) {
       return;
@@ -578,77 +773,66 @@
     );
   }
 
+
   /* =========================================================
-     DAILY FORM AUTO SAVE
+     DAILY AUTO SAVE
   ========================================================= */
 
-  function handleDailyInput(event) {
-    const target = event.target;
+  function handleDailyInput(
+    event
+  ) {
 
-    if (!target.id) {
+    const element =
+      event.target;
+
+    if (!element.id) {
       return;
     }
 
-    if (!dailyFields.includes(target.id)) {
+    if (
+      !dailyFields.includes(
+        element.id
+      )
+    ) {
       return;
     }
 
-    state.dailyManager[target.id] =
-      target.value;
+    state.dailyManager[
+      element.id
+    ] = element.value;
 
     saveState();
 
     updateDailyProgress();
   }
 
+
   /* =========================================================
-     SALES TARGET QUICK UPDATE
+     BUTTON ACTIONS
   ========================================================= */
 
-  function updateSalesTarget() {
-    const targetInput = $(
-      "#salesTargetInput"
-    );
+  function handlePageAction(
+    action
+  ) {
 
-    const actualInput = $(
-      "#salesActualInput"
-    );
-
-    if (!targetInput || !actualInput) {
+    if (!action) {
       return;
     }
 
-    const target =
-      safeNumber(targetInput.value);
 
-    const actual =
-      safeNumber(actualInput.value);
+    /* Page navigation */
 
-    state.dashboard.target = target;
-    state.dashboard.actual = actual;
+    if (pageNames[action]) {
 
-    saveState();
+      showPage(action);
 
-    updateDashboard();
+      return;
+    }
 
-    showToast(
-      "Sales Target updated."
-    );
-  }
 
-  /* =========================================================
-     GENERIC BUTTON ACTIONS
-  ========================================================= */
+    /* Special actions */
 
-  function handleAction(action) {
     switch (action) {
-
-      case "start-daily":
-        showPage("daily");
-        showToast(
-          "Daily Manager opened."
-        );
-        break;
 
       case "save-daily":
         saveDailyManager();
@@ -658,71 +842,277 @@
         resetDailyManager();
         break;
 
-      case "update-target":
-        updateSalesTarget();
-        break;
-
       case "notifications":
         showToast(
           "No new manager alerts."
         );
         break;
 
-      case "profile":
-        showToast(
-          "Aung Zar Ni Win — Sales Manager"
-        );
-        break;
-
-      case "search":
-        focusSearch();
-        break;
-
       default:
         console.log(
-          "Unknown action:",
+          "Unknown page action:",
           action
         );
     }
   }
 
+
   /* =========================================================
-     QUICK ACTIONS
+     NAVIGATION CLICK EVENTS
   ========================================================= */
 
-  function setupQuickActions() {
-    $$("[data-quick-page]").forEach(button => {
-      button.addEventListener("click", () => {
-        const page =
-          button.dataset.quickPage;
+  function setupNavigation() {
 
-        if (page) {
-          showPage(page);
-        }
-      });
-    });
+    /* Sidebar navigation */
+
+    $$(".nav-item").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          event => {
+
+            event.preventDefault();
+
+            const page =
+              button.dataset.page;
+
+            if (page) {
+              showPage(page);
+            }
+          }
+        );
+      }
+    );
+
+
+    /* Buttons using data-page-action */
+
+    $$("[data-page-action]").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          event => {
+
+            event.preventDefault();
+
+            const action =
+              button.dataset.pageAction;
+
+            handlePageAction(
+              action
+            );
+          }
+        );
+      }
+    );
   }
+
+
+  /* =========================================================
+     DAILY SECTION SAVE BUTTONS
+  ========================================================= */
+
+  function setupDailySaveButtons() {
+
+    $$("[data-save-section]").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          event => {
+
+            event.preventDefault();
+
+            const section =
+              button.dataset.saveSection;
+
+            /* Save everything */
+
+            dailyFields.forEach(
+              fieldName => {
+
+                const element =
+                  document.getElementById(
+                    fieldName
+                  );
+
+                if (element) {
+                  state.dailyManager[
+                    fieldName
+                  ] = element.value;
+                }
+              }
+            );
+
+            saveState();
+
+            updateDailyProgress();
+
+            const messages = {
+              morning:
+                "Morning Manager Plan saved.",
+              customer:
+                "Customer Visit Plan saved.",
+              team:
+                "Team Follow-up saved.",
+              distributor:
+                "Distributor Issue saved.",
+              collection:
+                "Collection Plan saved.",
+              competitor:
+                "Market Intelligence saved.",
+              eod:
+                "End-of-Day Review saved.",
+              action:
+                "Manager Action Plan saved."
+            };
+
+            showToast(
+              messages[section] ||
+              "Information saved successfully."
+            );
+          }
+        );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     DAILY INPUT EVENTS
+  ========================================================= */
+
+  function setupDailyInputs() {
+
+    dailyFields.forEach(
+      fieldName => {
+
+        const element =
+          document.getElementById(
+            fieldName
+          );
+
+        if (!element) {
+          return;
+        }
+
+        element.addEventListener(
+          "input",
+          handleDailyInput
+        );
+
+        element.addEventListener(
+          "change",
+          handleDailyInput
+        );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     MOBILE MENU
+  ========================================================= */
+
+  function setupMobileMenu() {
+
+    const mobileButton =
+      $("#mobileMenuBtn");
+
+    if (mobileButton) {
+
+      mobileButton.addEventListener(
+        "click",
+        event => {
+
+          event.preventDefault();
+
+          toggleSidebar();
+        }
+      );
+    }
+
+
+    const overlay =
+      $("#sidebarOverlay");
+
+    if (overlay) {
+
+      overlay.addEventListener(
+        "click",
+        event => {
+
+          event.preventDefault();
+
+          closeSidebar();
+        }
+      );
+    }
+  }
+
+
+  /* =========================================================
+     NOTIFICATION
+  ========================================================= */
+
+  function setupNotification() {
+
+    const button =
+      $("#notificationBtn");
+
+    if (!button) {
+      return;
+    }
+
+    button.addEventListener(
+      "click",
+      event => {
+
+        event.preventDefault();
+
+        showToast(
+          "No new manager alerts."
+        );
+      }
+    );
+  }
+
+
+  /* =========================================================
+     PROFILE
+  ========================================================= */
+
+  function setupProfile() {
+
+    const profile =
+      $(".top-profile");
+
+    if (!profile) {
+      return;
+    }
+
+    profile.addEventListener(
+      "click",
+      () => {
+
+        showToast(
+          "Aung Zar Ni Win — Sales Manager"
+        );
+      }
+    );
+  }
+
 
   /* =========================================================
      SEARCH
   ========================================================= */
 
-  function focusSearch() {
-    const search =
-      $("#globalSearch") ||
-      $("input[type='search']") ||
-      $(".search-input");
-
-    if (search) {
-      search.focus();
-    }
-  }
-
   function setupSearch() {
+
     const search =
-      $("#globalSearch") ||
-      $("input[type='search']") ||
-      $(".search-input");
+      $("#globalSearch");
 
     if (!search) {
       return;
@@ -731,9 +1121,14 @@
     search.addEventListener(
       "keydown",
       event => {
-        if (event.key !== "Enter") {
+
+        if (
+          event.key !== "Enter"
+        ) {
           return;
         }
+
+        event.preventDefault();
 
         const query =
           search.value
@@ -741,28 +1136,39 @@
             .toLowerCase();
 
         if (!query) {
+
           showToast(
-            "Type something to search."
+            "Please enter a page name."
           );
+
           return;
         }
 
-        const match =
-          Object.entries(pageNames)
-            .find(([key, title]) =>
-              title
+
+        const found =
+          Object.entries(
+            pageNames
+          ).find(
+            ([key, title]) =>
+              key
                 .toLowerCase()
                 .includes(query) ||
-              key.includes(query)
-            );
+              title
+                .toLowerCase()
+                .includes(query)
+          );
 
-        if (match) {
-          showPage(match[0]);
+
+        if (found) {
+
+          showPage(found[0]);
 
           showToast(
-            `${match[1]} opened.`
+            `${found[1]} opened.`
           );
+
         } else {
+
           showToast(
             "No matching page found.",
             "warning"
@@ -772,11 +1178,13 @@
     );
   }
 
+
   /* =========================================================
      KEYBOARD SHORTCUTS
   ========================================================= */
 
-  function setupKeyboardShortcuts() {
+  function setupKeyboard() {
+
     document.addEventListener(
       "keydown",
       event => {
@@ -785,165 +1193,46 @@
           event.ctrlKey &&
           event.key.toLowerCase() === "d"
         ) {
+
           event.preventDefault();
-          showPage("dashboard");
+
+          showPage(
+            "dashboard"
+          );
         }
+
 
         if (
           event.ctrlKey &&
           event.key.toLowerCase() === "m"
         ) {
+
           event.preventDefault();
-          showPage("daily");
+
+          showPage(
+            "daily-manager"
+          );
         }
+
 
         if (
           event.key === "Escape"
         ) {
+
           closeSidebar();
         }
       }
     );
   }
 
-  /* =========================================================
-     GLOBAL CLICK HANDLER
-  ========================================================= */
-
-  function setupClicks() {
-    document.addEventListener(
-      "click",
-      event => {
-
-        const navButton =
-          event.target.closest(
-            "[data-page]"
-          );
-
-        if (
-          navButton &&
-          navButton.dataset.page
-        ) {
-          event.preventDefault();
-
-          showPage(
-            navButton.dataset.page
-          );
-
-          return;
-        }
-
-        const actionButton =
-          event.target.closest(
-            "[data-page-action]"
-          );
-
-        if (
-          actionButton &&
-          actionButton.dataset.pageAction
-        ) {
-          event.preventDefault();
-
-          handleAction(
-            actionButton.dataset.pageAction
-          );
-
-          return;
-        }
-
-        const quickButton =
-          event.target.closest(
-            "[data-quick-page]"
-          );
-
-        if (
-          quickButton &&
-          quickButton.dataset.quickPage
-        ) {
-          event.preventDefault();
-
-          showPage(
-            quickButton.dataset.quickPage
-          );
-
-          return;
-        }
-
-        const menuButton =
-          event.target.closest(
-            "[data-menu-toggle]"
-          );
-
-        if (menuButton) {
-          event.preventDefault();
-          toggleSidebar();
-          return;
-        }
-
-        const closeButton =
-          event.target.closest(
-            "[data-sidebar-close]"
-          );
-
-        if (closeButton) {
-          event.preventDefault();
-          closeSidebar();
-          return;
-        }
-
-        const overlay =
-          event.target.closest(
-            "#sidebarOverlay"
-          );
-
-        if (overlay) {
-          closeSidebar();
-        }
-      }
-    );
-  }
 
   /* =========================================================
-     FORMS
+     PAGE REFRESH
   ========================================================= */
 
-  function setupForms() {
-    document.addEventListener(
-      "input",
-      handleDailyInput
-    );
-
-    document.addEventListener(
-      "change",
-      handleDailyInput
-    );
-
-    const forms = $$("form");
-
-    forms.forEach(form => {
-      form.addEventListener(
-        "submit",
-        event => {
-          event.preventDefault();
-
-          const saveButton =
-            form.querySelector(
-              "[data-page-action='save-daily']"
-            );
-
-          if (saveButton) {
-            saveDailyManager();
-          }
-        }
-      );
-    });
-  }
-
-  /* =========================================================
-     PAGE DATA REFRESH
-  ========================================================= */
-
-  function refreshPageData(pageName) {
+  function refreshPage(
+    pageName
+  ) {
 
     switch (pageName) {
 
@@ -951,16 +1240,8 @@
         updateDashboard();
         break;
 
-      case "daily":
+      case "daily-manager":
         loadDailyManager();
-        break;
-
-      case "sales-target":
-        updateTargetPage();
-        break;
-
-      case "sales-forecast":
-        updateForecastPage();
         break;
 
       default:
@@ -968,195 +1249,60 @@
     }
   }
 
-  /* =========================================================
-     SALES TARGET PAGE
-  ========================================================= */
-
-  function updateTargetPage() {
-
-    const target =
-      safeNumber(
-        state.dashboard.target
-      );
-
-    const actual =
-      safeNumber(
-        state.dashboard.actual
-      );
-
-    const achievement =
-      target > 0
-        ? (actual / target) * 100
-        : 0;
-
-    const gap =
-      Math.max(target - actual, 0);
-
-    $$("[data-target-result]").forEach(
-      element => {
-        const type =
-          element.dataset.targetResult;
-
-        if (type === "target") {
-          element.textContent =
-            formatNumber(target);
-        }
-
-        if (type === "actual") {
-          element.textContent =
-            formatNumber(actual);
-        }
-
-        if (type === "achievement") {
-          element.textContent =
-            `${Math.round(achievement)}%`;
-        }
-
-        if (type === "gap") {
-          element.textContent =
-            formatNumber(gap);
-        }
-      }
-    );
-  }
 
   /* =========================================================
-     FORECAST
+     INITIAL PAGE
   ========================================================= */
 
-  function updateForecastPage() {
+  function initializePage() {
 
-    const target =
-      safeNumber(
-        state.dashboard.target
-      );
+    let page =
+      state.currentPage;
 
-    const actual =
-      safeNumber(
-        state.dashboard.actual
-      );
-
-    const now =
-      new Date();
-
-    const currentDay =
-      now.getDate();
-
-    const daysInMonth =
-      new Date(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        0
-      ).getDate();
-
-    const elapsed =
-      Math.max(currentDay, 1);
-
-    const dailyRunRate =
-      actual / elapsed;
-
-    const forecast =
-      dailyRunRate * daysInMonth;
-
-    const remaining =
-      Math.max(
-        target - actual,
-        0
-      );
-
-    const requiredDaily =
-      daysInMonth > elapsed
-        ? remaining /
-          (daysInMonth - elapsed)
-        : remaining;
-
-    $$("[data-forecast]").forEach(
-      element => {
-
-        const type =
-          element.dataset.forecast;
-
-        if (type === "forecast") {
-          element.textContent =
-            formatNumber(forecast);
-        }
-
-        if (type === "run-rate") {
-          element.textContent =
-            formatNumber(dailyRunRate);
-        }
-
-        if (type === "required") {
-          element.textContent =
-            formatNumber(requiredDaily);
-        }
-
-        if (type === "target") {
-          element.textContent =
-            formatNumber(target);
-        }
-      }
-    );
-  }
-
-  /* =========================================================
-     MOBILE RESPONSIVE
-  ========================================================= */
-
-  function setupMobile() {
-
-    const menuButtons = $$(
-      "[data-menu-toggle]"
-    );
-
-    menuButtons.forEach(button => {
-      button.addEventListener(
-        "click",
-        event => {
-          event.preventDefault();
-          toggleSidebar();
-        }
-      );
-    });
-
-    const overlay =
-      $("#sidebarOverlay");
-
-    if (overlay) {
-      overlay.addEventListener(
-        "click",
-        closeSidebar
-      );
+    if (!pageNames[page]) {
+      page = "dashboard";
     }
+
+    showPage(page);
   }
 
+
   /* =========================================================
-     INITIALIZATION
+     APP INITIALIZATION
   ========================================================= */
 
   function initialize() {
 
     console.log(
-      "Aung Sales Manager Pro initialized."
+      "Aung Sales Manager Pro started successfully."
     );
 
-    setupClicks();
-    setupForms();
-    setupQuickActions();
+    setupNavigation();
+
+    setupDailySaveButtons();
+
+    setupDailyInputs();
+
+    setupMobileMenu();
+
+    setupNotification();
+
+    setupProfile();
+
     setupSearch();
-    setupKeyboardShortcuts();
-    setupMobile();
+
+    setupKeyboard();
 
     updateDate();
+
     updateDashboard();
+
     loadDailyManager();
 
-    const initialPage =
-      pageNames[state.currentPage]
-        ? state.currentPage
-        : "dashboard";
+    initializePage();
 
-    showPage(initialPage);
+
+    /* Update date every minute */
 
     setInterval(
       updateDate,
@@ -1164,18 +1310,23 @@
     );
   }
 
+
   /* =========================================================
-     START APP
+     START
   ========================================================= */
 
   if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
   ) {
+
     document.addEventListener(
       "DOMContentLoaded",
       initialize
     );
+
   } else {
+
     initialize();
   }
 
