@@ -1,251 +1,1107 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
   <title>Aung Sales Manager Pro</title>
-
-  <meta name="description"
-        content="Professional Sales Management & Leadership System">
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- ==============================
-       MOBILE OVERLAY
-  =============================== -->
-  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+<div class="app">
 
-  <!-- ==============================
-       SIDEBAR
-  =============================== -->
-  <aside id="sidebar" class="sidebar">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
 
     <div class="brand">
       <div class="brand-logo">ASM</div>
 
-      <div class="brand-text">
-        <strong>Aung Sales</strong>
-        <span>Manager Pro</span>
+      <div>
+        <h2>Aung Sales Manager Pro</h2>
+        <span>Professional Sales Management & Leadership</span>
       </div>
     </div>
 
-    <div class="sidebar-section">
-      MANAGEMENT
-    </div>
+    <div class="version">Version 1.0 Professional</div>
 
-    <nav class="sidebar-nav">
+    <nav>
+
+      <div class="nav-section">MANAGEMENT</div>
 
       <button class="nav-item active" data-page="dashboard">
-        <span class="nav-icon">📊</span>
+        <span>📊</span>
         <span>Dashboard</span>
       </button>
 
-      <button class="nav-item" data-page="daily">
-        <span class="nav-icon">📅</span>
+      <button class="nav-item" data-page="daily-manager">
+        <span>📅</span>
         <span>Daily Manager</span>
       </button>
 
-      <button class="nav-item" data-page="target">
-        <span class="nav-icon">🎯</span>
+      <button class="nav-item" data-page="sales-target">
+        <span>🎯</span>
         <span>Sales Target</span>
       </button>
 
-      <button class="nav-item" data-page="team">
-        <span class="nav-icon">👥</span>
+      <button class="nav-item" data-page="team-kpi">
+        <span>👥</span>
         <span>Team KPI</span>
       </button>
 
       <button class="nav-item" data-page="distributor">
-        <span class="nav-icon">🏢</span>
+        <span>🏢</span>
         <span>Distributor</span>
       </button>
 
       <button class="nav-item" data-page="territory">
-        <span class="nav-icon">🗺️</span>
+        <span>🗺️</span>
         <span>Territory</span>
       </button>
 
       <button class="nav-item" data-page="forecast">
-        <span class="nav-icon">📈</span>
+        <span>📈</span>
         <span>Sales Forecast</span>
       </button>
 
-    </nav>
 
-    <div class="sidebar-section">
-      MANAGER CENTER
-    </div>
-
-    <nav class="sidebar-nav">
+      <div class="nav-section">MANAGER CENTER</div>
 
       <button class="nav-item" data-page="tools">
-        <span class="nav-icon">🧮</span>
+        <span>🧮</span>
         <span>Manager Tools</span>
       </button>
 
       <button class="nav-item" data-page="reports">
-        <span class="nav-icon">📋</span>
+        <span>📋</span>
         <span>Reports</span>
       </button>
 
-      <button class="nav-item" data-page="problem">
-        <span class="nav-icon">🧩</span>
+      <button class="nav-item" data-page="problem-solver">
+        <span>🧩</span>
         <span>Problem Solver</span>
       </button>
 
-      <button class="nav-item" data-page="coach">
-        <span class="nav-icon">🤖</span>
+      <button class="nav-item" data-page="ai-coach">
+        <span>🤖</span>
         <span>AI Sales Coach</span>
       </button>
 
       <button class="nav-item" data-page="academy">
-        <span class="nav-icon">🎓</span>
+        <span>🎓</span>
         <span>Sales Academy</span>
+      </button>
+
+      <div class="nav-section">SYSTEM</div>
+
+      <button class="nav-item" data-page="settings">
+        <span>⚙️</span>
+        <span>Settings</span>
       </button>
 
     </nav>
 
-    <div class="sidebar-bottom">
-
-      <button class="nav-item" data-page="settings">
-        <span class="nav-icon">⚙️</span>
-        <span>Settings</span>
-      </button>
-
-      <div class="version">
-        Aung Sales Manager Pro<br>
-        <span>Version 1.0 Professional</span>
-      </div>
-
-    </div>
-
   </aside>
 
 
-  <!-- ==============================
-       MAIN AREA
-  =============================== -->
+  <!-- ================= MAIN ================= -->
+
   <main class="main">
 
-    <!-- TOPBAR -->
     <header class="topbar">
 
-      <div class="topbar-left">
+      <button class="menu-btn" id="menuBtn">
+        ☰
+      </button>
 
-        <button id="menuBtn" class="menu-btn">
-          ☰
-        </button>
-
-        <div>
-          <div id="pageTitle" class="page-title">
-            Manager Dashboard
-          </div>
-
-          <div id="pageSubtitle" class="page-subtitle">
-            Sales performance at a glance
-          </div>
-        </div>
-
+      <div>
+        <h1 id="pageTitle">Sales Manager Command Center</h1>
+        <p id="pageSubtitle">Your everyday management system</p>
       </div>
 
-      <div class="topbar-right">
+      <div class="top-profile">
+        <div class="avatar">AZ</div>
 
-        <div class="today">
-          <span>Today</span>
-          <strong id="currentDate">--</strong>
+        <div class="profile-text">
+          <strong>Aung Zar Ni Win</strong>
+          <small>Sales Manager</small>
         </div>
-
-        <button class="notification-btn" id="notificationBtn">
-          🔔
-          <span class="notification-dot"></span>
-        </button>
-
-        <div class="profile">
-
-          <div class="profile-avatar">
-            AZ
-          </div>
-
-          <div class="profile-info">
-            <strong>Aung Zar Ni Win</strong>
-            <span>Sales Manager</span>
-          </div>
-
-        </div>
-
       </div>
 
     </header>
 
 
-    <!-- ==============================
-         CONTENT
-    =============================== -->
-    <section id="appContent" class="content">
+    <section class="content">
 
-      <!-- DASHBOARD WILL LOAD HERE -->
+      <!-- ================= DASHBOARD ================= -->
+
+      <div class="page active-page" id="dashboard">
+
+        <div class="page-heading">
+
+          <div>
+            <span class="eyebrow">COMMAND CENTER</span>
+            <h2>Sales Manager Command Center</h2>
+
+            <p>
+              Your everyday management system for Target, Team,
+              Customer, KPI, Collection and Sales Execution.
+            </p>
+          </div>
+
+          <button class="primary-btn" data-page-link="daily-manager">
+            Start Today's Plan →
+          </button>
+
+        </div>
+
+
+        <div class="date-card">
+          <span>Today</span>
+          <strong id="todayDate">Tuesday, September 15, 2026</strong>
+        </div>
+
+
+        <!-- KPI -->
+
+        <div class="kpi-grid">
+
+          <div class="kpi-card">
+            <div class="kpi-icon">🎯</div>
+            <span>Monthly Target</span>
+            <strong id="dashTarget">500.0 L</strong>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">💰</div>
+            <span>Actual Sales</span>
+            <strong id="dashActual">385.0 L</strong>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">📊</div>
+            <span>Achievement</span>
+            <strong id="dashAchievement">77%</strong>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">⚠️</div>
+            <span>Target Gap</span>
+            <strong id="dashGap">115.0 L</strong>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon">👥</div>
+            <span>Team Members</span>
+            <strong>4</strong>
+          </div>
+
+        </div>
+
+
+        <!-- TARGET PROGRESS -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">PERFORMANCE</span>
+              <h3>Monthly Target Progress</h3>
+            </div>
+
+            <strong id="progressPercent">77%</strong>
+
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <div class="progress-values">
+            <span id="progressActual">385.0 L Actual</span>
+            <span id="progressTarget">500.0 L Target</span>
+          </div>
+
+        </div>
+
+
+        <!-- DAILY SNAPSHOT -->
+
+        <div class="two-column">
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <div>
+                <span class="eyebrow">TODAY</span>
+                <h3>Daily Manager Status</h3>
+              </div>
+            </div>
+
+            <div class="status-list">
+
+              <div>
+                <span>Morning Plan</span>
+                <strong id="dashMorning">Not Started</strong>
+              </div>
+
+              <div>
+                <span>Customer Visits</span>
+                <strong id="dashVisits">0</strong>
+              </div>
+
+              <div>
+                <span>Team Follow-ups</span>
+                <strong id="dashFollowups">0</strong>
+              </div>
+
+              <div>
+                <span>Open Actions</span>
+                <strong id="dashActions">0</strong>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="panel quick-actions">
+
+            <div class="panel-header">
+              <div>
+                <span class="eyebrow">QUICK ACTION</span>
+                <h3>Manager Shortcuts</h3>
+              </div>
+            </div>
+
+            <button data-page-link="daily-manager">
+              📅 Open Daily Manager
+            </button>
+
+            <button data-page-link="sales-target">
+              🎯 Review Sales Target
+            </button>
+
+            <button data-page-link="team-kpi">
+              👥 Review Team KPI
+            </button>
+
+            <button data-page-link="problem-solver">
+              🧩 Solve a Problem
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================= DAILY MANAGER ================= -->
+
+      <div class="page" id="daily-manager">
+
+        <div class="page-heading">
+
+          <div>
+            <span class="eyebrow">DAILY EXECUTION</span>
+            <h2>Daily Manager</h2>
+
+            <p>
+              Plan the day, manage execution, follow up your team,
+              solve field issues and close the day professionally.
+            </p>
+          </div>
+
+          <div class="date-badge" id="dailyDate">
+            Tue, Sep 15, 2026
+          </div>
+
+        </div>
+
+
+        <!-- DAILY SCORE -->
+
+        <div class="daily-score">
+
+          <div>
+            <span>Today's Plan Completion</span>
+            <strong id="dailyCompletion">0%</strong>
+          </div>
+
+          <div class="mini-progress">
+            <div id="dailyProgress"></div>
+          </div>
+
+          <small id="dailyStatus">
+            Start your morning plan.
+          </small>
+
+        </div>
+
+
+        <!-- MORNING PLAN -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">01 — PLAN</span>
+              <h3>Morning Manager Plan</h3>
+
+              <p>
+                Define the most important priorities before entering the field.
+              </p>
+            </div>
+
+            <span class="section-number">01</span>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group full">
+              <label>Today's Main Objective</label>
+
+              <textarea
+                id="morningObjective"
+                placeholder="Example: Close the monthly target gap by focusing on top customers and weak territories."
+              ></textarea>
+            </div>
+
+
+            <div class="form-group">
+              <label>Today's Sales Target (Lakh)</label>
+
+              <input
+                type="number"
+                id="todayTarget"
+                placeholder="15"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Priority</label>
+
+              <select id="dailyPriority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+
+            </div>
+
+          </div>
+
+          <button class="primary-btn" id="saveMorning">
+            Save Morning Plan
+          </button>
+
+        </div>
+
+
+
+        <!-- CUSTOMER VISITS -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">02 — FIELD</span>
+              <h3>Customer Visit Plan</h3>
+
+              <p>
+                Plan the customers that require management attention today.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Customer / Outlet</label>
+
+              <input
+                id="customerName"
+                placeholder="Customer name"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Visit Purpose</label>
+
+              <select id="visitPurpose">
+                <option>Sales Order</option>
+                <option>Collection</option>
+                <option>Relationship</option>
+                <option>New Customer</option>
+                <option>Complaint</option>
+                <option>Negotiation</option>
+                <option>Competitor Check</option>
+              </select>
+            </div>
+
+
+            <div class="form-group">
+              <label>Expected Sales (Lakh)</label>
+
+              <input
+                type="number"
+                id="visitSales"
+                placeholder="5"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Status</label>
+
+              <select id="visitStatus">
+                <option>Planned</option>
+                <option>Completed</option>
+                <option>Follow-up</option>
+              </select>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="addVisit">
+            + Add Customer Visit
+          </button>
+
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Customer</th>
+                  <th>Purpose</th>
+                  <th>Expected</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+              <tbody id="visitTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- TEAM FOLLOW UP -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">03 — PEOPLE</span>
+              <h3>Team Follow-up</h3>
+
+              <p>
+                Track the people who need coaching, follow-up or support.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Sales Representative</label>
+
+              <input
+                id="teamMember"
+                placeholder="Sales Rep name"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Follow-up Topic</label>
+
+              <input
+                id="teamTopic"
+                placeholder="Target / Customer / Coaching"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Action Required</label>
+
+              <input
+                id="teamAction"
+                placeholder="What needs to be done?"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Status</label>
+
+              <select id="teamStatus">
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+              </select>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="addTeam">
+            + Add Team Follow-up
+          </button>
+
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Team Member</th>
+                  <th>Topic</th>
+                  <th>Action</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+              <tbody id="teamTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- DISTRIBUTOR ISSUE -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">04 — DISTRIBUTION</span>
+              <h3>Distributor Issue</h3>
+
+              <p>
+                Capture distributor problems before they become sales problems.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Distributor</label>
+
+              <input
+                id="distributorName"
+                placeholder="Distributor name"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Issue Type</label>
+
+              <select id="distributorIssue">
+                <option>Stock</option>
+                <option>Sales Out</option>
+                <option>Collection</option>
+                <option>AR</option>
+                <option>Delivery</option>
+                <option>Manpower</option>
+                <option>Competitor</option>
+              </select>
+            </div>
+
+
+            <div class="form-group full">
+              <label>Issue Details</label>
+
+              <textarea
+                id="distributorDetails"
+                placeholder="Describe the distributor issue..."
+              ></textarea>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="saveDistributor">
+            Save Distributor Issue
+          </button>
+
+        </div>
+
+
+
+        <!-- COLLECTION -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">05 — COLLECTION</span>
+              <h3>Collection Issue</h3>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Customer</label>
+
+              <input
+                id="collectionCustomer"
+                placeholder="Customer name"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Outstanding (Lakh)</label>
+
+              <input
+                type="number"
+                id="outstanding"
+                placeholder="10"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Expected Collection (Lakh)</label>
+
+              <input
+                type="number"
+                id="expectedCollection"
+                placeholder="5"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Collection Status</label>
+
+              <select id="collectionStatus">
+                <option>Pending</option>
+                <option>Committed</option>
+                <option>Collected</option>
+                <option>Escalation Required</option>
+              </select>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="saveCollection">
+            Save Collection Plan
+          </button>
+
+        </div>
+
+
+
+        <!-- COMPETITOR -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">06 — MARKET</span>
+              <h3>Competitor Activity</h3>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Competitor</label>
+
+              <input
+                id="competitorName"
+                placeholder="Competitor"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Activity Type</label>
+
+              <select id="competitorType">
+                <option>Price</option>
+                <option>Promotion</option>
+                <option>New Product</option>
+                <option>Distribution</option>
+                <option>Customer Scheme</option>
+                <option>Sales Team</option>
+              </select>
+            </div>
+
+
+            <div class="form-group full">
+              <label>Market Observation</label>
+
+              <textarea
+                id="competitorDetails"
+                placeholder="What did you observe in the market?"
+              ></textarea>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="saveCompetitor">
+            Save Market Intelligence
+          </button>
+
+        </div>
+
+
+
+        <!-- END OF DAY -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">07 — REVIEW</span>
+              <h3>End-of-Day Review</h3>
+
+              <p>
+                Close the management loop by reviewing results and actions.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Actual Sales Today (Lakh)</label>
+
+              <input
+                type="number"
+                id="actualToday"
+                placeholder="12"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Target Achievement</label>
+
+              <select id="eodAchievement">
+                <option>Achieved</option>
+                <option>Partially Achieved</option>
+                <option>Not Achieved</option>
+              </select>
+            </div>
+
+
+            <div class="form-group full">
+              <label>What Went Well?</label>
+
+              <textarea
+                id="wentWell"
+                placeholder="Key wins today..."
+              ></textarea>
+            </div>
+
+
+            <div class="form-group full">
+              <label>What Went Wrong?</label>
+
+              <textarea
+                id="wentWrong"
+                placeholder="Main problems today..."
+              ></textarea>
+            </div>
+
+
+            <div class="form-group full">
+              <label>Tomorrow's Priority</label>
+
+              <textarea
+                id="tomorrowPriority"
+                placeholder="What is the most important action for tomorrow?"
+              ></textarea>
+            </div>
+
+          </div>
+
+
+          <button class="primary-btn" id="saveEOD">
+            Complete Today's Review
+          </button>
+
+        </div>
+
+
+
+        <!-- ACTION PLAN -->
+
+        <div class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <span class="eyebrow">08 — ACTION</span>
+              <h3>Manager Action Plan</h3>
+
+              <p>
+                Every important issue must have an owner and deadline.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="form-group full">
+              <label>Action</label>
+
+              <input
+                id="actionText"
+                placeholder="Example: Recover overdue collection from ABC distributor"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Owner</label>
+
+              <input
+                id="actionOwner"
+                placeholder="Responsible person"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Deadline</label>
+
+              <input
+                type="date"
+                id="actionDeadline"
+              >
+            </div>
+
+
+            <div class="form-group">
+              <label>Priority</label>
+
+              <select id="actionPriority">
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
+
+          </div>
+
+
+          <button class="secondary-btn" id="addAction">
+            + Add Action
+          </button>
+
+
+          <div class="action-list" id="actionList"></div>
+
+        </div>
+
+
+        <!-- RESET -->
+
+        <div class="danger-zone">
+
+          <div>
+            <strong>Daily Manager Reset</strong>
+
+            <p>
+              Clear today's demo data and start a fresh management day.
+            </p>
+          </div>
+
+          <button class="danger-btn" id="resetDaily">
+            Reset Today
+          </button>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================= OTHER MODULE PLACEHOLDERS ================= -->
+
+      <div class="page" id="sales-target">
+        <div class="empty-module">
+          <span>🎯</span>
+          <h2>Sales Target</h2>
+          <p>Target management module is ready for the next build.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="team-kpi">
+        <div class="empty-module">
+          <span>👥</span>
+          <h2>Team KPI</h2>
+          <p>Rep performance, achievement, productivity and coaching.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="distributor">
+        <div class="empty-module">
+          <span>🏢</span>
+          <h2>Distributor</h2>
+          <p>Distributor sales, stock, AR and collection management.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="territory">
+        <div class="empty-module">
+          <span>🗺️</span>
+          <h2>Territory</h2>
+          <p>Customer coverage, route plan and market opportunity.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="forecast">
+        <div class="empty-module">
+          <span>📈</span>
+          <h2>Sales Forecast</h2>
+          <p>Expected, best-case and worst-case month-end forecast.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="tools">
+        <div class="empty-module">
+          <span>🧮</span>
+          <h2>Manager Tools</h2>
+          <p>Professional sales management calculators and tools.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="reports">
+        <div class="empty-module">
+          <span>📋</span>
+          <h2>Reports</h2>
+          <p>Daily, Weekly and Monthly Sales Manager reports.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="problem-solver">
+        <div class="empty-module">
+          <span>🧩</span>
+          <h2>Problem Solver</h2>
+          <p>Problem → Root Cause → Action → Owner → Deadline.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="ai-coach">
+        <div class="empty-module">
+          <span>🤖</span>
+          <h2>AI Sales Coach</h2>
+          <p>Professional manager-level coaching and problem solving.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="academy">
+        <div class="empty-module">
+          <span>🎓</span>
+          <h2>Sales Academy</h2>
+          <p>Sales Leadership, Coaching, Forecasting and Management lessons.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
+
+
+      <div class="page" id="settings">
+        <div class="empty-module">
+          <span>⚙️</span>
+          <h2>Settings</h2>
+          <p>Application and manager profile settings.</p>
+          <button class="primary-btn" data-page-link="dashboard">← Dashboard</button>
+        </div>
+      </div>
 
     </section>
 
   </main>
 
-
-  <!-- ==============================
-       MODAL
-  =============================== -->
-  <div id="modal" class="modal">
-
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-
-    <div class="modal-box">
-
-      <div class="modal-header">
-
-        <div>
-          <h3 id="modalTitle">Add Record</h3>
-          <p id="modalSubtitle">Enter information below</p>
-        </div>
-
-        <button id="modalClose" class="modal-close">
-          ×
-        </button>
-
-      </div>
-
-      <div id="modalBody" class="modal-body">
-      </div>
-
-    </div>
-
-  </div>
+</div>
 
 
-  <!-- ==============================
-       TOAST
-  =============================== -->
-  <div id="toast" class="toast">
+<!-- TOAST -->
 
-    <span id="toastIcon">✓</span>
-
-    <div>
-      <strong id="toastTitle">Success</strong>
-      <p id="toastMessage">Saved successfully.</p>
-    </div>
-
-  </div>
+<div class="toast" id="toast">
+  Saved successfully
+</div>
 
 
-  <!-- ==============================
-       JAVASCRIPT
-  =============================== -->
-
-  <script src="app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
-```
