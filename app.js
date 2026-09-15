@@ -1,1330 +1,1182 @@
-
-/* =========================================================
-   AUNG SALES MANAGER PRO
-   app.js
-   Clean JavaScript Version 1.0
-   ========================================================= */
-
-(function () {
+(() => {
   "use strict";
-
-  /* =======================================================
-     STORAGE
-     ======================================================= */
 
   const STORAGE_KEY = "aung_sales_manager_pro_v1";
 
-  const defaultData = {
-    target: 500,
-    actual: 385,
-    team: 4,
-    daily: {
-      morning: {},
-      customer: {},
-      team: {},
-      distributor: {},
-      collection: {},
-      competitor: {},
-      eod: {},
-      action: {}
+  const defaultState = {
+    currentPage: "dashboard",
+
+    dashboard: {
+      target: 500,
+      actual: 385,
+      team: 4
+    },
+
+    dailyManager: {
+      morningPriority: "",
+      morningSales: "",
+      morningCustomers: "",
+
+      customerName: "",
+      customerObjective: "",
+      customerNotes: "",
+
+      teamMember: "",
+      teamFollowType: "",
+      teamNotes: "",
+
+      distributorName: "",
+      distributorIssue: "",
+      distributorNotes: "",
+
+      collectionCustomer: "",
+      collectionAmount: "",
+      collectionNotes: "",
+
+      competitorName: "",
+      competitorType: "",
+      competitorNotes: "",
+
+      eodSales: "",
+      eodAchievement: "",
+      eodVisits: "",
+      eodWin: "",
+      eodImprove: "",
+
+      actionPlan: "",
+      actionOwner: "",
+      actionPriority: ""
     }
   };
 
-  let appData = loadData();
+  let state = loadState();
 
+  /* =========================================================
+     BASIC HELPERS
+  ========================================================= */
 
-  /* =======================================================
-     START APP
-     ======================================================= */
+  function $(selector) {
+    return document.querySelector(selector);
+  }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function $$(selector) {
+    return Array.from(document.querySelectorAll(selector));
+  }
 
-    initializeNavigation();
+  function safeNumber(value) {
+    const number = parseFloat(value);
+    return Number.isFinite(number) ? number : 0;
+  }
 
-    initializeMobileMenu();
+  function formatNumber(value, decimals = 1) {
+    return safeNumber(value).toLocaleString("en-US", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
 
-    initializeDailyManager();
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
-    initializeDashboardActions();
-
-    initializeSearch();
-
-    initializeNotification();
-
-    initializeDate();
-
-    updateDashboard();
-
-    loadDailyForms();
-
-    updateDailyProgress();
-
-  });
-
-
-  /* =======================================================
-     LOCAL STORAGE
-     ======================================================= */
-
-  function loadData() {
-
+  function loadState() {
     try {
-
       const saved = localStorage.getItem(STORAGE_KEY);
 
       if (!saved) {
-        return JSON.parse(JSON.stringify(defaultData));
+        return structuredClone
+          ? structuredClone(defaultState)
+          : JSON.parse(JSON.stringify(defaultState));
       }
 
       const parsed = JSON.parse(saved);
 
       return {
-        ...JSON.parse(JSON.stringify(defaultData)),
+        ...defaultState,
         ...parsed,
-        daily: {
-          ...JSON.parse(JSON.stringify(defaultData.daily)),
-          ...(parsed.daily || {})
+        dashboard: {
+          ...defaultState.dashboard,
+          ...(parsed.dashboard || {})
+        },
+        dailyManager: {
+          ...defaultState.dailyManager,
+          ...(parsed.dailyManager || {})
         }
       };
-
     } catch (error) {
-
-      console.error("Storage load error:", error);
-
-      return JSON.parse(JSON.stringify(defaultData));
-
+      console.error("State loading error:", error);
+      return JSON.parse(JSON.stringify(defaultState));
     }
-
   }
 
-
-  function saveData() {
-
+  function saveState() {
     try {
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(appData)
-      );
-
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
+      console.error("State saving error:", error);
+    }
+  }
 
-      console.error("Storage save error:", error);
+  /* =========================================================
+     DATE / TIME
+  ========================================================= */
 
+  function updateDate() {
+    const now = new Date();
+
+    const dateText = now.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+
+    const elements = [
+      "#todayDate",
+      "#currentDate",
+      ".today-date",
+      "[data-current-date]"
+    ];
+
+    elements.forEach(selector => {
+      $$(selector).forEach(element => {
+        element.textContent = dateText;
+      });
+    });
+  }
+
+  /* =========================================================
+     TOAST
+  ========================================================= */
+
+  function showToast(message, type = "success") {
+    let toast = $("#toast");
+
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast";
+      document.body.appendChild(toast);
     }
 
+    toast.textContent = message;
+
+    toast.className = "toast show";
+
+    if (type === "error") {
+      toast.classList.add("toast-error");
+    }
+
+    if (type === "warning") {
+      toast.classList.add("toast-warning");
+    }
+
+    clearTimeout(window.__toastTimer);
+
+    window.__toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
   }
 
+  /* =========================================================
+     SIDEBAR
+  ========================================================= */
 
-  /* =======================================================
+  function openSidebar() {
+    document.body.classList.add("sidebar-open");
+
+    const overlay = $("#sidebarOverlay");
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+  }
+
+  function closeSidebar() {
+    document.body.classList.remove("sidebar-open");
+
+    const overlay = $("#sidebarOverlay");
+
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
+  }
+
+  function toggleSidebar() {
+    if (document.body.classList.contains("sidebar-open")) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  }
+
+  /* =========================================================
+     PAGE CONFIG
+  ========================================================= */
+
+  const pageNames = {
+    dashboard: "Dashboard",
+    daily: "Daily Manager",
+    "sales-target": "Sales Target",
+    "team-kpi": "Team KPI",
+    distributor: "Distributor",
+    territory: "Territory",
+    "sales-forecast": "Sales Forecast",
+    "manager-tools": "Manager Tools",
+    reports: "Reports",
+    "problem-solver": "Problem Solver",
+    "ai-coach": "AI Sales Coach",
+    academy: "Sales Academy",
+    settings: "Settings"
+  };
+
+  function getPageTitle(page) {
+    return pageNames[page] || "Dashboard";
+  }
+
+  /* =========================================================
      NAVIGATION
-     ======================================================= */
-
-  function initializeNavigation() {
-
-    const navItems = document.querySelectorAll("[data-page]");
-
-    navItems.forEach(function (button) {
-
-      button.addEventListener("click", function () {
-
-        const pageName = button.getAttribute("data-page");
-
-        if (!pageName) {
-          return;
-        }
-
-        showPage(pageName);
-
-        closeMobileSidebar();
-
-      });
-
-    });
-
-
-    const pageActions = document.querySelectorAll(
-      "[data-page-action]"
-    );
-
-    pageActions.forEach(function (button) {
-
-      button.addEventListener("click", function () {
-
-        const pageName =
-          button.getAttribute("data-page-action");
-
-        if (!pageName) {
-          return;
-        }
-
-        showPage(pageName);
-
-        closeMobileSidebar();
-
-      });
-
-    });
-
-  }
-
+  ========================================================= */
 
   function showPage(pageName) {
-
-    const pages = document.querySelectorAll(".page");
-
-    pages.forEach(function (page) {
-
-      page.classList.remove("active-page");
-
-    });
-
-
-    const targetPage =
-      document.getElementById("page-" + pageName);
-
-    if (!targetPage) {
-
-      console.warn(
-        "Page not found:",
-        pageName
-      );
-
-      return;
-
+    if (!pageName) {
+      pageName = "dashboard";
     }
 
-    targetPage.classList.add("active-page");
+    const pages = $$(".page");
 
+    pages.forEach(page => {
+      page.classList.remove("active");
 
-    const navItems =
-      document.querySelectorAll(".nav-item");
+      const pageId = page.dataset.page;
 
-    navItems.forEach(function (item) {
-
-      item.classList.remove("active");
-
-      if (
-        item.getAttribute("data-page") === pageName
-      ) {
-
-        item.classList.add("active");
-
+      if (pageId === pageName) {
+        page.classList.add("active");
       }
-
     });
 
+    const navItems = $$("[data-page]");
+
+    navItems.forEach(item => {
+      item.classList.remove("active");
+
+      if (item.dataset.page === pageName) {
+        item.classList.add("active");
+      }
+    });
+
+    state.currentPage = pageName;
+    saveState();
 
     updateBreadcrumb(pageName);
+
+    closeSidebar();
 
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
 
+    refreshPageData(pageName);
   }
-
-
-  /* =======================================================
-     BREADCRUMB
-     ======================================================= */
 
   function updateBreadcrumb(pageName) {
+    const title = getPageTitle(pageName);
 
-    const breadcrumb =
-      document.getElementById("breadcrumbCurrent");
+    const breadcrumb = $("[data-breadcrumb]");
 
-    if (!breadcrumb) {
-      return;
+    if (breadcrumb) {
+      breadcrumb.textContent = title;
     }
 
-    const names = {
+    const breadcrumbElements = [
+      "#breadcrumb",
+      "#pageTitle",
+      ".breadcrumb-current"
+    ];
 
-      dashboard: "Dashboard",
-
-      "daily-manager": "Daily Manager",
-
-      "sales-target": "Sales Target",
-
-      "team-kpi": "Team KPI",
-
-      distributor: "Distributor",
-
-      territory: "Territory",
-
-      "sales-forecast": "Sales Forecast",
-
-      "manager-tools": "Manager Tools",
-
-      reports: "Reports",
-
-      "problem-solver": "Problem Solver",
-
-      "ai-coach": "AI Sales Coach",
-
-      academy: "Sales Academy",
-
-      settings: "Settings"
-
-    };
-
-    breadcrumb.textContent =
-      names[pageName] || "Dashboard";
-
-  }
-
-
-  /* =======================================================
-     MOBILE MENU
-     ======================================================= */
-
-  function initializeMobileMenu() {
-
-    const menuButton =
-      document.getElementById("mobileMenuBtn");
-
-    const sidebar =
-      document.getElementById("sidebar");
-
-    const overlay =
-      document.getElementById("sidebarOverlay");
-
-
-    if (menuButton) {
-
-      menuButton.addEventListener(
-        "click",
-        function () {
-
-          if (!sidebar) {
-            return;
-          }
-
-          sidebar.classList.toggle("mobile-open");
-
-          if (overlay) {
-            overlay.classList.toggle(
-              "active"
-            );
-          }
-
+    breadcrumbElements.forEach(selector => {
+      $$(selector).forEach(element => {
+        if (
+          element.id === "pageTitle" &&
+          pageName === "dashboard"
+        ) {
+          return;
         }
-      );
 
-    }
-
-
-    if (overlay) {
-
-      overlay.addEventListener(
-        "click",
-        function () {
-
-          closeMobileSidebar();
-
-        }
-      );
-
-    }
-
-  }
-
-
-  function closeMobileSidebar() {
-
-    const sidebar =
-      document.getElementById("sidebar");
-
-    const overlay =
-      document.getElementById("sidebarOverlay");
-
-
-    if (sidebar) {
-      sidebar.classList.remove(
-        "mobile-open"
-      );
-    }
-
-    if (overlay) {
-      overlay.classList.remove(
-        "active"
-      );
-    }
-
-  }
-
-
-  /* =======================================================
-     DAILY MANAGER
-     ======================================================= */
-
-  function initializeDailyManager() {
-
-    const saveButtons =
-      document.querySelectorAll(
-        "[data-save-section]"
-      );
-
-
-    saveButtons.forEach(function (button) {
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          const section =
-            button.getAttribute(
-              "data-save-section"
-            );
-
-          saveDailySection(section);
-
-        }
-      );
-
+        element.textContent = title;
+      });
     });
 
+    const titleElement = $("#topbarPageTitle");
 
-    const resetButton =
-      document.getElementById(
-        "resetDailyBtn"
-      );
-
-
-    if (resetButton) {
-
-      resetButton.addEventListener(
-        "click",
-        function () {
-
-          resetDailyPlan();
-
-        }
-      );
-
+    if (titleElement) {
+      titleElement.textContent = title;
     }
-
   }
 
-
-  function saveDailySection(section) {
-
-    if (!appData.daily[section]) {
-
-      appData.daily[section] = {};
-
-    }
-
-
-    let values = {};
-
-
-    if (section === "morning") {
-
-      values = {
-
-        priority:
-          getValue("morningPriority"),
-
-        sales:
-          getValue("morningSales"),
-
-        customers:
-          getValue("morningCustomers")
-
-      };
-
-    }
-
-
-    if (section === "customer") {
-
-      values = {
-
-        customer:
-          getValue("customerName"),
-
-        objective:
-          getValue("customerObjective"),
-
-        notes:
-          getValue("customerNotes")
-
-      };
-
-    }
-
-
-    if (section === "team") {
-
-      values = {
-
-        member:
-          getValue("teamMember"),
-
-        followType:
-          getValue("teamFollowType"),
-
-        notes:
-          getValue("teamNotes")
-
-      };
-
-    }
-
-
-    if (section === "distributor") {
-
-      values = {
-
-        distributor:
-          getValue("distributorName"),
-
-        issue:
-          getValue("distributorIssue"),
-
-        notes:
-          getValue("distributorNotes")
-
-      };
-
-    }
-
-
-    if (section === "collection") {
-
-      values = {
-
-        customer:
-          getValue("collectionCustomer"),
-
-        amount:
-          getValue("collectionAmount"),
-
-        notes:
-          getValue("collectionNotes")
-
-      };
-
-    }
-
-
-    if (section === "competitor") {
-
-      values = {
-
-        competitor:
-          getValue("competitorName"),
-
-        type:
-          getValue("competitorType"),
-
-        notes:
-          getValue("competitorNotes")
-
-      };
-
-    }
-
-
-    if (section === "eod") {
-
-      values = {
-
-        sales:
-          getValue("eodSales"),
-
-        achievement:
-          getValue("eodAchievement"),
-
-        visits:
-          getValue("eodVisits"),
-
-        win:
-          getValue("eodWin"),
-
-        improve:
-          getValue("eodImprove")
-
-      };
-
-    }
-
-
-    if (section === "action") {
-
-      values = {
-
-        action:
-          getValue("actionPlan"),
-
-        owner:
-          getValue("actionOwner"),
-
-        priority:
-          getValue("actionPriority")
-
-      };
-
-    }
-
-
-    appData.daily[section] = values;
-
-    saveData();
-
-    updateDailyProgress();
-
-    showToast(
-      getSectionName(section) +
-      " saved successfully."
-    );
-
+  /* =========================================================
+     DASHBOARD
+  ========================================================= */
+
+  function calculateDashboard() {
+    const target = safeNumber(state.dashboard.target);
+    const actual = safeNumber(state.dashboard.actual);
+    const team = safeNumber(state.dashboard.team);
+
+    const achievement = target > 0
+      ? (actual / target) * 100
+      : 0;
+
+    const gap = Math.max(target - actual, 0);
+
+    return {
+      target,
+      actual,
+      team,
+      achievement,
+      gap
+    };
   }
 
+  function updateDashboard() {
+    const data = calculateDashboard();
 
-  function getSectionName(section) {
-
-    const names = {
-
-      morning: "Morning Plan",
-
-      customer: "Customer Visit Plan",
-
-      team: "Team Follow-up",
-
-      distributor: "Distributor Issue",
-
-      collection: "Collection Plan",
-
-      competitor: "Market Intelligence",
-
-      eod: "End-of-Day Review",
-
-      action: "Manager Action Plan"
-
+    const values = {
+      target: formatNumber(data.target),
+      actual: formatNumber(data.actual),
+      achievement: `${Math.round(data.achievement)}%`,
+      gap: formatNumber(data.gap),
+      team: String(data.team)
     };
 
-    return names[section] || "Plan";
+    const mapping = {
+      target: [
+        "#monthlyTarget",
+        "[data-kpi='target']",
+        "[data-value='target']"
+      ],
 
+      actual: [
+        "#actualSales",
+        "[data-kpi='actual']",
+        "[data-value='actual']"
+      ],
+
+      achievement: [
+        "#achievement",
+        "[data-kpi='achievement']",
+        "[data-value='achievement']"
+      ],
+
+      gap: [
+        "#targetGap",
+        "[data-kpi='gap']",
+        "[data-value='gap']"
+      ],
+
+      team: [
+        "#teamMembers",
+        "[data-kpi='team']",
+        "[data-value='team']"
+      ]
+    };
+
+    Object.keys(mapping).forEach(key => {
+      mapping[key].forEach(selector => {
+        $$(selector).forEach(element => {
+          element.textContent = values[key];
+        });
+      });
+    });
+
+    updateProgressBars(data.achievement);
   }
 
+  function updateProgressBars(achievement) {
+    const percentage = Math.max(
+      0,
+      Math.min(achievement, 100)
+    );
 
-  function getValue(id) {
+    $$("[data-progress]").forEach(bar => {
+      bar.style.width = `${percentage}%`;
+    });
 
-    const element =
-      document.getElementById(id);
+    $$(".progress-fill").forEach(bar => {
+      const currentWidth = bar.dataset.width;
+
+      if (currentWidth) {
+        bar.style.width = currentWidth;
+      }
+    });
+
+    const dashboardProgress = $(
+      "#monthlyProgress"
+    );
+
+    if (dashboardProgress) {
+      dashboardProgress.style.width =
+        `${percentage}%`;
+    }
+  }
+
+  /* =========================================================
+     DAILY MANAGER
+  ========================================================= */
+
+  const dailyFields = [
+    "morningPriority",
+    "morningSales",
+    "morningCustomers",
+
+    "customerName",
+    "customerObjective",
+    "customerNotes",
+
+    "teamMember",
+    "teamFollowType",
+    "teamNotes",
+
+    "distributorName",
+    "distributorIssue",
+    "distributorNotes",
+
+    "collectionCustomer",
+    "collectionAmount",
+    "collectionNotes",
+
+    "competitorName",
+    "competitorType",
+    "competitorNotes",
+
+    "eodSales",
+    "eodAchievement",
+    "eodVisits",
+    "eodWin",
+    "eodImprove",
+
+    "actionPlan",
+    "actionOwner",
+    "actionPriority"
+  ];
+
+  function getFieldValue(fieldName) {
+    const element = $(`#${fieldName}`);
 
     if (!element) {
       return "";
     }
 
-    return element.value.trim();
-
+    return element.value ?? "";
   }
 
+  function setFieldValue(fieldName, value) {
+    const element = $(`#${fieldName}`);
 
-  /* =======================================================
-     LOAD DAILY FORMS
-     ======================================================= */
-
-  function loadDailyForms() {
-
-    const d = appData.daily;
-
-
-    setValue(
-      "morningPriority",
-      d.morning.priority
-    );
-
-    setValue(
-      "morningSales",
-      d.morning.sales
-    );
-
-    setValue(
-      "morningCustomers",
-      d.morning.customers
-    );
-
-
-    setValue(
-      "customerName",
-      d.customer.customer
-    );
-
-    setValue(
-      "customerObjective",
-      d.customer.objective
-    );
-
-    setValue(
-      "customerNotes",
-      d.customer.notes
-    );
-
-
-    setValue(
-      "teamMember",
-      d.team.member
-    );
-
-    setValue(
-      "teamFollowType",
-      d.team.followType
-    );
-
-    setValue(
-      "teamNotes",
-      d.team.notes
-    );
-
-
-    setValue(
-      "distributorName",
-      d.distributor.distributor
-    );
-
-    setValue(
-      "distributorIssue",
-      d.distributor.issue
-    );
-
-    setValue(
-      "distributorNotes",
-      d.distributor.notes
-    );
-
-
-    setValue(
-      "collectionCustomer",
-      d.collection.customer
-    );
-
-    setValue(
-      "collectionAmount",
-      d.collection.amount
-    );
-
-    setValue(
-      "collectionNotes",
-      d.collection.notes
-    );
-
-
-    setValue(
-      "competitorName",
-      d.competitor.competitor
-    );
-
-    setValue(
-      "competitorType",
-      d.competitor.type
-    );
-
-    setValue(
-      "competitorNotes",
-      d.competitor.notes
-    );
-
-
-    setValue(
-      "eodSales",
-      d.eod.sales
-    );
-
-    setValue(
-      "eodAchievement",
-      d.eod.achievement
-    );
-
-    setValue(
-      "eodVisits",
-      d.eod.visits
-    );
-
-    setValue(
-      "eodWin",
-      d.eod.win
-    );
-
-    setValue(
-      "eodImprove",
-      d.eod.improve
-    );
-
-
-    setValue(
-      "actionPlan",
-      d.action.action
-    );
-
-    setValue(
-      "actionOwner",
-      d.action.owner
-    );
-
-    setValue(
-      "actionPriority",
-      d.action.priority
-    );
-
-  }
-
-
-  function setValue(id, value) {
-
-    const element =
-      document.getElementById(id);
-
-    if (
-      element &&
-      value !== undefined &&
-      value !== null
-    ) {
-
-      element.value = value;
-
+    if (!element) {
+      return;
     }
 
+    element.value = value ?? "";
   }
 
+  function saveDailyManager() {
+    dailyFields.forEach(field => {
+      state.dailyManager[field] =
+        getFieldValue(field);
+    });
 
-  /* =======================================================
-     DAILY PROGRESS
-     ======================================================= */
+    saveState();
+
+    updateDailyProgress();
+
+    showToast(
+      "Daily Manager plan saved successfully."
+    );
+  }
+
+  function loadDailyManager() {
+    dailyFields.forEach(field => {
+      setFieldValue(
+        field,
+        state.dailyManager[field]
+      );
+    });
+
+    updateDailyProgress();
+  }
 
   function updateDailyProgress() {
-
-    const sections = [
-      "morning",
-      "customer",
-      "team",
-      "distributor",
-      "collection",
-      "competitor",
-      "eod",
-      "action"
-    ];
-
+    const total = dailyFields.length;
 
     let completed = 0;
 
-
-    sections.forEach(function (section) {
-
-      const data =
-        appData.daily[section];
+    dailyFields.forEach(field => {
+      const value =
+        state.dailyManager[field];
 
       if (
-        data &&
-        Object.keys(data).length > 0
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
       ) {
-
-        const hasValue =
-          Object.values(data).some(
-            function (value) {
-              return String(value).trim() !== "";
-            }
-          );
-
-        if (hasValue) {
-          completed++;
-        }
-
+        completed++;
       }
-
     });
 
+    const percentage = total > 0
+      ? Math.round((completed / total) * 100)
+      : 0;
 
-    const percentage =
-      Math.round(
-        (completed / sections.length) * 100
-      );
+    const progressText =
+      `${completed}/${total} completed`;
 
+    $$("[data-daily-progress]").forEach(element => {
+      element.textContent =
+        `${percentage}%`;
+    });
 
-    const progress =
-      document.getElementById(
-        "dailyProgress"
-      );
+    $$("[data-daily-completed]").forEach(element => {
+      element.textContent =
+        progressText;
+    });
 
-    const text =
-      document.getElementById(
-        "dailyCompletionText"
-      );
-
-
-    if (progress) {
-
-      progress.style.width =
-        percentage + "%";
-
-    }
-
-
-    if (text) {
-
-      text.textContent =
-        percentage + "%";
-
-    }
-
+    $$("[data-daily-bar]").forEach(element => {
+      element.style.width =
+        `${percentage}%`;
+    });
   }
 
-
-  function resetDailyPlan() {
-
-    const confirmed =
-      window.confirm(
-        "Reset today's entire manager plan?"
-      );
-
+  function resetDailyManager() {
+    const confirmed = window.confirm(
+      "Reset today's Daily Manager plan?"
+    );
 
     if (!confirmed) {
       return;
     }
 
-
-    appData.daily = {
-
-      morning: {},
-      customer: {},
-      team: {},
-      distributor: {},
-      collection: {},
-      competitor: {},
-      eod: {},
-      action: {}
-
-    };
-
-
-    saveData();
-
-
-    const inputs =
-      document.querySelectorAll(
-        "#page-daily-manager input, " +
-        "#page-daily-manager textarea, " +
-        "#page-daily-manager select"
+    state.dailyManager =
+      JSON.parse(
+        JSON.stringify(
+          defaultState.dailyManager
+        )
       );
 
+    saveState();
 
-    inputs.forEach(function (input) {
-
-      input.value = "";
-
-    });
-
-
-    updateDailyProgress();
+    loadDailyManager();
 
     showToast(
-      "Today's plan has been reset."
+      "Today's plan has been reset.",
+      "warning"
     );
-
   }
 
+  /* =========================================================
+     DAILY FORM AUTO SAVE
+  ========================================================= */
 
-  /* =======================================================
-     DASHBOARD
-     ======================================================= */
+  function handleDailyInput(event) {
+    const target = event.target;
 
-  function initializeDashboardActions() {
-
-    /*
-      Dashboard action buttons are handled
-      by the common data-page-action system.
-    */
-
-  }
-
-
-  function updateDashboard() {
-
-    const target =
-      Number(appData.target) || 0;
-
-    const actual =
-      Number(appData.actual) || 0;
-
-    const team =
-      Number(appData.team) || 0;
-
-
-    let achievement = 0;
-
-    if (target > 0) {
-
-      achievement =
-        Math.round(
-          (actual / target) * 100
-        );
-
-    }
-
-
-    const gap =
-      Math.max(
-        target - actual,
-        0
-      );
-
-
-    setText(
-      "kpiTarget",
-      formatNumber(target) + " L"
-    );
-
-    setText(
-      "kpiActual",
-      formatNumber(actual) + " L"
-    );
-
-    setText(
-      "kpiAchievement",
-      achievement + "%"
-    );
-
-    setText(
-      "kpiGap",
-      formatNumber(gap) + " L"
-    );
-
-    setText(
-      "kpiTeam",
-      String(team)
-    );
-
-
-    setText(
-      "performanceActual",
-      formatNumber(actual) + " L"
-    );
-
-    setText(
-      "performanceTarget",
-      formatNumber(target) + " L"
-    );
-
-    setText(
-      "performanceGap",
-      formatNumber(gap) + " L"
-    );
-
-    setText(
-      "performancePercent",
-      achievement + "%"
-    );
-
-
-    setText(
-      "achievementBadge",
-      achievement + "% Achieved"
-    );
-
-
-    const progress =
-      document.getElementById(
-        "performanceProgress"
-      );
-
-    if (progress) {
-
-      progress.style.width =
-        Math.min(achievement, 100) + "%";
-
-    }
-
-
-    const actualBar =
-      document.getElementById(
-        "actualBar"
-      );
-
-    if (actualBar) {
-
-      actualBar.style.width =
-        Math.min(achievement, 100) + "%";
-
-    }
-
-  }
-
-
-  function setText(id, value) {
-
-    const element =
-      document.getElementById(id);
-
-    if (element) {
-
-      element.textContent =
-        value;
-
-    }
-
-  }
-
-
-  function formatNumber(number) {
-
-    return Number(number).toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     DATE
-     ======================================================= */
-
-  function initializeDate() {
-
-    const dateElement =
-      document.getElementById(
-        "todayDate"
-      );
-
-
-    if (!dateElement) {
+    if (!target.id) {
       return;
     }
 
+    if (!dailyFields.includes(target.id)) {
+      return;
+    }
 
-    const now = new Date();
+    state.dailyManager[target.id] =
+      target.value;
 
+    saveState();
 
-    const formatted =
-      now.toLocaleDateString(
-        "en-US",
-        {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-          year: "numeric"
-        }
-      );
-
-
-    dateElement.textContent =
-      formatted;
-
+    updateDailyProgress();
   }
 
+  /* =========================================================
+     SALES TARGET QUICK UPDATE
+  ========================================================= */
 
-  /* =======================================================
+  function updateSalesTarget() {
+    const targetInput = $(
+      "#salesTargetInput"
+    );
+
+    const actualInput = $(
+      "#salesActualInput"
+    );
+
+    if (!targetInput || !actualInput) {
+      return;
+    }
+
+    const target =
+      safeNumber(targetInput.value);
+
+    const actual =
+      safeNumber(actualInput.value);
+
+    state.dashboard.target = target;
+    state.dashboard.actual = actual;
+
+    saveState();
+
+    updateDashboard();
+
+    showToast(
+      "Sales Target updated."
+    );
+  }
+
+  /* =========================================================
+     GENERIC BUTTON ACTIONS
+  ========================================================= */
+
+  function handleAction(action) {
+    switch (action) {
+
+      case "start-daily":
+        showPage("daily");
+        showToast(
+          "Daily Manager opened."
+        );
+        break;
+
+      case "save-daily":
+        saveDailyManager();
+        break;
+
+      case "reset-daily":
+        resetDailyManager();
+        break;
+
+      case "update-target":
+        updateSalesTarget();
+        break;
+
+      case "notifications":
+        showToast(
+          "No new manager alerts."
+        );
+        break;
+
+      case "profile":
+        showToast(
+          "Aung Zar Ni Win — Sales Manager"
+        );
+        break;
+
+      case "search":
+        focusSearch();
+        break;
+
+      default:
+        console.log(
+          "Unknown action:",
+          action
+        );
+    }
+  }
+
+  /* =========================================================
+     QUICK ACTIONS
+  ========================================================= */
+
+  function setupQuickActions() {
+    $$("[data-quick-page]").forEach(button => {
+      button.addEventListener("click", () => {
+        const page =
+          button.dataset.quickPage;
+
+        if (page) {
+          showPage(page);
+        }
+      });
+    });
+  }
+
+  /* =========================================================
      SEARCH
-     ======================================================= */
+  ========================================================= */
 
-  function initializeSearch() {
-
+  function focusSearch() {
     const search =
-      document.getElementById(
-        "globalSearch"
-      );
+      $("#globalSearch") ||
+      $("input[type='search']") ||
+      $(".search-input");
 
+    if (search) {
+      search.focus();
+    }
+  }
+
+  function setupSearch() {
+    const search =
+      $("#globalSearch") ||
+      $("input[type='search']") ||
+      $(".search-input");
 
     if (!search) {
       return;
     }
 
-
     search.addEventListener(
-      "input",
-      function () {
+      "keydown",
+      event => {
+        if (event.key !== "Enter") {
+          return;
+        }
 
-        const keyword =
+        const query =
           search.value
             .trim()
             .toLowerCase();
 
-
-        if (!keyword) {
+        if (!query) {
+          showToast(
+            "Type something to search."
+          );
           return;
         }
 
-
-        const navItems =
-          document.querySelectorAll(
-            ".nav-item"
-          );
-
-
-        let found = null;
-
-
-        navItems.forEach(
-          function (item) {
-
-            const text =
-              item.textContent
-                .toLowerCase();
-
-
-            if (
-              !found &&
-              text.includes(keyword)
-            ) {
-
-              found = item;
-
-            }
-
-          }
-        );
-
-
-        if (found) {
-
-          const page =
-            found.getAttribute(
-              "data-page"
+        const match =
+          Object.entries(pageNames)
+            .find(([key, title]) =>
+              title
+                .toLowerCase()
+                .includes(query) ||
+              key.includes(query)
             );
 
-          if (page) {
+        if (match) {
+          showPage(match[0]);
 
-            showPage(page);
+          showToast(
+            `${match[1]} opened.`
+          );
+        } else {
+          showToast(
+            "No matching page found.",
+            "warning"
+          );
+        }
+      }
+    );
+  }
 
-          }
+  /* =========================================================
+     KEYBOARD SHORTCUTS
+  ========================================================= */
 
+  function setupKeyboardShortcuts() {
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.ctrlKey &&
+          event.key.toLowerCase() === "d"
+        ) {
+          event.preventDefault();
+          showPage("dashboard");
         }
 
+        if (
+          event.ctrlKey &&
+          event.key.toLowerCase() === "m"
+        ) {
+          event.preventDefault();
+          showPage("daily");
+        }
+
+        if (
+          event.key === "Escape"
+        ) {
+          closeSidebar();
+        }
       }
     );
-
   }
 
+  /* =========================================================
+     GLOBAL CLICK HANDLER
+  ========================================================= */
 
-  /* =======================================================
-     NOTIFICATION
-     ======================================================= */
-
-  function initializeNotification() {
-
-    const button =
-      document.getElementById(
-        "notificationBtn"
-      );
-
-
-    if (!button) {
-      return;
-    }
-
-
-    button.addEventListener(
+  function setupClicks() {
+    document.addEventListener(
       "click",
-      function () {
+      event => {
 
-        showToast(
-          "You have 3 manager alerts."
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     TOAST
-     ======================================================= */
-
-  function showToast(message) {
-
-    const toast =
-      document.getElementById(
-        "toast"
-      );
-
-    const toastMessage =
-      document.getElementById(
-        "toastMessage"
-      );
-
-
-    if (!toast) {
-      return;
-    }
-
-
-    if (toastMessage) {
-
-      toastMessage.textContent =
-        message;
-
-    }
-
-
-    toast.classList.add("show");
-
-
-    window.clearTimeout(
-      showToast.timer
-    );
-
-
-    showToast.timer =
-      window.setTimeout(
-        function () {
-
-          toast.classList.remove(
-            "show"
+        const navButton =
+          event.target.closest(
+            "[data-page]"
           );
 
-        },
-        2500
-      );
+        if (
+          navButton &&
+          navButton.dataset.page
+        ) {
+          event.preventDefault();
 
+          showPage(
+            navButton.dataset.page
+          );
+
+          return;
+        }
+
+        const actionButton =
+          event.target.closest(
+            "[data-page-action]"
+          );
+
+        if (
+          actionButton &&
+          actionButton.dataset.pageAction
+        ) {
+          event.preventDefault();
+
+          handleAction(
+            actionButton.dataset.pageAction
+          );
+
+          return;
+        }
+
+        const quickButton =
+          event.target.closest(
+            "[data-quick-page]"
+          );
+
+        if (
+          quickButton &&
+          quickButton.dataset.quickPage
+        ) {
+          event.preventDefault();
+
+          showPage(
+            quickButton.dataset.quickPage
+          );
+
+          return;
+        }
+
+        const menuButton =
+          event.target.closest(
+            "[data-menu-toggle]"
+          );
+
+        if (menuButton) {
+          event.preventDefault();
+          toggleSidebar();
+          return;
+        }
+
+        const closeButton =
+          event.target.closest(
+            "[data-sidebar-close]"
+          );
+
+        if (closeButton) {
+          event.preventDefault();
+          closeSidebar();
+          return;
+        }
+
+        const overlay =
+          event.target.closest(
+            "#sidebarOverlay"
+          );
+
+        if (overlay) {
+          closeSidebar();
+        }
+      }
+    );
   }
 
+  /* =========================================================
+     FORMS
+  ========================================================= */
 
-  /* =======================================================
-     KEYBOARD SHORTCUTS
-     ======================================================= */
+  function setupForms() {
+    document.addEventListener(
+      "input",
+      handleDailyInput
+    );
 
-  document.addEventListener(
-    "keydown",
-    function (event) {
+    document.addEventListener(
+      "change",
+      handleDailyInput
+    );
 
-      /*
-        Ctrl + D = Dashboard
-        Ctrl + M = Daily Manager
-      */
+    const forms = $$("form");
 
-      if (
-        event.ctrlKey &&
-        event.key.toLowerCase() === "d"
-      ) {
+    forms.forEach(form => {
+      form.addEventListener(
+        "submit",
+        event => {
+          event.preventDefault();
 
-        event.preventDefault();
+          const saveButton =
+            form.querySelector(
+              "[data-page-action='save-daily']"
+            );
 
-        showPage("dashboard");
+          if (saveButton) {
+            saveDailyManager();
+          }
+        }
+      );
+    });
+  }
 
-      }
+  /* =========================================================
+     PAGE DATA REFRESH
+  ========================================================= */
 
+  function refreshPageData(pageName) {
 
-      if (
-        event.ctrlKey &&
-        event.key.toLowerCase() === "m"
-      ) {
+    switch (pageName) {
 
-        event.preventDefault();
+      case "dashboard":
+        updateDashboard();
+        break;
 
-        showPage("daily-manager");
+      case "daily":
+        loadDailyManager();
+        break;
 
-      }
+      case "sales-target":
+        updateTargetPage();
+        break;
 
+      case "sales-forecast":
+        updateForecastPage();
+        break;
+
+      default:
+        break;
     }
-  );
+  }
 
+  /* =========================================================
+     SALES TARGET PAGE
+  ========================================================= */
+
+  function updateTargetPage() {
+
+    const target =
+      safeNumber(
+        state.dashboard.target
+      );
+
+    const actual =
+      safeNumber(
+        state.dashboard.actual
+      );
+
+    const achievement =
+      target > 0
+        ? (actual / target) * 100
+        : 0;
+
+    const gap =
+      Math.max(target - actual, 0);
+
+    $$("[data-target-result]").forEach(
+      element => {
+        const type =
+          element.dataset.targetResult;
+
+        if (type === "target") {
+          element.textContent =
+            formatNumber(target);
+        }
+
+        if (type === "actual") {
+          element.textContent =
+            formatNumber(actual);
+        }
+
+        if (type === "achievement") {
+          element.textContent =
+            `${Math.round(achievement)}%`;
+        }
+
+        if (type === "gap") {
+          element.textContent =
+            formatNumber(gap);
+        }
+      }
+    );
+  }
+
+  /* =========================================================
+     FORECAST
+  ========================================================= */
+
+  function updateForecastPage() {
+
+    const target =
+      safeNumber(
+        state.dashboard.target
+      );
+
+    const actual =
+      safeNumber(
+        state.dashboard.actual
+      );
+
+    const now =
+      new Date();
+
+    const currentDay =
+      now.getDate();
+
+    const daysInMonth =
+      new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0
+      ).getDate();
+
+    const elapsed =
+      Math.max(currentDay, 1);
+
+    const dailyRunRate =
+      actual / elapsed;
+
+    const forecast =
+      dailyRunRate * daysInMonth;
+
+    const remaining =
+      Math.max(
+        target - actual,
+        0
+      );
+
+    const requiredDaily =
+      daysInMonth > elapsed
+        ? remaining /
+          (daysInMonth - elapsed)
+        : remaining;
+
+    $$("[data-forecast]").forEach(
+      element => {
+
+        const type =
+          element.dataset.forecast;
+
+        if (type === "forecast") {
+          element.textContent =
+            formatNumber(forecast);
+        }
+
+        if (type === "run-rate") {
+          element.textContent =
+            formatNumber(dailyRunRate);
+        }
+
+        if (type === "required") {
+          element.textContent =
+            formatNumber(requiredDaily);
+        }
+
+        if (type === "target") {
+          element.textContent =
+            formatNumber(target);
+        }
+      }
+    );
+  }
+
+  /* =========================================================
+     MOBILE RESPONSIVE
+  ========================================================= */
+
+  function setupMobile() {
+
+    const menuButtons = $$(
+      "[data-menu-toggle]"
+    );
+
+    menuButtons.forEach(button => {
+      button.addEventListener(
+        "click",
+        event => {
+          event.preventDefault();
+          toggleSidebar();
+        }
+      );
+    });
+
+    const overlay =
+      $("#sidebarOverlay");
+
+    if (overlay) {
+      overlay.addEventListener(
+        "click",
+        closeSidebar
+      );
+    }
+  }
+
+  /* =========================================================
+     INITIALIZATION
+  ========================================================= */
+
+  function initialize() {
+
+    console.log(
+      "Aung Sales Manager Pro initialized."
+    );
+
+    setupClicks();
+    setupForms();
+    setupQuickActions();
+    setupSearch();
+    setupKeyboardShortcuts();
+    setupMobile();
+
+    updateDate();
+    updateDashboard();
+    loadDailyManager();
+
+    const initialPage =
+      pageNames[state.currentPage]
+        ? state.currentPage
+        : "dashboard";
+
+    showPage(initialPage);
+
+    setInterval(
+      updateDate,
+      60000
+    );
+  }
+
+  /* =========================================================
+     START APP
+  ========================================================= */
+
+  if (
+    document.readyState === "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      initialize
+    );
+  } else {
+    initialize();
+  }
 
 })();
-```
