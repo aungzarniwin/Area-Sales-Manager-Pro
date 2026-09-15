@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="theme-color" content="#0f172a">
   <title>Aung Sales Manager Pro</title>
 
-  <meta name="theme-color" content="#111827">
-  <meta name="description" content="Professional Sales Management System">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,319 +17,332 @@
 
 <div class="app-shell">
 
-  <!-- =========================
-       SIDEBAR
-  ========================== -->
+  <!-- ================= SIDEBAR ================= -->
   <aside class="sidebar" id="sidebar">
 
     <div class="brand">
       <div class="brand-logo">ASM</div>
-
-      <div class="brand-text">
-        <strong>Aung Sales Manager</strong>
-        <span>Professional Sales Management</span>
+      <div>
+        <div class="brand-name">Aung Sales Manager</div>
+        <div class="brand-subtitle">Professional Sales Management</div>
       </div>
     </div>
 
+    <div class="profile-card">
+      <div class="profile-avatar">AZ</div>
+      <div class="profile-info">
+        <strong>Aung Zar Ni Win</strong>
+        <span>Sales Manager</span>
+      </div>
+    </div>
 
-    <!-- MANAGEMENT -->
-    <div class="nav-section">MANAGEMENT</div>
+    <nav class="sidebar-nav">
 
-    <button class="nav-item active" data-page="dashboard">
-      <span class="nav-icon">🏠</span>
-      <span>Dashboard</span>
-    </button>
+      <div class="nav-section-title">WORKSPACE</div>
 
-    <button class="nav-item" data-page="daily-manager">
-      <span class="nav-icon">📋</span>
-      <span>Daily Manager</span>
-    </button>
+      <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">🏠</span>
+        <span>Dashboard</span>
+      </button>
 
-    <button class="nav-item" data-page="sales-target">
-      <span class="nav-icon">🎯</span>
-      <span>Sales Target</span>
-    </button>
+      <button class="nav-item" data-page="daily-manager">
+        <span class="nav-icon">📋</span>
+        <span>Daily Manager</span>
+      </button>
 
-    <button class="nav-item" data-page="team-kpi">
-      <span class="nav-icon">👥</span>
-      <span>Team KPI</span>
-    </button>
+      <button class="nav-item" data-page="sales-target">
+        <span class="nav-icon">🎯</span>
+        <span>Sales Target</span>
+      </button>
 
-    <button class="nav-item" data-page="distributor">
-      <span class="nav-icon">🏢</span>
-      <span>Distributor</span>
-    </button>
+      <button class="nav-item" data-page="team-kpi">
+        <span class="nav-icon">👥</span>
+        <span>Team KPI</span>
+      </button>
 
-    <button class="nav-item" data-page="territory">
-      <span class="nav-icon">🗺️</span>
-      <span>Territory</span>
-    </button>
+      <button class="nav-item" data-page="distributor">
+        <span class="nav-icon">🏢</span>
+        <span>Distributor</span>
+      </button>
 
-    <button class="nav-item" data-page="sales-forecast">
-      <span class="nav-icon">📈</span>
-      <span>Sales Forecast</span>
-    </button>
+      <button class="nav-item" data-page="territory">
+        <span class="nav-icon">📍</span>
+        <span>Territory</span>
+      </button>
 
+      <button class="nav-item" data-page="sales-forecast">
+        <span class="nav-icon">📈</span>
+        <span>Sales Forecast</span>
+      </button>
 
-    <!-- MANAGER CENTER -->
-    <div class="nav-section">MANAGER CENTER</div>
+      <div class="nav-section-title">MANAGEMENT</div>
 
-    <button class="nav-item" data-page="manager-tools">
-      <span class="nav-icon">🧰</span>
-      <span>Manager Tools</span>
-    </button>
+      <button class="nav-item" data-page="manager-tools">
+        <span class="nav-icon">🧰</span>
+        <span>Manager Tools</span>
+      </button>
 
-    <button class="nav-item" data-page="reports">
-      <span class="nav-icon">📊</span>
-      <span>Reports</span>
-    </button>
+      <button class="nav-item" data-page="reports">
+        <span class="nav-icon">📊</span>
+        <span>Reports</span>
+      </button>
 
-    <button class="nav-item" data-page="problem-solver">
-      <span class="nav-icon">🧩</span>
-      <span>Problem Solver</span>
-    </button>
+      <button class="nav-item" data-page="problem-solver">
+        <span class="nav-icon">🛠️</span>
+        <span>Problem Solver</span>
+      </button>
 
-    <button class="nav-item" data-page="ai-coach">
-      <span class="nav-icon">🤖</span>
-      <span>AI Sales Coach</span>
-    </button>
+      <button class="nav-item" data-page="ai-coach">
+        <span class="nav-icon">🤖</span>
+        <span>AI Sales Coach</span>
+      </button>
 
-    <button class="nav-item" data-page="academy">
-      <span class="nav-icon">🎓</span>
-      <span>Sales Academy</span>
-    </button>
+      <div class="nav-section-title">LEARNING</div>
 
+      <button class="nav-item" data-page="academy">
+        <span class="nav-icon">🎓</span>
+        <span>Sales Academy</span>
+      </button>
 
-    <!-- COMMUNICATION -->
-    <div class="nav-section">COMMUNICATION</div>
+      <div class="nav-section-title">COMMUNICATION</div>
 
-    <button class="nav-item" data-page="professional-email">
-      <span class="nav-icon">✉️</span>
-      <span>Professional Email</span>
-    </button>
+      <button class="nav-item" data-page="professional-email">
+        <span class="nav-icon">✉️</span>
+        <span>Professional Email</span>
+      </button>
 
+      <div class="nav-section-title">SYSTEM</div>
 
-    <!-- SYSTEM -->
-    <div class="nav-section">SYSTEM</div>
+      <button class="nav-item" data-page="settings">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
 
-    <button class="nav-item" data-page="settings">
-      <span class="nav-icon">⚙️</span>
-      <span>Settings</span>
-    </button>
-
+    </nav>
 
     <div class="sidebar-footer">
-      <div class="version-badge">1.0 Professional</div>
+      <div class="version">ASM v1.0 Professional</div>
+      <div class="copyright">© 2026 Aung Sales Manager</div>
     </div>
 
   </aside>
 
 
-  <!-- MOBILE OVERLAY -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-  <!-- =========================
-       MAIN
-  ========================== -->
+  <!-- ================= MAIN ================= -->
   <div class="main-shell">
 
     <!-- TOPBAR -->
     <header class="topbar">
 
       <div class="topbar-left">
-
-        <button class="mobile-menu-btn" id="mobileMenuBtn">
-          ☰
-        </button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
         <div class="breadcrumb">
-          <span>Sales Manager</span>
-          <span class="breadcrumb-separator">/</span>
+          <span>Aung Sales Manager</span>
+          <span class="breadcrumb-arrow">›</span>
           <strong id="breadcrumbCurrent">Dashboard</strong>
         </div>
-
       </div>
-
 
       <div class="topbar-right">
 
         <div class="search-box">
-          <span>🔍</span>
+          <span>🔎</span>
           <input
             type="text"
             id="globalSearch"
             placeholder="Search..."
-          >
+            autocomplete="off">
         </div>
 
-        <button class="icon-btn" id="notificationBtn" title="Notifications">
+        <button class="top-icon-btn" id="notificationBtn" title="Notifications">
           🔔
         </button>
 
-        <div class="top-profile">
-          <div class="profile-avatar">
-            AZ
-          </div>
-
-          <div class="profile-info">
+        <button class="top-profile" id="profileBtn">
+          <div class="small-avatar">AZ</div>
+          <div class="top-profile-text">
             <strong>Aung Zar Ni Win</strong>
             <span>Sales Manager</span>
           </div>
-        </div>
+        </button>
 
       </div>
 
     </header>
 
 
-    <!-- CONTENT -->
+    <!-- ================= CONTENT ================= -->
     <main class="main-content">
 
-
-      <!-- =========================
-           DASHBOARD
-      ========================== -->
+      <!-- ================================================= -->
+      <!-- DASHBOARD -->
+      <!-- ================================================= -->
       <section class="page active" id="page-dashboard">
 
         <div class="page-header">
-
           <div>
-            <h1>Sales Manager Command Center</h1>
-
-            <p>
-              Your everyday management system for Target, Team,
-              Customer, KPI, Collection and Sales Execution.
-            </p>
+            <div class="eyebrow">SALES MANAGEMENT</div>
+            <h1>Sales Manager Dashboard</h1>
+            <p>Manage your sales performance, team, distributors and territory from one place.</p>
           </div>
 
           <div class="page-header-actions">
-            <button
-              class="btn btn-primary"
-              data-page-action="daily-manager"
-            >
-              Start Today's Plan →
-            </button>
+            <button class="btn btn-secondary" data-page="daily-manager">📋 Daily Manager</button>
+            <button class="btn btn-primary" data-page="sales-target">🎯 Set Target</button>
+          </div>
+        </div>
+
+
+        <div class="welcome-banner">
+          <div>
+            <span class="banner-label">TODAY</span>
+            <h2>Good afternoon, Aung Zar Ni Win 👋</h2>
+            <p>Focus on execution, people and numbers.</p>
           </div>
 
+          <div class="banner-date" id="todayDate">--</div>
         </div>
 
 
-        <div class="date-line">
-          📅 <span id="todayDate"></span>
-        </div>
-
-
-        <!-- KPI CARDS -->
         <div class="stats-grid">
 
           <div class="stat-card">
-            <div class="stat-icon">🎯</div>
-            <div>
+            <div class="stat-icon blue">🎯</div>
+            <div class="stat-content">
               <span>Monthly Target</span>
-              <strong id="kpiTarget">500.0 L</strong>
+              <strong id="dashboardTarget">0</strong>
+              <small>MMK</small>
             </div>
           </div>
 
           <div class="stat-card">
-            <div class="stat-icon">💰</div>
-            <div>
-              <span>Actual Sales</span>
-              <strong id="kpiActual">385.0 L</strong>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">📈</div>
-            <div>
+            <div class="stat-icon green">💰</div>
+            <div class="stat-content">
               <span>Achievement</span>
-              <strong id="kpiAchievement">77%</strong>
+              <strong id="dashboardAchievement">0</strong>
+              <small>MMK</small>
             </div>
           </div>
 
           <div class="stat-card">
-            <div class="stat-icon">⚠️</div>
-            <div>
-              <span>Gap</span>
-              <strong id="kpiGap">115.0 L</strong>
+            <div class="stat-icon orange">📊</div>
+            <div class="stat-content">
+              <span>Achievement %</span>
+              <strong id="dashboardAchievementPercent">0%</strong>
+              <small>Current performance</small>
             </div>
           </div>
 
           <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div>
+            <div class="stat-icon purple">👥</div>
+            <div class="stat-content">
               <span>Team Members</span>
-              <strong id="kpiTeam">4</strong>
+              <strong id="dashboardTeamCount">0</strong>
+              <small>Sales team</small>
             </div>
           </div>
 
         </div>
 
 
-        <!-- PERFORMANCE -->
-        <div class="panel">
+        <div class="dashboard-grid">
 
-          <div class="panel-header">
+          <div class="card large-card">
 
-            <div>
-              <h2>Sales Performance</h2>
-              <p>Current month sales performance overview.</p>
+            <div class="card-header">
+              <div>
+                <h3>Sales Performance</h3>
+                <p>Current monthly performance</p>
+              </div>
+
+              <button class="text-btn" data-page="reports">View Report →</button>
             </div>
 
-            <span
-              class="status-badge"
-              id="achievementBadge"
-            >
-              77%
-            </span>
+            <div class="progress-section">
+
+              <div class="progress-top">
+                <span>Target Achievement</span>
+                <strong id="dashboardProgressText">0%</strong>
+              </div>
+
+              <div class="progress-bar">
+                <div class="progress-fill" id="dashboardProgressBar" style="width:0%"></div>
+              </div>
+
+              <div class="progress-meta">
+                <span>Achievement: <strong id="dashboardProgressAchievement">0</strong></span>
+                <span>Target: <strong id="dashboardProgressTarget">0</strong></span>
+              </div>
+
+            </div>
+
+
+            <div class="mini-metrics">
+
+              <div>
+                <span>Target Gap</span>
+                <strong id="dashboardGap">0</strong>
+              </div>
+
+              <div>
+                <span>Daily Required</span>
+                <strong id="dashboardDailyRequired">0</strong>
+              </div>
+
+              <div>
+                <span>Remaining Days</span>
+                <strong id="dashboardRemainingDays">0</strong>
+              </div>
+
+            </div>
 
           </div>
 
 
-          <div class="performance-grid">
+          <div class="card">
 
-            <div class="performance-number">
-              <span>Actual</span>
-              <strong id="performanceActual">385.0 L</strong>
+            <div class="card-header">
+              <div>
+                <h3>Quick Actions</h3>
+                <p>Common manager tasks</p>
+              </div>
             </div>
 
-            <div class="performance-number">
-              <span>Target</span>
-              <strong id="performanceTarget">500.0 L</strong>
-            </div>
+            <div class="quick-actions">
 
-            <div class="performance-number">
-              <span>Gap</span>
-              <strong id="performanceGap">115.0 L</strong>
-            </div>
+              <button data-page="sales-target">
+                <span>🎯</span>
+                <div>
+                  <strong>Sales Target</strong>
+                  <small>Update monthly target</small>
+                </div>
+              </button>
 
-            <div class="performance-number">
-              <span>Achievement</span>
-              <strong id="performancePercent">77%</strong>
-            </div>
+              <button data-page="team-kpi">
+                <span>👥</span>
+                <div>
+                  <strong>Team KPI</strong>
+                  <small>Review team performance</small>
+                </div>
+              </button>
 
-          </div>
+              <button data-page="distributor">
+                <span>🏢</span>
+                <div>
+                  <strong>Distributor</strong>
+                  <small>Manage distributor health</small>
+                </div>
+              </button>
 
+              <button data-page="problem-solver">
+                <span>🛠️</span>
+                <div>
+                  <strong>Problem Solver</strong>
+                  <small>Find root cause & action</small>
+                </div>
+              </button>
 
-          <div class="progress-wrapper">
-
-            <div class="progress-bar">
-              <div
-                class="progress-fill"
-                id="performanceProgress"
-                style="width:77%;"
-              ></div>
-            </div>
-
-            <div
-              class="progress-bar"
-              style="margin-top:-12px;"
-            >
-              <div
-                class="progress-fill"
-                id="actualBar"
-                style="width:77%;"
-              ></div>
             </div>
 
           </div>
@@ -337,99 +350,80 @@
         </div>
 
 
-        <!-- TEAM -->
-        <div class="panel">
+        <div class="dashboard-grid bottom-grid">
 
-          <div class="panel-header">
+          <div class="card">
 
-            <div>
-              <h2>Team Management</h2>
-              <p>
-                Monitor team execution and KPI performance.
-              </p>
+            <div class="card-header">
+              <div>
+                <h3>Today's Priorities</h3>
+                <p>Manager execution checklist</p>
+              </div>
+
+              <button class="text-btn" data-page="daily-manager">Open →</button>
             </div>
 
-            <button
-              class="btn btn-primary"
-              data-page-action="team-kpi"
-            >
-              Open Team KPI
-            </button>
+            <div class="priority-list">
 
-          </div>
+              <div class="priority-item">
+                <span class="priority-dot"></span>
+                <div>
+                  <strong>Review yesterday's sales</strong>
+                  <small>Check achievement and gaps</small>
+                </div>
+              </div>
 
-          <div class="module-empty">
-            <div class="empty-icon">👥</div>
+              <div class="priority-item">
+                <span class="priority-dot"></span>
+                <div>
+                  <strong>Review team performance</strong>
+                  <small>Identify under-performers</small>
+                </div>
+              </div>
 
-            <h3>Team KPI Center</h3>
+              <div class="priority-item">
+                <span class="priority-dot"></span>
+                <div>
+                  <strong>Check distributor stock</strong>
+                  <small>Prevent stock-out situation</small>
+                </div>
+              </div>
 
-            <p>
-              Track individual performance, target achievement,
-              productivity and coaching actions.
-            </p>
-          </div>
+              <div class="priority-item">
+                <span class="priority-dot"></span>
+                <div>
+                  <strong>Set field priorities</strong>
+                  <small>Focus on high-value opportunities</small>
+                </div>
+              </div>
 
-        </div>
-
-
-        <!-- QUICK ACTIONS -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>Quick Actions</h2>
-              <p>Common manager activities.</p>
             </div>
 
           </div>
 
 
-          <div class="quick-actions">
+          <div class="card">
 
-            <button
-              class="quick-action"
-              data-page-action="daily-manager"
-            >
-              <span>📋</span>
-              <strong>Daily Manager</strong>
-              <small>Plan today's execution</small>
-            </button>
+            <div class="card-header">
+              <div>
+                <h3>Manager Focus</h3>
+                <p>Professional sales leadership</p>
+              </div>
+            </div>
 
-            <button
-              class="quick-action"
-              data-page-action="sales-target"
-            >
-              <span>🎯</span>
-              <strong>Sales Target</strong>
-              <small>Manage target & gap</small>
-            </button>
+            <div class="focus-box">
+              <div class="focus-icon">💡</div>
+              <div>
+                <strong>People + Numbers + Execution</strong>
+                <p>
+                  A strong Sales Manager converts business targets
+                  into clear field actions and follows up consistently.
+                </p>
+              </div>
+            </div>
 
-            <button
-              class="quick-action"
-              data-page-action="team-kpi"
-            >
-              <span>👥</span>
-              <strong>Team KPI</strong>
-              <small>Manage team performance</small>
-            </button>
-
-            <button
-              class="quick-action"
-              data-page-action="reports"
-            >
-              <span>📊</span>
-              <strong>Reports</strong>
-              <small>Review business reports</small>
-            </button>
-
-            <button
-              class="quick-action"
-              data-page-action="professional-email"
-            >
-              <span>✉️</span>
-              <strong>Professional Email</strong>
-              <small>Create business emails</small>
+            <button class="full-btn" data-page="ai-coach">
+              🤖 Ask AI Sales Coach
             </button>
 
           </div>
@@ -439,1355 +433,1423 @@
       </section>
 
 
-
-      <!-- =========================
-           DAILY MANAGER
-      ========================== -->
+      <!-- ================================================= -->
+      <!-- DAILY MANAGER -->
+      <!-- ================================================= -->
       <section class="page" id="page-daily-manager">
 
         <div class="page-header">
-
           <div>
+            <div class="eyebrow">DAILY EXECUTION</div>
             <h1>Daily Manager</h1>
-
-            <p>
-              Manage your daily sales execution, team follow-up,
-              customers, distributors and collections.
-            </p>
+            <p>Your daily sales management command center.</p>
           </div>
 
-          <button
-            class="btn"
-            id="resetDailyBtn"
-          >
-            Reset Today
-          </button>
-
+          <div class="date-badge" id="dailyManagerDate">Today</div>
         </div>
 
 
-        <div class="panel">
+        <div class="daily-grid">
 
-          <div class="panel-header">
-            <div>
-              <h2>Today's Manager Progress</h2>
-              <p id="dailyCompletionText">
-                0% completed
-              </p>
-            </div>
-          </div>
+          <div class="card">
 
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="dailyProgress"
-              style="width:0%;"
-            ></div>
-          </div>
-
-        </div>
-
-
-        <!-- MORNING PLAN -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>🌅 Morning Manager Plan</h2>
-              <p>Define the most important priorities for today.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Today's Priority</label>
-              <input
-                type="text"
-                id="morningPriority"
-                placeholder="Example: Close target gap"
-              >
+            <div class="card-header">
+              <div>
+                <h3>Daily Manager Checklist</h3>
+                <p>Complete the critical activities every day.</p>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label>Sales Focus</label>
-              <input
-                type="text"
-                id="morningSales"
-                placeholder="Example: Focus on top customers"
-              >
+            <div class="checklist" id="dailyChecklist">
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="yesterday">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Review yesterday's sales</strong>
+                  <small>Achievement, gap and major issues</small>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="target">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Check today's sales target</strong>
+                  <small>Translate monthly target into daily action</small>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="team">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Review team performance</strong>
+                  <small>Coaching and follow-up priorities</small>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="stock">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Check distributor stock</strong>
+                  <small>Availability and stock risk</small>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="market">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Review market issues</strong>
+                  <small>Competitor, pricing and customer issues</small>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" data-daily-check="priority">
+                <span class="check-box"></span>
+                <div>
+                  <strong>Set field priorities</strong>
+                  <small>People, customers and territories to focus on</small>
+                </div>
+              </label>
+
             </div>
 
-            <div class="form-group">
-              <label>Customer Focus</label>
-              <input
-                type="text"
-                id="morningCustomers"
-                placeholder="Example: Visit 5 key customers"
-              >
-            </div>
-
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="morning"
-          >
-            Save Morning Plan
-          </button>
-
-        </div>
-
-
-        <!-- CUSTOMER -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>🏪 Customer Visit Plan</h2>
-              <p>Record today's important customer activity.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Customer Name</label>
-              <input
-                type="text"
-                id="customerName"
-                placeholder="Customer / Outlet"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Visit Objective</label>
-              <input
-                type="text"
-                id="customerObjective"
-                placeholder="Objective"
-              >
+            <div class="checklist-footer">
+              <span>Daily Completion</span>
+              <strong id="dailyCompletion">0%</strong>
             </div>
 
           </div>
 
-          <div class="form-group">
-            <label>Notes</label>
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Manager Notes</h3>
+                <p>Capture today's key observations.</p>
+              </div>
+            </div>
+
             <textarea
-              id="customerNotes"
-              placeholder="Customer situation / opportunity / issue..."
-            ></textarea>
-          </div>
+              id="dailyManagerNotes"
+              class="textarea"
+              rows="12"
+              placeholder="Write your observations, market issues, team issues, customer issues and action points..."></textarea>
 
-          <button
-            class="btn btn-primary"
-            data-save-section="customer"
-          >
-            Save Customer Plan
-          </button>
-
-        </div>
-
-
-        <!-- TEAM -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>👥 Team Follow-up</h2>
-              <p>Follow up on salespeople and execution.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Team Member</label>
-              <input
-                type="text"
-                id="teamMember"
-                placeholder="Sales Representative"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Follow-up Type</label>
-              <select id="teamFollowType">
-                <option value="">Select</option>
-                <option>Target</option>
-                <option>Customer Visit</option>
-                <option>Collection</option>
-                <option>Coaching</option>
-                <option>Performance</option>
-              </select>
-            </div>
+            <button class="btn btn-primary full-btn" id="saveDailyNotes">
+              💾 Save Notes
+            </button>
 
           </div>
-
-          <div class="form-group">
-            <label>Notes</label>
-            <textarea
-              id="teamNotes"
-              placeholder="Follow-up notes..."
-            ></textarea>
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="team"
-          >
-            Save Team Follow-up
-          </button>
-
-        </div>
-
-
-        <!-- DISTRIBUTOR -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>🏢 Distributor Issue</h2>
-              <p>Record distributor issues and actions.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Distributor</label>
-              <input
-                type="text"
-                id="distributorName"
-                placeholder="Distributor name"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Issue Type</label>
-              <input
-                type="text"
-                id="distributorIssue"
-                placeholder="Stock / Credit / Delivery / Target..."
-              >
-            </div>
-
-          </div>
-
-          <div class="form-group">
-            <label>Notes</label>
-            <textarea
-              id="distributorNotes"
-              placeholder="Issue details and action..."
-            ></textarea>
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="distributor"
-          >
-            Save Distributor Issue
-          </button>
-
-        </div>
-
-
-        <!-- COLLECTION -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>💵 Collection Issue</h2>
-              <p>Track payment and collection follow-up.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Customer</label>
-              <input
-                type="text"
-                id="collectionCustomer"
-                placeholder="Customer"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Outstanding Amount</label>
-              <input
-                type="text"
-                id="collectionAmount"
-                placeholder="Amount"
-              >
-            </div>
-
-          </div>
-
-          <div class="form-group">
-            <label>Collection Notes</label>
-            <textarea
-              id="collectionNotes"
-              placeholder="Collection status / commitment..."
-            ></textarea>
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="collection"
-          >
-            Save Collection
-          </button>
-
-        </div>
-
-
-        <!-- COMPETITOR -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>⚔️ Competitor Activity</h2>
-              <p>Capture market and competitor information.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Competitor</label>
-              <input
-                type="text"
-                id="competitorName"
-                placeholder="Competitor"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Activity Type</label>
-              <input
-                type="text"
-                id="competitorType"
-                placeholder="Price / Promotion / Display / New Product..."
-              >
-            </div>
-
-          </div>
-
-          <div class="form-group">
-            <label>Notes</label>
-            <textarea
-              id="competitorNotes"
-              placeholder="Market observation..."
-            ></textarea>
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="competitor"
-          >
-            Save Competitor Activity
-          </button>
-
-        </div>
-
-
-        <!-- EOD -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>🌙 End-of-Day Review</h2>
-              <p>Review today's execution and results.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Today's Sales</label>
-              <input
-                type="text"
-                id="eodSales"
-                placeholder="Sales result"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Achievement</label>
-              <input
-                type="text"
-                id="eodAchievement"
-                placeholder="Achievement %"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Customer Visits</label>
-              <input
-                type="text"
-                id="eodVisits"
-                placeholder="Number of visits"
-              >
-            </div>
-
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Today's Win</label>
-              <textarea
-                id="eodWin"
-                placeholder="What went well?"
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Improvement</label>
-              <textarea
-                id="eodImprove"
-                placeholder="What needs improvement?"
-              ></textarea>
-            </div>
-
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="eod"
-          >
-            Save EOD Review
-          </button>
-
-        </div>
-
-
-        <!-- ACTION PLAN -->
-        <div class="panel">
-
-          <div class="panel-header">
-            <div>
-              <h2>📝 Manager Action Plan</h2>
-              <p>Convert issues into clear actions.</p>
-            </div>
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Action</label>
-              <textarea
-                id="actionPlan"
-                placeholder="What needs to be done?"
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Owner</label>
-              <input
-                type="text"
-                id="actionOwner"
-                placeholder="Person responsible"
-              >
-            </div>
-
-            <div class="form-group">
-              <label>Priority</label>
-              <select id="actionPriority">
-                <option value="">Select</option>
-                <option>High</option>
-                <option>Medium</option>
-                <option>Low</option>
-              </select>
-            </div>
-
-          </div>
-
-          <button
-            class="btn btn-primary"
-            data-save-section="action"
-          >
-            Save Action Plan
-          </button>
 
         </div>
 
       </section>
 
 
-
-      <!-- =========================
-           PROFESSIONAL EMAIL
-      ========================== -->
-      <section class="page" id="page-professional-email">
-
-        <div class="page-header">
-
-          <div>
-            <h1>✉️ Professional Email Writer</h1>
-
-            <p>
-              Turn short Myanmar notes into complete, detailed
-              and professional business emails.
-            </p>
-          </div>
-
-        </div>
-
-
-        <!-- INTRO -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>✉️ Short Write → Professional Email</h2>
-
-              <p>
-                Short Write ≠ Short Email
-              </p>
-            </div>
-
-          </div>
-
-
-          <div
-            class="module-empty"
-            style="text-align:left;"
-          >
-
-            <strong>
-              မြန်မာလို အတိုချုံးပဲ ရေးပါ။
-            </strong>
-
-            <p style="margin-top:8px;">
-              သင်ရေးထားတဲ့ အဓိပ္ပါယ်ကို မပြောင်းဘဲ
-              Background → Current Situation → Key Details →
-              Business Impact → Action Taken → Next Action →
-              Request / Recommendation → Professional Closing
-              အထိ ပြည့်စုံတဲ့ Business Email အဖြစ် ပြန်ရေးပေးပါမယ်။
-            </p>
-
-            <p style="margin-top:8px;">
-              ဥပမာ —
-              “ဒီလ sales target မပြည့်သေးဘူး။ လက်ရှိ 77% ရောက်နေတယ်။
-              5 ရက်ကျန်တယ်။ Team ကို customer visit တိုးခိုင်းထားတယ်။
-              Target ပြည့်အောင် ကြိုးစားနေတယ်။”
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <!-- EMAIL SETTINGS -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>1. Email Settings</h2>
-              <p>Choose the business communication format.</p>
-            </div>
-
-          </div>
-
-
-          <div class="form-row">
-
-            <div class="form-group">
-              <label>Your Name</label>
-
-              <input
-                type="text"
-                id="professionalEmailSender"
-                value="Aung Zar Ni Win"
-                placeholder="Your name"
-              >
-            </div>
-
-
-            <div class="form-group">
-              <label>Recipient</label>
-
-              <input
-                type="text"
-                id="professionalEmailRecipient"
-                value="Sir/Madam"
-                placeholder="Manager / Customer / Distributor"
-              >
-            </div>
-
-
-            <div class="form-group">
-              <label>Company / Organization</label>
-
-              <input
-                type="text"
-                id="professionalEmailCompany"
-                placeholder="Company name"
-              >
-            </div>
-
-          </div>
-
-
-          <div class="form-row">
-
-            <div class="form-group">
-
-              <label>Email Type</label>
-
-              <select id="professionalEmailType">
-
-                <option value="sales_report">
-                  📊 Sales Report
-                </option>
-
-                <option value="target_gap">
-                  🎯 Target Achievement / Gap
-                </option>
-
-                <option value="promotion">
-                  🎁 Promotion / Trade Promotion
-                </option>
-
-                <option value="price_discount">
-                  💰 Price / Discount Proposal
-                </option>
-
-                <option value="order">
-                  🧾 Order / Order Confirmation
-                </option>
-
-                <option value="stock">
-                  📦 Stock / Availability
-                </option>
-
-                <option value="distributor">
-                  🏢 Distributor Communication
-                </option>
-
-                <option value="collection">
-                  💵 Payment / Collection
-                </option>
-
-                <option value="customer">
-                  🤝 Customer Communication
-                </option>
-
-                <option value="new_customer">
-                  🏪 New Customer / New Outlet
-                </option>
-
-                <option value="followup">
-                  🔄 Customer / Distributor Follow-up
-                </option>
-
-                <option value="request">
-                  🙏 Request
-                </option>
-
-                <option value="approval">
-                  ✅ Approval Request
-                </option>
-
-                <option value="situation">
-                  ⚠️ Situation / Issue
-                </option>
-
-                <option value="escalation">
-                  🚨 Escalation
-                </option>
-
-                <option value="feedback">
-                  💬 Feedback
-                </option>
-
-                <option value="meeting">
-                  📅 Meeting Request
-                </option>
-
-                <option value="action_plan">
-                  📝 Action Plan
-                </option>
-
-                <option value="recommendation">
-                  📌 Recommendation
-                </option>
-
-                <option value="reminder">
-                  🔔 Reminder
-                </option>
-
-                <option value="urgent">
-                  ⏰ Urgent Action
-                </option>
-
-                <option value="team">
-                  👥 Team Communication
-                </option>
-
-                <option value="team_target">
-                  🎯 Team Target
-                </option>
-
-                <option value="recognition">
-                  🏆 Performance Recognition
-                </option>
-
-                <option value="coaching">
-                  📚 Coaching / Training
-                </option>
-
-                <option value="performance_improvement">
-                  ⚠️ Performance Improvement
-                </option>
-
-                <option value="announcement">
-                  📢 Announcement
-                </option>
-
-                <option value="partnership">
-                  🤝 Partnership / Business Proposal
-                </option>
-
-                <option value="general">
-                  📄 General Business Email
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>Tone</label>
-
-              <select id="professionalEmailTone">
-
-                <option value="professional">
-                  Professional
-                </option>
-
-                <option value="formal">
-                  Formal
-                </option>
-
-                <option value="polite">
-                  Polite
-                </option>
-
-                <option value="firm">
-                  Firm
-                </option>
-
-                <option value="executive">
-                  Executive
-                </option>
-
-                <option value="friendly">
-                  Friendly
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>Detail Level</label>
-
-              <select id="professionalEmailDetail">
-
-                <option value="standard">
-                  Standard
-                </option>
-
-                <option value="detailed" selected>
-                  Detailed
-                </option>
-
-                <option value="executive">
-                  Executive
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label>Language</label>
-
-              <select id="professionalEmailLanguage">
-
-                <option value="english">
-                  English
-                </option>
-
-                <option value="myanmar" selected>
-                  Myanmar
-                </option>
-
-                <option value="bilingual">
-                  Myanmar + English
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- INPUT -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>2. Short Write</h2>
-
-              <p>
-                Write the situation in short Myanmar notes.
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Your Situation / Notes
-            </label>
-
-            <textarea
-              id="professionalEmailInput"
-              rows="10"
-              placeholder="ဥပမာ - ဒီလ sales target မပြည့်သေးဘူး။ လက်ရှိ 77% ရောက်နေတယ်။ 5 ရက်ကျန်တယ်။ Team ကို customer visit တိုးခိုင်းထားတယ်။ Target ပြည့်အောင် ကြိုးစားနေတယ်။"
-            ></textarea>
-
-          </div>
-
-
-          <!-- QUICK EXAMPLES -->
-          <div class="quick-example-section">
-
-            <label>
-              Quick Examples
-            </label>
-
-            <div
-              class="quick-actions"
-              style="margin-top:10px;"
-            >
-
-              <button
-                class="quick-action"
-                type="button"
-                data-email-example="target"
-              >
-                <span>🎯</span>
-                <strong>Target Gap</strong>
-                <small>Sales target update</small>
-              </button>
-
-
-              <button
-                class="quick-action"
-                type="button"
-                data-email-example="promotion"
-              >
-                <span>🎁</span>
-                <strong>Promotion</strong>
-                <small>Promotion approval</small>
-              </button>
-
-
-              <button
-                class="quick-action"
-                type="button"
-                data-email-example="collection"
-              >
-                <span>💵</span>
-                <strong>Collection</strong>
-                <small>Payment follow-up</small>
-              </button>
-
-
-              <button
-                class="quick-action"
-                type="button"
-                data-email-example="distributor"
-              >
-                <span>🏢</span>
-                <strong>Distributor</strong>
-                <small>Distributor issue</small>
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div
-            class="form-actions"
-            style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;"
-          >
-
-            <button
-              class="btn btn-primary"
-              id="professionalEmailWriteBtn"
-              type="button"
-            >
-              ✍️ Write Professional Email
-            </button>
-
-
-            <button
-              class="btn"
-              id="professionalEmailRewriteBtn"
-              type="button"
-            >
-              🔄 Rewrite
-            </button>
-
-
-            <button
-              class="btn"
-              id="professionalEmailClearBtn"
-              type="button"
-            >
-              🗑️ Clear
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- OUTPUT -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>3. Professional Email</h2>
-
-              <p>
-                Your complete business email will appear here.
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Subject
-            </label>
-
-            <input
-              type="text"
-              id="professionalEmailSubject"
-              placeholder="Email subject"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Email Content
-            </label>
-
-            <textarea
-              id="professionalEmailOutput"
-              rows="22"
-              placeholder="Your professional email will appear here..."
-            ></textarea>
-
-          </div>
-
-
-          <div
-            id="professionalEmailActions"
-            class="form-actions"
-            style="display:flex;gap:10px;flex-wrap:wrap;"
-          >
-
-            <button
-              class="btn btn-primary"
-              id="professionalEmailCopyBtn"
-              type="button"
-            >
-              📋 Copy Email
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- EMAIL STRUCTURE -->
-        <div class="panel">
-
-          <div class="panel-header">
-
-            <div>
-              <h2>📐 Professional Email Structure</h2>
-
-              <p>
-                The tool expands your short notes into a business-ready structure.
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="quick-actions">
-
-            <div class="quick-action">
-              <span>1️⃣</span>
-              <strong>Background</strong>
-              <small>Why the email is being sent</small>
-            </div>
-
-            <div class="quick-action">
-              <span>2️⃣</span>
-              <strong>Situation</strong>
-              <small>Current business situation</small>
-            </div>
-
-            <div class="quick-action">
-              <span>3️⃣</span>
-              <strong>Key Details</strong>
-              <small>Numbers, dates and facts</small>
-            </div>
-
-            <div class="quick-action">
-              <span>4️⃣</span>
-              <strong>Business Impact</strong>
-              <small>What it means for the business</small>
-            </div>
-
-            <div class="quick-action">
-              <span>5️⃣</span>
-              <strong>Action Taken</strong>
-              <small>What has already been done</small>
-            </div>
-
-            <div class="quick-action">
-              <span>6️⃣</span>
-              <strong>Next Action</strong>
-              <small>What will happen next</small>
-            </div>
-
-            <div class="quick-action">
-              <span>7️⃣</span>
-              <strong>Request</strong>
-              <small>Approval / support / decision</small>
-            </div>
-
-            <div class="quick-action">
-              <span>8️⃣</span>
-              <strong>Closing</strong>
-              <small>Professional closing</small>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <button
-          class="btn"
-          data-page-action="dashboard"
-        >
-          ← Back to Dashboard
-        </button>
-
-      </section>
-
-
-
-      <!-- =========================
-           PLACEHOLDER PAGES
-      ========================== -->
-
+      <!-- ================================================= -->
+      <!-- SALES TARGET -->
+      <!-- ================================================= -->
       <section class="page" id="page-sales-target">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">PERFORMANCE MANAGEMENT</div>
             <h1>Sales Target</h1>
-            <p>Manage monthly, territory and salesperson targets.</p>
+            <p>Set monthly targets and measure achievement.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🎯</div>
-          <h3>Sales Target Center</h3>
-          <p>
-            Target planning, gap analysis and execution tools.
-          </p>
+
+        <div class="form-card card">
+
+          <div class="card-header">
+            <div>
+              <h3>Monthly Sales Target</h3>
+              <p>Enter your current month's sales numbers.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Monthly Target (MMK)</label>
+              <input
+                type="number"
+                id="salesTargetInput"
+                placeholder="Example: 500000000">
+            </div>
+
+            <div class="form-group">
+              <label>Achievement (MMK)</label>
+              <input
+                type="number"
+                id="salesAchievementInput"
+                placeholder="Example: 250000000">
+            </div>
+
+            <div class="form-group">
+              <label>Remaining Days</label>
+              <input
+                type="number"
+                id="salesRemainingDaysInput"
+                placeholder="Example: 15">
+            </div>
+
+            <div class="form-group form-action">
+              <button class="btn btn-primary" id="calculateSalesTarget">
+                Calculate Performance
+              </button>
+            </div>
+
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="stats-grid">
+
+          <div class="metric-card">
+            <span>Target Gap</span>
+            <strong id="targetGapResult">0</strong>
+            <small>MMK</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Achievement</span>
+            <strong id="targetAchievementPercent">0%</strong>
+            <small>of target</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Daily Required</span>
+            <strong id="dailyRequiredResult">0</strong>
+            <small>MMK / day</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Status</span>
+            <strong id="targetStatusResult">Not Set</strong>
+            <small>Performance status</small>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Target Progress</h3>
+              <p>Visual achievement tracking</p>
+            </div>
+          </div>
+
+          <div class="big-progress">
+
+            <div class="big-progress-top">
+              <strong id="bigTargetPercent">0%</strong>
+              <span>Achievement</span>
+            </div>
+
+            <div class="progress-bar large">
+              <div class="progress-fill" id="bigTargetBar" style="width:0%"></div>
+            </div>
+
+            <div class="progress-meta">
+              <span>Achievement <strong id="targetAchievementDisplay">0</strong></span>
+              <span>Target <strong id="targetDisplay">0</strong></span>
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- TEAM KPI -->
+      <!-- ================================================= -->
       <section class="page" id="page-team-kpi">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">TEAM PERFORMANCE</div>
             <h1>Team KPI</h1>
-            <p>Track individual and team sales performance.</p>
+            <p>Track individual sales representative performance.</p>
           </div>
+
+          <button class="btn btn-primary" id="addTeamMemberBtn">
+            + Add Sales Rep
+          </button>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">👥</div>
-          <h3>Team KPI Center</h3>
-          <p>
-            Monitor target, achievement, productivity and coaching.
-          </p>
+
+        <div class="stats-grid">
+
+          <div class="metric-card">
+            <span>Total Team</span>
+            <strong id="teamTotalCount">0</strong>
+            <small>Sales Representatives</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Top Performer</span>
+            <strong id="teamTopPerformer">-</strong>
+            <small>Highest achievement</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Average Achievement</span>
+            <strong id="teamAverageAchievement">0%</strong>
+            <small>Team average</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Under Performer</span>
+            <strong id="teamUnderPerformer">-</strong>
+            <small>Needs coaching</small>
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Sales Team Performance</h3>
+              <p>Individual KPI tracking</p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>Sales Rep</th>
+                  <th>Target</th>
+                  <th>Achievement</th>
+                  <th>Achievement %</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="teamKpiTableBody">
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    No sales team data yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- DISTRIBUTOR -->
+      <!-- ================================================= -->
       <section class="page" id="page-distributor">
 
         <div class="page-header">
           <div>
-            <h1>Distributor</h1>
-            <p>Manage distributor performance and issues.</p>
+            <div class="eyebrow">CHANNEL MANAGEMENT</div>
+            <h1>Distributor Management</h1>
+            <p>Monitor stock, sales, outstanding and distributor health.</p>
           </div>
+
+          <button class="btn btn-primary" id="addDistributorBtn">
+            + Add Distributor
+          </button>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🏢</div>
-          <h3>Distributor Management</h3>
-          <p>
-            Distributor target, stock, credit and execution management.
-          </p>
+
+        <div class="stats-grid">
+
+          <div class="metric-card">
+            <span>Total Distributors</span>
+            <strong id="distributorTotal">0</strong>
+            <small>Active accounts</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Total Stock</span>
+            <strong id="distributorStock">0</strong>
+            <small>Units</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Total Outstanding</span>
+            <strong id="distributorOutstanding">0</strong>
+            <small>MMK</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Risk Accounts</span>
+            <strong id="distributorRisk">0</strong>
+            <small>Need attention</small>
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Distributor Portfolio</h3>
+              <p>Distributor health and commercial position.</p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>Distributor</th>
+                  <th>Opening Stock</th>
+                  <th>Sales</th>
+                  <th>Closing Stock</th>
+                  <th>Outstanding</th>
+                  <th>Credit Limit</th>
+                  <th>Health</th>
+                </tr>
+              </thead>
+
+              <tbody id="distributorTableBody">
+                <tr>
+                  <td colspan="7" class="empty-state">
+                    No distributor data yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- TERRITORY -->
+      <!-- ================================================= -->
       <section class="page" id="page-territory">
 
         <div class="page-header">
           <div>
-            <h1>Territory</h1>
-            <p>Manage territory coverage and market execution.</p>
+            <div class="eyebrow">TERRITORY MANAGEMENT</div>
+            <h1>Territory Management</h1>
+            <p>Manage market coverage, outlets and territory performance.</p>
           </div>
+
+          <button class="btn btn-primary" id="addTerritoryBtn">
+            + Add Territory
+          </button>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🗺️</div>
-          <h3>Territory Management</h3>
-          <p>
-            Territory planning, outlet coverage and market opportunities.
-          </p>
+
+        <div class="stats-grid">
+
+          <div class="metric-card">
+            <span>Total Territories</span>
+            <strong id="territoryTotal">0</strong>
+            <small>Markets</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Total Outlets</span>
+            <strong id="territoryOutlets">0</strong>
+            <small>Outlet universe</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Active Outlets</span>
+            <strong id="territoryActiveOutlets">0</strong>
+            <small>Currently active</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Coverage</span>
+            <strong id="territoryCoverage">0%</strong>
+            <small>Active / total</small>
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Territory Performance</h3>
+              <p>Market coverage and sales results.</p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="data-table">
+
+              <thead>
+                <tr>
+                  <th>Territory</th>
+                  <th>Outlets</th>
+                  <th>Active</th>
+                  <th>Sales</th>
+                  <th>Target</th>
+                  <th>Coverage %</th>
+                  <th>Growth %</th>
+                </tr>
+              </thead>
+
+              <tbody id="territoryTableBody">
+                <tr>
+                  <td colspan="7" class="empty-state">
+                    No territory data yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- SALES FORECAST -->
+      <!-- ================================================= -->
       <section class="page" id="page-sales-forecast">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">BUSINESS FORECASTING</div>
             <h1>Sales Forecast</h1>
-            <p>Forecast sales and identify potential target gaps.</p>
+            <p>Estimate month-end performance based on current run rate.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">📈</div>
-          <h3>Sales Forecast Center</h3>
-          <p>
-            Forecasting and business performance planning.
-          </p>
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Forecast Calculator</h3>
+              <p>Use current performance to estimate month-end result.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Monthly Target</label>
+              <input type="number" id="forecastTarget" placeholder="MMK">
+            </div>
+
+            <div class="form-group">
+              <label>Current Achievement</label>
+              <input type="number" id="forecastAchievement" placeholder="MMK">
+            </div>
+
+            <div class="form-group">
+              <label>Days Passed</label>
+              <input type="number" id="forecastDaysPassed" placeholder="Example: 15">
+            </div>
+
+            <div class="form-group">
+              <label>Total Days</label>
+              <input type="number" id="forecastTotalDays" placeholder="Example: 30">
+            </div>
+
+            <div class="form-group form-action">
+              <button class="btn btn-primary" id="calculateForecast">
+                Calculate Forecast
+              </button>
+            </div>
+
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="stats-grid">
+
+          <div class="metric-card">
+            <span>Daily Run Rate</span>
+            <strong id="forecastRunRate">0</strong>
+            <small>MMK / day</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Forecast</span>
+            <strong id="forecastResult">0</strong>
+            <small>Month-end MMK</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Forecast Gap</span>
+            <strong id="forecastGap">0</strong>
+            <small>MMK</small>
+          </div>
+
+          <div class="metric-card">
+            <span>Expected Achievement</span>
+            <strong id="forecastPercent">0%</strong>
+            <small>of target</small>
+          </div>
+
+        </div>
+
+
+        <div class="card forecast-insight" id="forecastInsight">
+          <div class="focus-icon">📈</div>
+          <div>
+            <h3>Forecast Insight</h3>
+            <p>Enter your current numbers to generate a management insight.</p>
+          </div>
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- MANAGER TOOLS -->
+      <!-- ================================================= -->
       <section class="page" id="page-manager-tools">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">MANAGEMENT TOOLKIT</div>
             <h1>Manager Tools</h1>
             <p>Practical tools for daily sales management.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🧰</div>
-          <h3>Manager Tools</h3>
-          <p>
-            Sales, team, customer and execution management tools.
-          </p>
+
+        <div class="tool-grid">
+
+          <button class="tool-card" data-tool="target">
+            <span class="tool-icon">🎯</span>
+            <strong>Target Planner</strong>
+            <small>Break monthly target into daily and weekly targets.</small>
+          </button>
+
+          <button class="tool-card" data-tool="coaching">
+            <span class="tool-icon">👥</span>
+            <strong>Coaching Planner</strong>
+            <small>Create structured coaching actions for sales reps.</small>
+          </button>
+
+          <button class="tool-card" data-tool="field">
+            <span class="tool-icon">🚗</span>
+            <strong>Field Visit Planner</strong>
+            <small>Prioritize customers, outlets and distributors.</small>
+          </button>
+
+          <button class="tool-card" data-tool="meeting">
+            <span class="tool-icon">🗓️</span>
+            <strong>Meeting Planner</strong>
+            <small>Prepare agenda, decisions and action items.</small>
+          </button>
+
+          <button class="tool-card" data-tool="review">
+            <span class="tool-icon">📋</span>
+            <strong>Performance Review</strong>
+            <small>Prepare monthly performance review discussions.</small>
+          </button>
+
+          <button class="tool-card" data-tool="action">
+            <span class="tool-icon">⚡</span>
+            <strong>Action Plan</strong>
+            <small>Convert problems into owners and deadlines.</small>
+          </button>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card tool-output-card">
+
+          <div class="card-header">
+            <div>
+              <h3 id="managerToolTitle">Manager Tool Output</h3>
+              <p id="managerToolSubtitle">Select a tool above.</p>
+            </div>
+          </div>
+
+          <div id="managerToolOutput" class="tool-output">
+            <div class="empty-state">
+              Select a management tool to begin.
+            </div>
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- REPORTS -->
+      <!-- ================================================= -->
       <section class="page" id="page-reports">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">BUSINESS REPORTING</div>
             <h1>Reports</h1>
-            <p>Review sales and management reports.</p>
+            <p>Review your sales business from multiple management views.</p>
           </div>
+
+          <button class="btn btn-secondary" id="exportReportBtn">
+            📥 Export Report
+          </button>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">📊</div>
-          <h3>Reports Center</h3>
-          <p>
-            Business reports and management insights.
-          </p>
+
+        <div class="report-tabs">
+
+          <button class="report-tab active" data-report="daily">Daily Sales</button>
+          <button class="report-tab" data-report="weekly">Weekly</button>
+          <button class="report-tab" data-report="monthly">Monthly</button>
+          <button class="report-tab" data-report="team">Team Performance</button>
+          <button class="report-tab" data-report="distributor">Distributor</button>
+          <button class="report-tab" data-report="territory">Territory</button>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3 id="reportTitle">Daily Sales Report</h3>
+              <p id="reportDescription">Daily sales management summary.</p>
+            </div>
+
+            <span class="report-date" id="reportDate">Today</span>
+          </div>
+
+          <div id="reportContent" class="report-content">
+
+            <div class="report-summary-grid">
+
+              <div>
+                <span>Total Sales</span>
+                <strong id="reportTotalSales">0</strong>
+              </div>
+
+              <div>
+                <span>Target</span>
+                <strong id="reportTarget">0</strong>
+              </div>
+
+              <div>
+                <span>Achievement</span>
+                <strong id="reportAchievement">0%</strong>
+              </div>
+
+              <div>
+                <span>Gap</span>
+                <strong id="reportGap">0</strong>
+              </div>
+
+            </div>
+
+            <div class="report-placeholder">
+              📊 Report data will appear here as you enter your business numbers.
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- PROBLEM SOLVER -->
+      <!-- ================================================= -->
       <section class="page" id="page-problem-solver">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">ROOT CAUSE MANAGEMENT</div>
             <h1>Problem Solver</h1>
-            <p>Identify problems and convert them into actions.</p>
+            <p>Identify root causes and convert problems into action plans.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🧩</div>
-          <h3>Sales Problem Solver</h3>
-          <p>
-            Diagnose sales, people, customer and distributor issues.
-          </p>
+
+        <div class="problem-types">
+
+          <button class="problem-type active" data-problem="target-gap">
+            🎯 Target Gap
+          </button>
+
+          <button class="problem-type" data-problem="low-sales">
+            📉 Low Sales
+          </button>
+
+          <button class="problem-type" data-problem="distributor">
+            🏢 Distributor Problem
+          </button>
+
+          <button class="problem-type" data-problem="stock">
+            📦 Stock Problem
+          </button>
+
+          <button class="problem-type" data-problem="team">
+            👥 Team Performance
+          </button>
+
+          <button class="problem-type" data-problem="collection">
+            💳 Collection Problem
+          </button>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="problem-grid">
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Problem Diagnosis</h3>
+                <p>Describe the current situation.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Problem</label>
+              <textarea
+                id="problemInput"
+                class="textarea"
+                rows="6"
+                placeholder="Example: Sales achievement is below target because several key distributors are reducing orders..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Important Data / Evidence</label>
+              <textarea
+                id="problemEvidence"
+                class="textarea"
+                rows="5"
+                placeholder="Enter sales numbers, customer feedback, stock situation, team performance, competitor activity, etc."></textarea>
+            </div>
+
+            <button class="btn btn-primary full-btn" id="solveProblemBtn">
+              🧠 Analyze Problem
+            </button>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Action Plan</h3>
+                <p>Root cause → action → owner → follow-up.</p>
+              </div>
+            </div>
+
+            <div id="problemSolutionOutput" class="solution-output">
+
+              <div class="solution-step">
+                <span>1</span>
+                <div>
+                  <strong>Root Cause</strong>
+                  <p id="rootCauseResult">Waiting for problem analysis...</p>
+                </div>
+              </div>
+
+              <div class="solution-step">
+                <span>2</span>
+                <div>
+                  <strong>Immediate Action</strong>
+                  <p id="immediateActionResult">Waiting for problem analysis...</p>
+                </div>
+              </div>
+
+              <div class="solution-step">
+                <span>3</span>
+                <div>
+                  <strong>Owner</strong>
+                  <p id="ownerResult">Sales Manager / Responsible person</p>
+                </div>
+              </div>
+
+              <div class="solution-step">
+                <span>4</span>
+                <div>
+                  <strong>Follow-up</strong>
+                  <p id="followUpResult">Set a clear review date and KPI.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- AI SALES COACH -->
+      <!-- ================================================= -->
       <section class="page" id="page-ai-coach">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">AI MANAGEMENT ASSISTANT</div>
             <h1>AI Sales Coach</h1>
-            <p>Improve sales leadership and management decisions.</p>
+            <p>Get structured sales management guidance.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🤖</div>
-          <h3>AI Sales Coach</h3>
-          <p>
-            Sales coaching and management decision support.
-          </p>
-        </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+        <div class="ai-layout">
+
+          <div class="card ai-chat-card">
+
+            <div class="ai-header">
+              <div class="ai-avatar">🤖</div>
+              <div>
+                <h3>Aung AI Sales Coach</h3>
+                <span>Sales Manager Assistant</span>
+              </div>
+              <span class="ai-status">● Online</span>
+            </div>
+
+
+            <div class="ai-chat" id="aiChat">
+
+              <div class="ai-message">
+
+                <div class="ai-message-avatar">🤖</div>
+
+                <div class="ai-message-content">
+                  <strong>AI Sales Coach</strong>
+                  <p>
+                    Hello Aung Zar Ni Win. I can help you with target gaps,
+                    team coaching, distributor management, forecasting,
+                    market problems and action plans.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="ai-input-area">
+
+              <textarea
+                id="aiCoachInput"
+                rows="3"
+                placeholder="Ask your sales management question..."></textarea>
+
+              <button class="btn btn-primary" id="aiCoachSendBtn">
+                Send →
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="card ai-quick-card">
+
+            <div class="card-header">
+              <div>
+                <h3>Quick Coaching</h3>
+                <p>Common Sales Manager situations</p>
+              </div>
+            </div>
+
+            <div class="ai-quick-list">
+
+              <button data-ai-question="My sales target achievement is below target. What should I do?">
+                🎯 Target Gap Action Plan
+              </button>
+
+              <button data-ai-question="One of my sales representatives is consistently underperforming. How should I coach him?">
+                👥 Underperformer Coaching
+              </button>
+
+              <button data-ai-question="My distributor has high outstanding and low order volume. What should I do?">
+                🏢 Distributor Problem
+              </button>
+
+              <button data-ai-question="How can I improve sales in a weak territory?">
+                📍 Territory Growth
+              </button>
+
+              <button data-ai-question="How should I prepare a monthly sales review meeting?">
+                📊 Monthly Review
+              </button>
+
+              <button data-ai-question="How can I improve my team's execution without micromanaging them?">
+                🚀 Team Leadership
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- SALES ACADEMY -->
+      <!-- ================================================= -->
       <section class="page" id="page-academy">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">PROFESSIONAL DEVELOPMENT</div>
             <h1>Sales Academy</h1>
-            <p>Build professional sales management capability.</p>
+            <p>Build practical Sales Manager leadership capability.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">🎓</div>
-          <h3>Sales Academy</h3>
-          <p>
-            Sales leadership, execution and management learning.
-          </p>
+
+        <div class="academy-grid">
+
+          <div class="academy-card">
+            <span>🎯</span>
+            <h3>Sales Target Management</h3>
+            <p>Learn how to convert business targets into field execution.</p>
+            <button data-academy="target">Start Lesson →</button>
+          </div>
+
+          <div class="academy-card">
+            <span>👥</span>
+            <h3>Team Leadership</h3>
+            <p>Coach, empower and manage sales representatives effectively.</p>
+            <button data-academy="leadership">Start Lesson →</button>
+          </div>
+
+          <div class="academy-card">
+            <span>🏢</span>
+            <h3>Distributor Management</h3>
+            <p>Improve stock, sales, credit and distributor relationships.</p>
+            <button data-academy="distributor">Start Lesson →</button>
+          </div>
+
+          <div class="academy-card">
+            <span>📍</span>
+            <h3>Territory Management</h3>
+            <p>Build market coverage and maximize territory potential.</p>
+            <button data-academy="territory">Start Lesson →</button>
+          </div>
+
+          <div class="academy-card">
+            <span>📈</span>
+            <h3>Sales Forecasting</h3>
+            <p>Use run rate and business indicators to forecast performance.</p>
+            <button data-academy="forecast">Start Lesson →</button>
+          </div>
+
+          <div class="academy-card">
+            <span>🧠</span>
+            <h3>Problem Solving</h3>
+            <p>Move from symptoms to root cause and measurable actions.</p>
+            <button data-academy="problem">Start Lesson →</button>
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
+
+        <div class="card academy-content">
+
+          <div class="card-header">
+            <div>
+              <h3 id="academyLessonTitle">Sales Manager Professional Learning</h3>
+              <p id="academyLessonSubtitle">Select a lesson to begin.</p>
+            </div>
+          </div>
+
+          <div id="academyLessonContent" class="lesson-content">
+
+            <h3>What makes a strong Sales Manager?</h3>
+
+            <p>
+              A professional Sales Manager does not only chase sales numbers.
+              The manager connects business strategy, people, market execution
+              and performance management.
+            </p>
+
+            <div class="lesson-points">
+
+              <div>
+                <strong>1. People</strong>
+                <span>Build capability through coaching and clear expectations.</span>
+              </div>
+
+              <div>
+                <strong>2. Numbers</strong>
+                <span>Understand target, achievement, gap, run rate and forecast.</span>
+              </div>
+
+              <div>
+                <strong>3. Execution</strong>
+                <span>Convert strategy into daily field actions.</span>
+              </div>
+
+              <div>
+                <strong>4. Accountability</strong>
+                <span>Set owners, deadlines and follow-up routines.</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
 
+      <!-- ================================================= -->
+      <!-- PROFESSIONAL EMAIL -->
+      <!-- ================================================= -->
+      <section class="page" id="page-professional-email">
+
+        <div class="page-header">
+          <div>
+            <div class="eyebrow">BUSINESS COMMUNICATION</div>
+            <h1>Professional Email</h1>
+            <p>Create clear and professional business emails quickly.</p>
+          </div>
+        </div>
+
+
+        <div class="email-layout">
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Email Builder</h3>
+                <p>Enter the business situation and generate a professional email.</p>
+              </div>
+            </div>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label>Sender Name</label>
+                <input
+                  type="text"
+                  id="professionalEmailSender"
+                  value="Aung Zar Ni Win">
+              </div>
+
+              <div class="form-group">
+                <label>Recipient</label>
+                <input
+                  type="text"
+                  id="professionalEmailRecipient"
+                  placeholder="Manager / Distributor / Customer">
+              </div>
+
+              <div class="form-group">
+                <label>Company</label>
+                <input
+                  type="text"
+                  id="professionalEmailCompany"
+                  placeholder="Company name">
+              </div>
+
+              <div class="form-group">
+                <label>Email Type</label>
+                <select id="professionalEmailType">
+                  <option value="target">Sales Target</option>
+                  <option value="promotion">Promotion</option>
+                  <option value="collection">Collection</option>
+                  <option value="distributor">Distributor</option>
+                  <option value="sales">Sales Update</option>
+                  <option value="meeting">Meeting</option>
+                  <option value="market">Market Update</option>
+                  <option value="stock">Stock</option>
+                  <option value="customer">Customer</option>
+                  <option value="report">Report</option>
+                  <option value="forecast">Forecast</option>
+                  <option value="request">Request</option>
+                  <option value="feedback">Feedback</option>
+                  <option value="appreciation">Appreciation</option>
+                  <option value="escalation">Escalation</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Tone</label>
+                <select id="professionalEmailTone">
+                  <option value="professional">Professional</option>
+                  <option value="polite">Polite</option>
+                  <option value="firm">Firm</option>
+                  <option value="friendly">Friendly</option>
+                  <option value="management">Management</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Language</label>
+                <select id="professionalEmailLanguage">
+                  <option value="english">English</option>
+                  <option value="myanmar">Myanmar</option>
+                  <option value="bilingual">English + Myanmar</option>
+                </select>
+              </div>
+
+            </div>
+
+
+            <div class="form-group">
+              <label>Business Detail</label>
+
+              <textarea
+                id="professionalEmailDetail"
+                class="textarea"
+                rows="8"
+                placeholder="Explain what happened, what you need, target, date, amount, issue or action required..."></textarea>
+            </div>
+
+
+            <div class="email-actions">
+
+              <button class="btn btn-primary" id="professionalEmailWriteBtn">
+                ✨ Write Email
+              </button>
+
+              <button class="btn btn-secondary" id="professionalEmailRewriteBtn">
+                🔄 Rewrite
+              </button>
+
+              <button class="btn btn-danger-outline" id="professionalEmailClearBtn">
+                Clear
+              </button>
+
+            </div>
+
+
+            <input type="hidden" id="professionalEmailInput">
+
+          </div>
+
+
+          <div class="card email-output-card">
+
+            <div class="card-header">
+
+              <div>
+                <h3>Email Preview</h3>
+                <p>Generated professional email</p>
+              </div>
+
+              <button class="btn btn-secondary" id="professionalEmailCopyBtn">
+                📋 Copy
+              </button>
+
+            </div>
+
+
+            <div id="professionalEmailActions"></div>
+
+            <div class="email-preview">
+
+              <div class="email-subject">
+                <span>Subject</span>
+                <strong id="professionalEmailSubject">—</strong>
+              </div>
+
+              <div
+                id="professionalEmailOutput"
+                class="email-output">
+                Your generated email will appear here.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-header">
+            <div>
+              <h3>Quick Email Examples</h3>
+              <p>Start with a common business situation.</p>
+            </div>
+          </div>
+
+          <div class="email-examples">
+
+            <button data-email-example="target">
+              🎯 Target Update
+            </button>
+
+            <button data-email-example="promotion">
+              📢 Promotion Request
+            </button>
+
+            <button data-email-example="collection">
+              💳 Collection Follow-up
+            </button>
+
+            <button data-email-example="distributor">
+              🏢 Distributor Issue
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- SETTINGS -->
+      <!-- ================================================= -->
       <section class="page" id="page-settings">
 
         <div class="page-header">
           <div>
+            <div class="eyebrow">SYSTEM SETTINGS</div>
             <h1>Settings</h1>
-            <p>Manage application settings.</p>
+            <p>Manage your Sales Manager workspace.</p>
           </div>
         </div>
 
-        <div class="module-empty">
-          <div class="empty-icon">⚙️</div>
-          <h3>Settings</h3>
-          <p>
-            Application preferences and configuration.
-          </p>
+
+        <div class="settings-grid">
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Profile</h3>
+                <p>Your manager profile information.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                id="settingsName"
+                value="Aung Zar Ni Win">
+            </div>
+
+            <div class="form-group">
+              <label>Position</label>
+              <input
+                type="text"
+                id="settingsPosition"
+                value="Sales Manager">
+            </div>
+
+            <div class="form-group">
+              <label>Company</label>
+              <input
+                type="text"
+                id="settingsCompany"
+                placeholder="Company name">
+            </div>
+
+            <button class="btn btn-primary" id="saveSettingsBtn">
+              💾 Save Profile
+            </button>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>Data Management</h3>
+                <p>Manage locally stored application data.</p>
+              </div>
+            </div>
+
+            <div class="settings-action">
+
+              <div>
+                <strong>Reset Application Data</strong>
+                <p>Delete locally saved targets, notes and manager data.</p>
+              </div>
+
+              <button class="btn btn-danger" id="resetDataBtn">
+                Reset Data
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-header">
+              <div>
+                <h3>About Aung Sales Manager</h3>
+                <p>Professional Sales Management System</p>
+              </div>
+            </div>
+
+            <div class="about-box">
+
+              <div class="about-logo">ASM</div>
+
+              <div>
+                <h3>Aung Sales Manager Pro</h3>
+                <p>
+                  A practical sales management workspace designed to help
+                  Sales Managers manage targets, people, distributors,
+                  territories, forecasts and execution.
+                </p>
+                <span>Version 1.0 Professional</span>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <button class="btn" data-page-action="dashboard">
-          ← Back to Dashboard
-        </button>
-
       </section>
-
 
     </main>
 
@@ -1796,18 +1858,15 @@
 </div>
 
 
-<!-- TOAST -->
+<!-- ================= TOAST ================= -->
 <div class="toast" id="toast">
-  <span id="toastMessage">
-    Saved successfully.
-  </span>
+  <span id="toastMessage">Done</span>
 </div>
 
 
-<!-- JAVASCRIPT -->
+<!-- ================= SCRIPTS ================= -->
 <script src="app.js"></script>
 <script src="professional-email.js"></script>
 
 </body>
 </html>
-```
