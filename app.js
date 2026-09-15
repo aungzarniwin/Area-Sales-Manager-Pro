@@ -1,15 +1,17 @@
 /* =========================================================
    AUNG SALES MANAGER PRO
    app.js
-   Version 1.2 Stable
+   Version 1.0 Professional
    ========================================================= */
 
 (function () {
     "use strict";
 
-    /* ---------------------------------------------------------
-       PAGE NAMES
-    --------------------------------------------------------- */
+    /* =====================================================
+       GLOBAL CONFIG
+       ===================================================== */
+
+    const APP_NAME = "Aung Sales Manager Pro";
 
     const PAGE_NAMES = {
         dashboard: "Dashboard",
@@ -28,860 +30,1332 @@
         settings: "Settings"
     };
 
+    const STORAGE_KEYS = {
+        dailyManager: "asm_daily_manager",
+        salesTarget: "asm_sales_target",
+        teamKpi: "asm_team_kpi",
+        distributor: "asm_distributor",
+        territory: "asm_territory",
+        settings: "asm_settings",
+        emailHistory: "asm_email_history"
+    };
 
-    /* ---------------------------------------------------------
-       BASIC HELPERS
-    --------------------------------------------------------- */
+    /* =====================================================
+       DOM HELPERS
+       ===================================================== */
 
-    function $(selector) {
-        return document.querySelector(selector);
+    function $(selector, parent) {
+        return (parent || document).querySelector(selector);
     }
 
-    function $all(selector) {
-        return document.querySelectorAll(selector);
+    function $$(selector, parent) {
+        return Array.from(
+            (parent || document).querySelectorAll(selector)
+        );
     }
 
-    function showToast(message) {
-        const toast = $("#toast");
-        const toastMessage = $("#toastMessage");
-
-        if (!toast || !toastMessage) return;
-
-        toastMessage.textContent = message;
-
-        toast.classList.add("show");
-
-        setTimeout(function () {
-            toast.classList.remove("show");
-        }, 2500);
+    function byId(id) {
+        return document.getElementById(id);
     }
 
+    function safeText(value) {
+        return value == null ? "" : String(value);
+    }
 
-    /* ---------------------------------------------------------
-       PAGE NAVIGATION
-    --------------------------------------------------------- */
+    /* =====================================================
+       STORAGE
+       ===================================================== */
 
-    function openPage(pageName) {
+    function getStorage(key, fallback) {
+        try {
+            const value = localStorage.getItem(key);
 
-        const target = document.getElementById("page-" + pageName);
+            if (!value) {
+                return fallback;
+            }
 
-        if (!target) {
-            console.error("Page not found:", "page-" + pageName);
-            showToast("Page မတွေ့ပါ: " + pageName);
+            return JSON.parse(value);
+        } catch (error) {
+            console.warn("Storage read error:", key, error);
+            return fallback;
+        }
+    }
+
+    function setStorage(key, value) {
+        try {
+            localStorage.setItem(
+                key,
+                JSON.stringify(value)
+            );
+
+            return true;
+        } catch (error) {
+            console.warn("Storage write error:", key, error);
+            return false;
+        }
+    }
+
+    /* =====================================================
+       TOAST
+       ===================================================== */
+
+    function showToast(message, type) {
+        const toast = byId("toast");
+
+        if (!toast) {
             return;
         }
 
-        /* Hide every page */
-        $all(".page").forEach(function (page) {
-            page.classList.remove("active");
-            page.style.display = "none";
-        });
+        toast.textContent = message;
 
-        /* Show selected page */
-        target.classList.add("active");
-        target.style.display = "block";
+        toast.classList.remove(
+            "success",
+            "error",
+            "warning",
+            "show"
+        );
 
-        /* Update navigation active state */
-        $all(".nav-item[data-page]").forEach(function (item) {
-            item.classList.remove("active");
-
-            if (item.getAttribute("data-page") === pageName) {
-                item.classList.add("active");
-            }
-        });
-
-        /* Breadcrumb */
-        const breadcrumb = $("#breadcrumbCurrent");
-
-        if (breadcrumb) {
-            breadcrumb.textContent =
-                PAGE_NAMES[pageName] || pageName;
+        if (type) {
+            toast.classList.add(type);
         }
 
-        /* Close mobile sidebar */
-        closeSidebar();
+        void toast.offsetWidth;
 
-        /* Scroll to top */
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        toast.classList.add("show");
 
-        /* Page-specific initialization */
-        if (pageName === "dashboard") {
-            updateDashboard();
-        }
+        clearTimeout(window.__asmToastTimer);
 
-        if (pageName === "daily-manager") {
-            updateDailyProgress();
-        }
-
-        console.log("Opened page:", pageName);
+        window.__asmToastTimer = setTimeout(function () {
+            toast.classList.remove("show");
+        }, 2800);
     }
 
+    /* =====================================================
+       PAGE NAVIGATION
+       ===================================================== */
 
-    /* ---------------------------------------------------------
-       NAVIGATION CLICK
-    --------------------------------------------------------- */
+    function getPageElement(pageName) {
+        return byId("page-" + pageName);
+    }
 
-    function setupNavigation() {
+    function updateBreadcrumb(pageName) {
+        const breadcrumb = byId("breadcrumbCurrent");
 
-        /* Sidebar navigation */
-        $all(".nav-item[data-page]").forEach(function (item) {
+        if (!breadcrumb) {
+            return;
+        }
 
-            item.addEventListener("click", function (event) {
+        breadcrumb.textContent =
+            PAGE_NAMES[pageName] || pageName;
+    }
 
-                event.preventDefault();
+    function updateActiveNav(pageName) {
+        $$(".nav-item[data-page]").forEach(function (item) {
+            const itemPage = item.getAttribute("data-page");
 
-                const pageName =
-                    item.getAttribute("data-page");
-
-                if (pageName) {
-                    openPage(pageName);
-                }
-            });
-        });
-
-
-        /* Buttons / cards using data-page-action */
-        $all("[data-page-action]").forEach(function (element) {
-
-            element.addEventListener("click", function (event) {
-
-                event.preventDefault();
-
-                const pageName =
-                    element.getAttribute("data-page-action");
-
-                if (pageName) {
-                    openPage(pageName);
-                }
-            });
+            item.classList.toggle(
+                "active",
+                itemPage === pageName
+            );
         });
     }
 
-
-    /* ---------------------------------------------------------
-       MOBILE SIDEBAR
-    --------------------------------------------------------- */
-
-    function openSidebar() {
-
+    function closeMobileSidebar() {
         const sidebar = $(".sidebar");
-        const overlay = $("#sidebarOverlay");
-
-        if (sidebar) {
-            sidebar.classList.add("open");
-        }
-
-        if (overlay) {
-            overlay.classList.add("show");
-        }
-    }
-
-
-    function closeSidebar() {
-
-        const sidebar = $(".sidebar");
-        const overlay = $("#sidebarOverlay");
+        const overlay = $(".sidebar-overlay");
 
         if (sidebar) {
             sidebar.classList.remove("open");
         }
 
         if (overlay) {
-            overlay.classList.remove("show");
+            overlay.classList.remove("active");
         }
     }
 
+    function openPage(pageName, options) {
+        options = options || {};
 
-    function setupMobileMenu() {
-
-        const menuButton = $("#mobileMenuBtn");
-        const overlay = $("#sidebarOverlay");
-
-        if (menuButton) {
-
-            menuButton.addEventListener("click", function () {
-
-                const sidebar = $(".sidebar");
-
-                if (!sidebar) return;
-
-                if (sidebar.classList.contains("open")) {
-                    closeSidebar();
-                } else {
-                    openSidebar();
-                }
-            });
-        }
-
-        if (overlay) {
-            overlay.addEventListener("click", function () {
-                closeSidebar();
-            });
-        }
-    }
-
-
-    /* ---------------------------------------------------------
-       TODAY DATE
-    --------------------------------------------------------- */
-
-    function updateTodayDate() {
-
-        const dateElement = $("#todayDate");
-
-        if (!dateElement) return;
-
-        const now = new Date();
-
-        const options = {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        };
-
-        dateElement.textContent =
-            now.toLocaleDateString("en-US", options);
-    }
-
-
-    /* ---------------------------------------------------------
-       DASHBOARD
-    --------------------------------------------------------- */
-
-    function updateDashboard() {
-
-        const target = 500;
-        const actual = 385;
-
-        const achievement =
-            target > 0
-                ? (actual / target) * 100
-                : 0;
-
-        const gap =
-            Math.max(target - actual, 0);
-
-
-        const targetElement = $("#kpiTarget");
-        const actualElement = $("#kpiActual");
-        const achievementElement = $("#kpiAchievement");
-        const gapElement = $("#kpiGap");
-
-
-        if (targetElement) {
-            targetElement.textContent =
-                target.toFixed(1) + " L";
-        }
-
-        if (actualElement) {
-            actualElement.textContent =
-                actual.toFixed(1) + " L";
-        }
-
-        if (achievementElement) {
-            achievementElement.textContent =
-                Math.round(achievement) + "%";
-        }
-
-        if (gapElement) {
-            gapElement.textContent =
-                gap.toFixed(1) + " L";
-        }
-
-
-        /* Performance section */
-
-        const performanceActual =
-            $("#performanceActual");
-
-        const performanceTarget =
-            $("#performanceTarget");
-
-        const performanceGap =
-            $("#performanceGap");
-
-        const performancePercent =
-            $("#performancePercent");
-
-        const performanceProgress =
-            $("#performanceProgress");
-
-        const actualBar =
-            $("#actualBar");
-
-        const achievementBadge =
-            $("#achievementBadge");
-
-
-        if (performanceActual) {
-            performanceActual.textContent =
-                actual.toFixed(1) + " L";
-        }
-
-        if (performanceTarget) {
-            performanceTarget.textContent =
-                target.toFixed(1) + " L";
-        }
-
-        if (performanceGap) {
-            performanceGap.textContent =
-                gap.toFixed(1) + " L";
-        }
-
-        if (performancePercent) {
-            performancePercent.textContent =
-                Math.round(achievement) + "%";
-        }
-
-        if (performanceProgress) {
-            performanceProgress.style.width =
-                Math.min(achievement, 100) + "%";
-        }
-
-        if (actualBar) {
-            actualBar.style.width =
-                Math.min(achievement, 100) + "%";
-        }
-
-        if (achievementBadge) {
-            achievementBadge.textContent =
-                Math.round(achievement) + "% Achievement";
-        }
-    }
-
-
-    /* ---------------------------------------------------------
-       DAILY MANAGER
-    --------------------------------------------------------- */
-
-    const DAILY_KEY =
-        "aung_sales_manager_daily";
-
-
-    function getDailyData() {
-
-        try {
-
-            const data =
-                localStorage.getItem(DAILY_KEY);
-
-            return data
-                ? JSON.parse(data)
-                : {};
-
-        } catch (error) {
-
-            console.error(
-                "Daily data error:",
-                error
-            );
-
-            return {};
-        }
-    }
-
-
-    function saveDailySection(section) {
-
-        const data = getDailyData();
-
-        data[section] = {
-            saved: true,
-            time: new Date().toISOString()
-        };
-
-        try {
-
-            localStorage.setItem(
-                DAILY_KEY,
-                JSON.stringify(data)
-            );
-
-            showToast(
-                "Daily Manager data saved successfully."
-            );
-
-            updateDailyProgress();
-
-        } catch (error) {
-
-            console.error(
-                "Save error:",
-                error
-            );
-
-            showToast(
-                "Data သိမ်းရာတွင် ပြဿနာရှိပါသည်။"
-            );
-        }
-    }
-
-
-    function updateDailyProgress() {
-
-        const sections = [
-            "morning",
-            "customer",
-            "team",
-            "distributor",
-            "collection",
-            "competitor",
-            "eod",
-            "action"
-        ];
-
-        const data = getDailyData();
-
-        let completed = 0;
-
-        sections.forEach(function (section) {
-
-            if (
-                data[section] &&
-                data[section].saved
-            ) {
-                completed++;
-            }
-        });
-
-        const percent =
-            Math.round(
-                (completed / sections.length) * 100
-            );
-
-
-        const progress =
-            $("#dailyProgress");
-
-        const text =
-            $("#dailyCompletionText");
-
-
-        if (progress) {
-            progress.style.width =
-                percent + "%";
-        }
-
-        if (text) {
-            text.textContent =
-                completed +
-                " / " +
-                sections.length +
-                " completed";
-        }
-    }
-
-
-    function resetDailyManager() {
-
-        try {
-
-            localStorage.removeItem(
-                DAILY_KEY
-            );
-
-            updateDailyProgress();
-
-            showToast(
-                "Today's plan has been reset."
-            );
-
-        } catch (error) {
-
-            console.error(error);
-        }
-    }
-
-
-    function setupDailyManager() {
-
-        $all("[data-save-section]").forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        const section =
-                            button.getAttribute(
-                                "data-save-section"
-                            );
-
-                        if (section) {
-                            saveDailySection(section);
-                        }
-                    }
-                );
-            }
-        );
-
-
-        const resetButton =
-            $("#resetDailyBtn");
-
-        if (resetButton) {
-
-            resetButton.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    resetDailyManager();
-                }
-            );
-        }
-    }
-
-
-    /* ---------------------------------------------------------
-       SEARCH
-    --------------------------------------------------------- */
-
-    function setupSearch() {
-
-        const search =
-            $("#globalSearch");
-
-        if (!search) return;
-
-        search.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key !== "Enter") {
-                    return;
-                }
-
-                const query =
-                    search.value
-                        .trim()
-                        .toLowerCase();
-
-                if (!query) return;
-
-
-                let foundPage = null;
-
-
-                Object.keys(PAGE_NAMES).forEach(
-                    function (page) {
-
-                        const name =
-                            PAGE_NAMES[page]
-                                .toLowerCase();
-
-                        if (
-                            !foundPage &&
-                            name.includes(query)
-                        ) {
-                            foundPage = page;
-                        }
-                    }
-                );
-
-
-                if (foundPage) {
-
-                    openPage(foundPage);
-
-                    showToast(
-                        "Opened: " +
-                        PAGE_NAMES[foundPage]
-                    );
-
-                } else {
-
-                    showToast(
-                        "No matching page found."
-                    );
-                }
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       NOTIFICATION
-    --------------------------------------------------------- */
-
-    function setupNotification() {
-
-        const button =
-            $("#notificationBtn");
-
-        if (!button) return;
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                showToast(
-                    "No new notifications."
-                );
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       PROFILE
-    --------------------------------------------------------- */
-
-    function setupProfile() {
-
-        const profile =
-            $(".top-profile");
-
-        if (!profile) return;
-
-        profile.addEventListener(
-            "click",
-            function () {
-
-                showToast(
-                    "Aung Zar Ni Win • Sales Manager"
-                );
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       KEYBOARD SHORTCUTS
-    --------------------------------------------------------- */
-
-    function setupKeyboardShortcuts() {
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                /* Alt + D = Dashboard */
-                if (
-                    event.altKey &&
-                    event.key.toLowerCase() === "d"
-                ) {
-
-                    event.preventDefault();
-
-                    openPage("dashboard");
-                }
-
-
-                /* Alt + E = Professional Email */
-                if (
-                    event.altKey &&
-                    event.key.toLowerCase() === "e"
-                ) {
-
-                    event.preventDefault();
-
-                    openPage(
-                        "professional-email"
-                    );
-                }
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       PROFESSIONAL EMAIL SAFETY CHECK
-    --------------------------------------------------------- */
-
-    function checkProfessionalEmailPage() {
-
-        const page =
-            document.getElementById(
-                "page-professional-email"
-            );
-
-        if (!page) {
-
+        if (!PAGE_NAMES[pageName]) {
             console.warn(
-                "Professional Email page not found."
+                "Unknown page:",
+                pageName
+            );
+
+            pageName = "dashboard";
+        }
+
+        const target = getPageElement(pageName);
+
+        if (!target) {
+            console.warn(
+                "Page element not found:",
+                "page-" + pageName
             );
 
             return false;
         }
 
+        /*
+         * Hide every page directly with style.display.
+         * This makes navigation work even if CSS has issues.
+         */
+
+        $$(".page").forEach(function (page) {
+            page.classList.remove("active");
+            page.classList.remove("active-page");
+
+            page.style.display = "none";
+        });
+
+        /*
+         * Show selected page.
+         */
+
+        target.classList.add("active");
+        target.style.display = "block";
+
+        updateActiveNav(pageName);
+        updateBreadcrumb(pageName);
+
+        closeMobileSidebar();
+
+        try {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        } catch (error) {
+            window.scrollTo(0, 0);
+        }
+
+        if (!options.silent) {
+            window.history.replaceState(
+                {
+                    page: pageName
+                },
+                "",
+                "#" + pageName
+            );
+        }
+
+        /*
+         * Module-specific refresh.
+         */
+
+        if (pageName === "dashboard") {
+            updateDashboard();
+        }
+
+        if (pageName === "daily-manager") {
+            loadDailyManager();
+        }
+
+        if (pageName === "sales-target") {
+            loadSalesTarget();
+        }
+
+        if (pageName === "team-kpi") {
+            loadTeamKPI();
+        }
+
         return true;
     }
 
+    /* =====================================================
+       NAVIGATION EVENTS
+       ===================================================== */
 
-    /* ---------------------------------------------------------
-       INITIAL PAGE
-    --------------------------------------------------------- */
+    function bindNavigation() {
+        $$(".nav-item[data-page]").forEach(function (item) {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
 
-    function initializePages() {
+                const pageName =
+                    item.getAttribute("data-page");
 
-        const pages =
-            $all(".page");
+                openPage(pageName);
+            });
+        });
 
-        if (!pages.length) {
+        $$("[data-page-action]").forEach(function (item) {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
 
-            console.error(
-                "No .page elements found."
+                const pageName =
+                    item.getAttribute("data-page-action");
+
+                openPage(pageName);
+            });
+        });
+    }
+
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
+
+    function bindMobileMenu() {
+        const menuButton = $(".mobile-menu-btn");
+        const sidebar = $(".sidebar");
+        const overlay = $(".sidebar-overlay");
+
+        if (menuButton && sidebar) {
+            menuButton.addEventListener(
+                "click",
+                function () {
+                    sidebar.classList.toggle("open");
+
+                    if (overlay) {
+                        overlay.classList.toggle(
+                            "active"
+                        );
+                    }
+                }
+            );
+        }
+
+        if (overlay) {
+            overlay.addEventListener(
+                "click",
+                closeMobileSidebar
+            );
+        }
+    }
+
+    /* =====================================================
+       DATE
+       ===================================================== */
+
+    function formatDate(date) {
+        return new Intl.DateTimeFormat(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        ).format(date);
+    }
+
+    function formatLongDate(date) {
+        return new Intl.DateTimeFormat(
+            "en-US",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(date);
+    }
+
+    function updateDateDisplays() {
+        const now = new Date();
+
+        $$(".date-line").forEach(function (element) {
+            if (
+                element.dataset &&
+                element.dataset.dateFormat === "long"
+            ) {
+                element.textContent =
+                    formatLongDate(now);
+            } else {
+                element.textContent =
+                    formatDate(now);
+            }
+        });
+
+        const todayDate = byId("todayDate");
+
+        if (todayDate) {
+            todayDate.textContent =
+                formatLongDate(now);
+        }
+    }
+
+    /* =====================================================
+       DASHBOARD
+       ===================================================== */
+
+    function updateDashboard() {
+        const targetData = getStorage(
+            STORAGE_KEYS.salesTarget,
+            {}
+        );
+
+        const kpiData = getStorage(
+            STORAGE_KEYS.teamKpi,
+            {}
+        );
+
+        const dailyData = getStorage(
+            STORAGE_KEYS.dailyManager,
+            {}
+        );
+
+        /*
+         * Sales target
+         */
+
+        const target =
+            Number(targetData.target) || 0;
+
+        const achieved =
+            Number(targetData.achieved) || 0;
+
+        const achievement =
+            target > 0
+                ? Math.min(
+                    100,
+                    Math.round(
+                        (achieved / target) * 100
+                    )
+                )
+                : 0;
+
+        setText(
+            [
+                "#dashboardTarget",
+                "#salesTargetValue"
+            ],
+            formatNumber(target)
+        );
+
+        setText(
+            [
+                "#dashboardAchievement",
+                "#achievementValue"
+            ],
+            achievement + "%"
+        );
+
+        /*
+         * Team KPI
+         */
+
+        const teamMembers =
+            Number(kpiData.teamMembers) || 0;
+
+        const completed =
+            Number(kpiData.completed) || 0;
+
+        setText(
+            [
+                "#teamMemberCount",
+                "#dashboardTeam"
+            ],
+            String(teamMembers)
+        );
+
+        setText(
+            [
+                "#kpiCompleted",
+                "#dashboardKPI"
+            ],
+            String(completed)
+        );
+
+        /*
+         * Daily manager
+         */
+
+        const tasks =
+            Array.isArray(dailyData.tasks)
+                ? dailyData.tasks
+                : [];
+
+        const completedTasks =
+            tasks.filter(function (task) {
+                return task.completed;
+            }).length;
+
+        setText(
+            [
+                "#dailyTaskCount",
+                "#dashboardTasks"
+            ],
+            completedTasks + "/" + tasks.length
+        );
+
+        /*
+         * Progress bars
+         */
+
+        setProgress(
+            "#dashboardProgress",
+            achievement
+        );
+
+        setProgress(
+            "#targetProgress",
+            achievement
+        );
+    }
+
+    function setText(selectors, value) {
+        if (!Array.isArray(selectors)) {
+            selectors = [selectors];
+        }
+
+        selectors.forEach(function (selector) {
+            const element = $(selector);
+
+            if (element) {
+                element.textContent = safeText(value);
+            }
+        });
+    }
+
+    function setProgress(selector, percent) {
+        const element = $(selector);
+
+        if (!element) {
+            return;
+        }
+
+        const safePercent = Math.max(
+            0,
+            Math.min(100, Number(percent) || 0)
+        );
+
+        element.style.width =
+            safePercent + "%";
+    }
+
+    function formatNumber(value) {
+        const number = Number(value) || 0;
+
+        return new Intl.NumberFormat(
+            "en-US"
+        ).format(number);
+    }
+
+    /* =====================================================
+       DAILY MANAGER
+       ===================================================== */
+
+    const defaultDailyTasks = [
+        {
+            id: 1,
+            title: "Review yesterday's sales",
+            category: "Numbers",
+            completed: false
+        },
+        {
+            id: 2,
+            title: "Check today's sales target",
+            category: "Target",
+            completed: false
+        },
+        {
+            id: 3,
+            title: "Review team performance",
+            category: "People",
+            completed: false
+        },
+        {
+            id: 4,
+            title: "Check distributor stock",
+            category: "Distributor",
+            completed: false
+        },
+        {
+            id: 5,
+            title: "Review market issues",
+            category: "Market",
+            completed: false
+        },
+        {
+            id: 6,
+            title: "Set field priorities",
+            category: "Execution",
+            completed: false
+        }
+    ];
+
+    function loadDailyManager() {
+        const data = getStorage(
+            STORAGE_KEYS.dailyManager,
+            {
+                tasks: defaultDailyTasks
+            }
+        );
+
+        if (
+            !Array.isArray(data.tasks) ||
+            data.tasks.length === 0
+        ) {
+            data.tasks = defaultDailyTasks;
+        }
+
+        const container =
+            byId("dailyManagerTasks");
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.tasks.forEach(function (task) {
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "daily-task-row";
+
+            row.style.cssText = `
+                display:flex;
+                align-items:center;
+                gap:12px;
+                padding:13px 0;
+                border-bottom:1px solid #f1f5f9;
+            `;
+
+            row.innerHTML = `
+                <input
+                    type="checkbox"
+                    ${task.completed ? "checked" : ""}
+                    data-task-id="${task.id}"
+                    style="width:18px;height:18px;"
+                >
+
+                <div style="flex:1;">
+                    <div style="
+                        font-size:13px;
+                        font-weight:700;
+                        color:#0f172a;
+                        ${
+                            task.completed
+                                ? "text-decoration:line-through;color:#94a3b8;"
+                                : ""
+                        }
+                    ">
+                        ${escapeHtml(task.title)}
+                    </div>
+
+                    <div style="
+                        font-size:10px;
+                        color:#94a3b8;
+                        margin-top:3px;
+                    ">
+                        ${escapeHtml(task.category)}
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(row);
+        });
+
+        $$("#dailyManagerTasks input[type='checkbox']")
+            .forEach(function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    function () {
+                        toggleDailyTask(
+                            Number(
+                                checkbox.getAttribute(
+                                    "data-task-id"
+                                )
+                            )
+                        );
+                    }
+                );
+            });
+
+        updateDailyProgress(data.tasks);
+    }
+
+    function toggleDailyTask(id) {
+        const data = getStorage(
+            STORAGE_KEYS.dailyManager,
+            {
+                tasks: defaultDailyTasks
+            }
+        );
+
+        data.tasks =
+            Array.isArray(data.tasks)
+                ? data.tasks
+                : defaultDailyTasks;
+
+        const task =
+            data.tasks.find(function (item) {
+                return item.id === id;
+            });
+
+        if (task) {
+            task.completed =
+                !task.completed;
+        }
+
+        setStorage(
+            STORAGE_KEYS.dailyManager,
+            data
+        );
+
+        loadDailyManager();
+        updateDashboard();
+    }
+
+    function updateDailyProgress(tasks) {
+        const total = tasks.length;
+
+        const completed =
+            tasks.filter(function (task) {
+                return task.completed;
+            }).length;
+
+        const percent =
+            total > 0
+                ? Math.round(
+                    (completed / total) * 100
+                )
+                : 0;
+
+        setText(
+            "#dailyManagerProgressText",
+            completed +
+            "/" +
+            total +
+            " completed"
+        );
+
+        setProgress(
+            "#dailyManagerProgress",
+            percent
+        );
+    }
+
+    function resetDailyTasks() {
+        setStorage(
+            STORAGE_KEYS.dailyManager,
+            {
+                tasks:
+                    defaultDailyTasks.map(
+                        function (task) {
+                            return {
+                                ...task,
+                                completed: false
+                            };
+                        }
+                    )
+            }
+        );
+
+        loadDailyManager();
+
+        showToast(
+            "Daily manager checklist reset.",
+            "success"
+        );
+    }
+
+    /* =====================================================
+       SALES TARGET
+       ===================================================== */
+
+    function loadSalesTarget() {
+        const data = getStorage(
+            STORAGE_KEYS.salesTarget,
+            {}
+        );
+
+        const targetInput =
+            byId("salesTargetInput");
+
+        const achievedInput =
+            byId("salesAchievedInput");
+
+        if (targetInput) {
+            targetInput.value =
+                data.target || "";
+        }
+
+        if (achievedInput) {
+            achievedInput.value =
+                data.achieved || "";
+        }
+
+        calculateSalesTarget();
+    }
+
+    function calculateSalesTarget() {
+        const targetInput =
+            byId("salesTargetInput");
+
+        const achievedInput =
+            byId("salesAchievedInput");
+
+        if (!targetInput || !achievedInput) {
+            return;
+        }
+
+        const target =
+            Number(targetInput.value) || 0;
+
+        const achieved =
+            Number(achievedInput.value) || 0;
+
+        const remaining =
+            Math.max(
+                0,
+                target - achieved
+            );
+
+        const achievement =
+            target > 0
+                ? Math.round(
+                    (achieved / target) * 100
+                )
+                : 0;
+
+        setText(
+            "#salesRemaining",
+            formatNumber(remaining)
+        );
+
+        setText(
+            "#salesAchievement",
+            achievement + "%"
+        );
+
+        setProgress(
+            "#salesTargetProgress",
+            achievement
+        );
+
+        setStorage(
+            STORAGE_KEYS.salesTarget,
+            {
+                target: target,
+                achieved: achieved
+            }
+        );
+
+        updateDashboard();
+    }
+
+    /* =====================================================
+       TEAM KPI
+       ===================================================== */
+
+    function loadTeamKPI() {
+        const data = getStorage(
+            STORAGE_KEYS.teamKpi,
+            {}
+        );
+
+        const teamInput =
+            byId("teamMembersInput");
+
+        const completedInput =
+            byId("kpiCompletedInput");
+
+        if (teamInput) {
+            teamInput.value =
+                data.teamMembers || "";
+        }
+
+        if (completedInput) {
+            completedInput.value =
+                data.completed || "";
+        }
+    }
+
+    function saveTeamKPI() {
+        const teamInput =
+            byId("teamMembersInput");
+
+        const completedInput =
+            byId("kpiCompletedInput");
+
+        const data = {
+            teamMembers:
+                Number(
+                    teamInput
+                        ? teamInput.value
+                        : 0
+                ) || 0,
+
+            completed:
+                Number(
+                    completedInput
+                        ? completedInput.value
+                        : 0
+                ) || 0
+        };
+
+        setStorage(
+            STORAGE_KEYS.teamKpi,
+            data
+        );
+
+        updateDashboard();
+
+        showToast(
+            "Team KPI saved successfully.",
+            "success"
+        );
+    }
+
+    /* =====================================================
+       SEARCH
+       ===================================================== */
+
+    function bindGlobalSearch() {
+        const searchInput =
+            byId("globalSearch");
+
+        if (!searchInput) {
+            return;
+        }
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+                const query =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+                if (!query) {
+                    return;
+                }
+
+                const match =
+                    Object.entries(
+                        PAGE_NAMES
+                    ).find(function (entry) {
+                        return entry[1]
+                            .toLowerCase()
+                            .includes(query);
+                    });
+
+                if (match) {
+                    openPage(
+                        match[0]
+                    );
+                }
+            }
+        );
+    }
+
+    /* =====================================================
+       NOTIFICATION
+       ===================================================== */
+
+    function bindNotifications() {
+        const button =
+            $(
+                ".icon-btn[data-action='notifications'], " +
+                ".top-icon-btn[data-action='notifications']"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        button.addEventListener(
+            "click",
+            function () {
+                showToast(
+                    "No new notifications.",
+                    "info"
+                );
+            }
+        );
+    }
+
+    /* =====================================================
+       PROFILE
+       ===================================================== */
+
+    function bindProfile() {
+        const profile =
+            $(".top-profile");
+
+        if (!profile) {
+            return;
+        }
+
+        profile.addEventListener(
+            "click",
+            function () {
+                openPage("settings");
+            }
+        );
+
+        profile.style.cursor = "pointer";
+    }
+
+    /* =====================================================
+       RESET DATA
+       ===================================================== */
+
+    function resetAllData() {
+        const confirmed =
+            window.confirm(
+                "Reset all Aung Sales Manager data?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        Object.values(
+            STORAGE_KEYS
+        ).forEach(function (key) {
+            localStorage.removeItem(key);
+        });
+
+        showToast(
+            "All app data has been reset.",
+            "success"
+        );
+
+        setTimeout(
+            function () {
+                location.reload();
+            },
+            500
+        );
+    }
+
+    /* =====================================================
+       BUTTON ACTIONS
+       ===================================================== */
+
+    function bindButtons() {
+
+        $$("[data-action]").forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const action =
+                            button.getAttribute(
+                                "data-action"
+                            );
+
+                        if (
+                            action ===
+                            "reset-daily"
+                        ) {
+                            resetDailyTasks();
+                        }
+
+                        if (
+                            action ===
+                            "calculate-target"
+                        ) {
+                            calculateSalesTarget();
+                        }
+
+                        if (
+                            action ===
+                            "save-kpi"
+                        ) {
+                            saveTeamKPI();
+                        }
+
+                        if (
+                            action ===
+                            "reset-data"
+                        ) {
+                            resetAllData();
+                        }
+
+                        if (
+                            action ===
+                            "today"
+                        ) {
+                            updateDateDisplays();
+
+                            showToast(
+                                "Today's information updated.",
+                                "success"
+                            );
+                        }
+                    }
+                );
+            }
+        );
+
+        /*
+         * Direct button IDs
+         */
+
+        const targetInputs = [
+            byId("salesTargetInput"),
+            byId("salesAchievedInput")
+        ];
+
+        targetInputs.forEach(
+            function (input) {
+                if (!input) {
+                    return;
+                }
+
+                input.addEventListener(
+                    "input",
+                    calculateSalesTarget
+                );
+            }
+        );
+
+        const saveKpiButton =
+            byId("saveTeamKPI");
+
+        if (saveKpiButton) {
+            saveKpiButton.addEventListener(
+                "click",
+                saveTeamKPI
+            );
+        }
+    }
+
+    /* =====================================================
+       ESCAPE HTML
+       ===================================================== */
+
+    function escapeHtml(value) {
+        return safeText(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    /* =====================================================
+       KEYBOARD SHORTCUTS
+       ===================================================== */
+
+    function bindKeyboardShortcuts() {
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                /*
+                 * Ctrl + K
+                 * Focus search
+                 */
+
+                if (
+                    event.ctrlKey &&
+                    event.key.toLowerCase() === "k"
+                ) {
+                    event.preventDefault();
+
+                    const search =
+                        byId("globalSearch");
+
+                    if (search) {
+                        search.focus();
+                    }
+                }
+
+                /*
+                 * Escape
+                 */
+
+                if (event.key === "Escape") {
+                    closeMobileSidebar();
+                }
+            }
+        );
+    }
+
+    /* =====================================================
+       HASH ROUTING
+       ===================================================== */
+
+    function loadInitialPage() {
+        const hash =
+            window.location.hash
+                .replace("#", "")
+                .trim();
+
+        if (
+            hash &&
+            PAGE_NAMES[hash]
+        ) {
+            openPage(
+                hash,
+                {
+                    silent: true
+                }
             );
 
             return;
         }
 
-
-        /* Hide all first */
-
-        pages.forEach(
-            function (page) {
-
-                page.classList.remove(
-                    "active"
-                );
-
-                page.style.display =
-                    "none";
+        openPage(
+            "dashboard",
+            {
+                silent: true
             }
         );
+    }
 
+    window.addEventListener(
+        "hashchange",
+        function () {
+            const hash =
+                window.location.hash
+                    .replace("#", "")
+                    .trim();
 
-        /* Dashboard first */
+            if (
+                hash &&
+                PAGE_NAMES[hash]
+            ) {
+                openPage(
+                    hash,
+                    {
+                        silent: true
+                    }
+                );
+            }
+        }
+    );
 
-        const dashboard =
-            document.getElementById(
-                "page-dashboard"
+    /* =====================================================
+       DEMO DATA INITIALIZATION
+       ===================================================== */
+
+    function initializeDefaultData() {
+
+        if (
+            localStorage.getItem(
+                STORAGE_KEYS.dailyManager
+            ) === null
+        ) {
+            setStorage(
+                STORAGE_KEYS.dailyManager,
+                {
+                    tasks:
+                        defaultDailyTasks
+                            .map(function (task) {
+                                return {
+                                    ...task
+                                };
+                            })
+                }
             );
-
-        if (dashboard) {
-
-            dashboard.classList.add(
-                "active"
-            );
-
-            dashboard.style.display =
-                "block";
         }
 
-
-        /* Dashboard nav active */
-
-        $all(
-            ".nav-item[data-page]"
-        ).forEach(
-            function (item) {
-
-                item.classList.remove(
-                    "active"
-                );
-
-                if (
-                    item.getAttribute(
-                        "data-page"
-                    ) === "dashboard"
-                ) {
-
-                    item.classList.add(
-                        "active"
-                    );
+        if (
+            localStorage.getItem(
+                STORAGE_KEYS.salesTarget
+            ) === null
+        ) {
+            setStorage(
+                STORAGE_KEYS.salesTarget,
+                {
+                    target: 0,
+                    achieved: 0
                 }
-            }
-        );
+            );
+        }
 
-
-        const breadcrumb =
-            $("#breadcrumbCurrent");
-
-        if (breadcrumb) {
-
-            breadcrumb.textContent =
-                "Dashboard";
+        if (
+            localStorage.getItem(
+                STORAGE_KEYS.teamKpi
+            ) === null
+        ) {
+            setStorage(
+                STORAGE_KEYS.teamKpi,
+                {
+                    teamMembers: 0,
+                    completed: 0
+                }
+            );
         }
     }
 
+    /* =====================================================
+       APP START
+       ===================================================== */
 
-    /* ---------------------------------------------------------
-       MAIN INITIALIZATION
-    --------------------------------------------------------- */
+    function initApp() {
 
-    function init() {
+        initializeDefaultData();
 
-        console.log(
-            "Aung Sales Manager Pro starting..."
-        );
+        bindNavigation();
 
+        bindMobileMenu();
 
-        initializePages();
+        bindGlobalSearch();
 
-        setupNavigation();
+        bindNotifications();
 
-        setupMobileMenu();
+        bindProfile();
 
-        setupDailyManager();
+        bindButtons();
 
-        setupSearch();
+        bindKeyboardShortcuts();
 
-        setupNotification();
+        updateDateDisplays();
 
-        setupProfile();
+        loadDailyManager();
 
-        setupKeyboardShortcuts();
+        loadSalesTarget();
 
-        updateTodayDate();
+        loadTeamKPI();
 
         updateDashboard();
 
-        updateDailyProgress();
+        loadInitialPage();
 
-        checkProfessionalEmailPage();
+        /*
+         * Application ready event
+         */
 
+        document.body.classList.add(
+            "asm-ready"
+        );
 
         console.log(
-            "Aung Sales Manager Pro ready."
+            APP_NAME +
+            " initialized successfully."
         );
     }
 
+    /* =====================================================
+       PUBLIC API
+       ===================================================== */
 
-    /* ---------------------------------------------------------
-       START
-    --------------------------------------------------------- */
+    window.AungSalesManager = {
+        openPage: openPage,
+        showToast: showToast,
+        updateDashboard: updateDashboard,
+        resetDailyTasks: resetDailyTasks,
+        calculateSalesTarget:
+            calculateSalesTarget,
+        saveTeamKPI: saveTeamKPI,
+        resetAllData: resetAllData,
+        formatNumber: formatNumber
+    };
+
+    /* =====================================================
+       START AFTER DOM
+       ===================================================== */
 
     if (
         document.readyState ===
         "loading"
     ) {
-
         document.addEventListener(
             "DOMContentLoaded",
-            init
+            initApp
         );
-
     } else {
-
-        init();
+        initApp();
     }
-
-
-    /* ---------------------------------------------------------
-       GLOBAL ACCESS
-    --------------------------------------------------------- */
-
-    window.AungSalesManager = {
-
-        openPage: openPage,
-
-        updateDashboard:
-            updateDashboard,
-
-        updateDailyProgress:
-            updateDailyProgress,
-
-        showToast:
-            showToast
-    };
 
 })();
