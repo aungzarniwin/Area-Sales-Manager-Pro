@@ -1,1092 +1,887 @@
 /* =========================================================
    AUNG SALES MANAGER PRO
-   MAIN APPLICATION
-   Version 1.1
+   app.js
+   Version 1.2 Stable
    ========================================================= */
 
 (function () {
-  "use strict";
-
-
-  /* =========================================================
-     PAGE CONFIGURATION
-  ========================================================= */
-
-  const PAGE_NAMES = {
-    dashboard: "Dashboard",
-    "daily-manager": "Daily Manager",
-    "sales-target": "Sales Target",
-    "team-kpi": "Team KPI",
-    distributor: "Distributor",
-    territory: "Territory",
-    "sales-forecast": "Sales Forecast",
-    "manager-tools": "Manager Tools",
-    reports: "Reports",
-    "problem-solver": "Problem Solver",
-    "ai-coach": "AI Sales Coach",
-    academy: "Sales Academy",
-    "professional-email": "Professional Email",
-    settings: "Settings"
-  };
-
-
-  /* =========================================================
-     HELPERS
-  ========================================================= */
-
-  function get(id) {
-    return document.getElementById(id);
-  }
-
-
-  function showToast(message) {
-
-    const toast = get("toast");
-    const toastMessage = get("toastMessage");
-
-    if (!toast || !toastMessage) {
-      console.log(message);
-      return;
-    }
-
-    toastMessage.textContent = message;
-
-    toast.classList.add("show");
-
-    clearTimeout(window.aungToastTimer);
-
-    window.aungToastTimer = setTimeout(function () {
-      toast.classList.remove("show");
-    }, 2500);
-  }
-
-
-  /* =========================================================
-     NAVIGATION
-  ========================================================= */
-
-  function openPage(pageName) {
-
-    if (!pageName) {
-      pageName = "dashboard";
-    }
-
-
-    /*
-      IMPORTANT:
-      HTML structure uses:
-
-      id="page-dashboard"
-      id="page-professional-email"
-
-      Therefore we directly use:
-
-      page-${pageName}
-    */
-
-    const targetPage =
-      document.getElementById(
-        "page-" + pageName
-      );
-
-
-    if (!targetPage) {
-
-      console.error(
-        "Page not found:",
-        "page-" + pageName
-      );
-
-      showToast(
-        "Page not found: " + pageName
-      );
-
-      return;
-    }
-
-
-    /* Hide all pages */
-
-    document
-      .querySelectorAll(".page")
-      .forEach(function (page) {
-
-        page.classList.remove("active");
-
-        page.style.display = "";
-
-      });
-
-
-    /* Show selected page */
-
-    targetPage.classList.add("active");
-
-
-    /*
-      Do not force display:block here if CSS
-      already controls .page / .page.active.
-
-      The class "active" is enough.
-    */
-
-
-    /* Update sidebar active item */
-
-    document
-      .querySelectorAll(".nav-item")
-      .forEach(function (item) {
-
-        item.classList.remove("active");
-
-      });
-
-
-    const activeNav =
-      document.querySelector(
-        '.nav-item[data-page="' +
-        pageName +
-        '"]'
-      );
-
-
-    if (activeNav) {
-      activeNav.classList.add("active");
-    }
-
-
-    /* Update breadcrumb */
-
-    const breadcrumb =
-      get("breadcrumbCurrent");
-
-
-    if (breadcrumb) {
-
-      breadcrumb.textContent =
-        PAGE_NAMES[pageName] ||
-        pageName;
-    }
-
-
-    /* Close mobile sidebar */
-
-    closeMobileMenu();
-
-
-    /* Scroll to top */
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-
-    /* Page-specific refresh */
-
-    if (
-      pageName === "professional-email"
-    ) {
-
-      /*
-        Professional Email JS is loaded
-        separately.
-
-        No additional action is required here.
-      */
-
-      console.log(
-        "Professional Email page opened."
-      );
-    }
-
-
-    showToast(
-      (PAGE_NAMES[pageName] || pageName) +
-      " opened."
-    );
-  }
-
-
-  /* =========================================================
-     NAV ITEM EVENTS
-  ========================================================= */
-
-  function bindNavigation() {
-
-    document
-      .querySelectorAll(
-        ".nav-item[data-page]"
-      )
-      .forEach(function (item) {
-
-        item.addEventListener(
-          "click",
-          function (event) {
-
-            event.preventDefault();
-
-            const pageName =
-              item.getAttribute(
-                "data-page"
-              );
-
-            openPage(pageName);
-
-          }
-        );
-
-      });
-
-
-    /*
-      Buttons inside pages:
-
-      data-page-action="dashboard"
-      data-page-action="daily-manager"
-      data-page-action="professional-email"
-    */
-
-    document
-      .querySelectorAll(
-        "[data-page-action]"
-      )
-      .forEach(function (button) {
-
-        button.addEventListener(
-          "click",
-          function (event) {
-
-            event.preventDefault();
-
-            const pageName =
-              button.getAttribute(
-                "data-page-action"
-              );
-
-            openPage(pageName);
-
-          }
-        );
-
-      });
-  }
-
-
-  /* =========================================================
-     MOBILE MENU
-  ========================================================= */
-
-  function openMobileMenu() {
-
-    const sidebar =
-      get("sidebar");
-
-    const overlay =
-      get("sidebarOverlay");
-
-
-    if (sidebar) {
-      sidebar.classList.add("open");
-    }
-
-    if (overlay) {
-      overlay.classList.add("show");
-    }
-  }
-
-
-  function closeMobileMenu() {
-
-    const sidebar =
-      get("sidebar");
-
-    const overlay =
-      get("sidebarOverlay");
-
-
-    if (sidebar) {
-      sidebar.classList.remove("open");
-    }
-
-    if (overlay) {
-      overlay.classList.remove("show");
-    }
-  }
-
-
-  function bindMobileMenu() {
-
-    const menuButton =
-      get("mobileMenuBtn");
-
-    const overlay =
-      get("sidebarOverlay");
-
-
-    if (menuButton) {
-
-      menuButton.addEventListener(
-        "click",
-        function () {
-
-          const sidebar =
-            get("sidebar");
-
-          if (
-            sidebar &&
-            sidebar.classList.contains("open")
-          ) {
-
-            closeMobileMenu();
-
-          } else {
-
-            openMobileMenu();
-
-          }
-
-        }
-      );
-    }
-
-
-    if (overlay) {
-
-      overlay.addEventListener(
-        "click",
-        function () {
-
-          closeMobileMenu();
-
-        }
-      );
-    }
-  }
-
-
-  /* =========================================================
-     DATE
-  ========================================================= */
-
-  function updateDate() {
-
-    const dateElement =
-      get("todayDate");
-
-
-    if (!dateElement) {
-      return;
-    }
-
-
-    const now =
-      new Date();
-
-
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
+    "use strict";
+
+    /* ---------------------------------------------------------
+       PAGE NAMES
+    --------------------------------------------------------- */
+
+    const PAGE_NAMES = {
+        dashboard: "Dashboard",
+        "daily-manager": "Daily Manager",
+        "sales-target": "Sales Target",
+        "team-kpi": "Team KPI",
+        distributor: "Distributor",
+        territory: "Territory",
+        "sales-forecast": "Sales Forecast",
+        "manager-tools": "Manager Tools",
+        reports: "Reports",
+        "problem-solver": "Problem Solver",
+        "ai-coach": "AI Sales Coach",
+        academy: "Sales Academy",
+        "professional-email": "Professional Email",
+        settings: "Settings"
     };
 
 
-    dateElement.textContent =
-      now.toLocaleDateString(
-        "en-US",
-        options
-      );
-  }
+    /* ---------------------------------------------------------
+       BASIC HELPERS
+    --------------------------------------------------------- */
 
-
-  /* =========================================================
-     DASHBOARD
-  ========================================================= */
-
-  function updateDashboard() {
-
-    const target =
-      get("kpiTarget");
-
-    const actual =
-      get("kpiActual");
-
-    const achievement =
-      get("kpiAchievement");
-
-    const gap =
-      get("kpiGap");
-
-
-    const performanceActual =
-      get("performanceActual");
-
-    const performanceTarget =
-      get("performanceTarget");
-
-    const performanceGap =
-      get("performanceGap");
-
-    const performancePercent =
-      get("performancePercent");
-
-    const progress =
-      get("performanceProgress");
-
-    const actualBar =
-      get("actualBar");
-
-    const badge =
-      get("achievementBadge");
-
-
-    if (target) {
-      target.textContent = "500.0 L";
+    function $(selector) {
+        return document.querySelector(selector);
     }
 
-    if (actual) {
-      actual.textContent = "385.0 L";
+    function $all(selector) {
+        return document.querySelectorAll(selector);
     }
 
-    if (achievement) {
-      achievement.textContent = "77%";
-    }
+    function showToast(message) {
+        const toast = $("#toast");
+        const toastMessage = $("#toastMessage");
 
-    if (gap) {
-      gap.textContent = "115.0 L";
+        if (!toast || !toastMessage) return;
+
+        toastMessage.textContent = message;
+
+        toast.classList.add("show");
+
+        setTimeout(function () {
+            toast.classList.remove("show");
+        }, 2500);
     }
 
 
-    if (performanceActual) {
-      performanceActual.textContent =
-        "385.0 L";
-    }
+    /* ---------------------------------------------------------
+       PAGE NAVIGATION
+    --------------------------------------------------------- */
 
-    if (performanceTarget) {
-      performanceTarget.textContent =
-        "500.0 L";
-    }
+    function openPage(pageName) {
 
-    if (performanceGap) {
-      performanceGap.textContent =
-        "115.0 L";
-    }
+        const target = document.getElementById("page-" + pageName);
 
-    if (performancePercent) {
-      performancePercent.textContent =
-        "77%";
-    }
+        if (!target) {
+            console.error("Page not found:", "page-" + pageName);
+            showToast("Page မတွေ့ပါ: " + pageName);
+            return;
+        }
 
+        /* Hide every page */
+        $all(".page").forEach(function (page) {
+            page.classList.remove("active");
+            page.style.display = "none";
+        });
 
-    if (progress) {
-      progress.style.width = "77%";
-    }
+        /* Show selected page */
+        target.classList.add("active");
+        target.style.display = "block";
 
-    if (actualBar) {
-      actualBar.style.width = "77%";
-    }
+        /* Update navigation active state */
+        $all(".nav-item[data-page]").forEach(function (item) {
+            item.classList.remove("active");
 
-    if (badge) {
-      badge.textContent = "77%";
-    }
-  }
+            if (item.getAttribute("data-page") === pageName) {
+                item.classList.add("active");
+            }
+        });
 
+        /* Breadcrumb */
+        const breadcrumb = $("#breadcrumbCurrent");
 
-  /* =========================================================
-     DAILY MANAGER STORAGE
-  ========================================================= */
+        if (breadcrumb) {
+            breadcrumb.textContent =
+                PAGE_NAMES[pageName] || pageName;
+        }
 
-  const DAILY_STORAGE =
-    "aung_sales_manager_daily_manager";
+        /* Close mobile sidebar */
+        closeSidebar();
 
+        /* Scroll to top */
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
 
-  const DAILY_FIELDS = [
+        /* Page-specific initialization */
+        if (pageName === "dashboard") {
+            updateDashboard();
+        }
 
-    "morningPriority",
-    "morningSales",
-    "morningCustomers",
+        if (pageName === "daily-manager") {
+            updateDailyProgress();
+        }
 
-    "customerName",
-    "customerObjective",
-    "customerNotes",
-
-    "teamMember",
-    "teamFollowType",
-    "teamNotes",
-
-    "distributorName",
-    "distributorIssue",
-    "distributorNotes",
-
-    "collectionCustomer",
-    "collectionAmount",
-    "collectionNotes",
-
-    "competitorName",
-    "competitorType",
-    "competitorNotes",
-
-    "eodSales",
-    "eodAchievement",
-    "eodVisits",
-    "eodWin",
-    "eodImprove",
-
-    "actionPlan",
-    "actionOwner",
-    "actionPriority"
-
-  ];
-
-
-  function loadDailyManager() {
-
-    let data = {};
-
-    try {
-
-      const saved =
-        localStorage.getItem(
-          DAILY_STORAGE
-        );
-
-      if (saved) {
-        data = JSON.parse(saved);
-      }
-
-    } catch (error) {
-
-      console.error(
-        "Daily data load error:",
-        error
-      );
-
+        console.log("Opened page:", pageName);
     }
 
 
-    DAILY_FIELDS.forEach(function (id) {
+    /* ---------------------------------------------------------
+       NAVIGATION CLICK
+    --------------------------------------------------------- */
 
-      const element =
-        get(id);
+    function setupNavigation() {
 
-      if (
-        element &&
-        Object.prototype.hasOwnProperty.call(
-          data,
-          id
-        )
-      ) {
+        /* Sidebar navigation */
+        $all(".nav-item[data-page]").forEach(function (item) {
 
-        element.value =
-          data[id] || "";
+            item.addEventListener("click", function (event) {
 
-      }
+                event.preventDefault();
 
-    });
+                const pageName =
+                    item.getAttribute("data-page");
 
-
-    updateDailyProgress();
-  }
+                if (pageName) {
+                    openPage(pageName);
+                }
+            });
+        });
 
 
-  function saveDailyManager() {
+        /* Buttons / cards using data-page-action */
+        $all("[data-page-action]").forEach(function (element) {
 
-    const data = {};
+            element.addEventListener("click", function (event) {
 
+                event.preventDefault();
 
-    DAILY_FIELDS.forEach(function (id) {
+                const pageName =
+                    element.getAttribute("data-page-action");
 
-      const element =
-        get(id);
-
-      if (element) {
-        data[id] =
-          element.value || "";
-      }
-
-    });
-
-
-    try {
-
-      localStorage.setItem(
-        DAILY_STORAGE,
-        JSON.stringify(data)
-      );
-
-      updateDailyProgress();
-
-    } catch (error) {
-
-      console.error(
-        "Daily data save error:",
-        error
-      );
-    }
-  }
-
-
-  function updateDailyProgress() {
-
-    const fields =
-      DAILY_FIELDS
-        .map(function (id) {
-          return get(id);
-        })
-        .filter(Boolean);
-
-
-    if (!fields.length) {
-      return;
+                if (pageName) {
+                    openPage(pageName);
+                }
+            });
+        });
     }
 
 
-    let completed = 0;
+    /* ---------------------------------------------------------
+       MOBILE SIDEBAR
+    --------------------------------------------------------- */
 
+    function openSidebar() {
 
-    fields.forEach(function (field) {
+        const sidebar = $(".sidebar");
+        const overlay = $("#sidebarOverlay");
 
-      if (
-        String(field.value || "").trim()
-      ) {
-        completed++;
-      }
+        if (sidebar) {
+            sidebar.classList.add("open");
+        }
 
-    });
-
-
-    const percent =
-      Math.round(
-        (completed / fields.length) *
-        100
-      );
-
-
-    const progress =
-      get("dailyProgress");
-
-    const text =
-      get("dailyCompletionText");
-
-
-    if (progress) {
-      progress.style.width =
-        percent + "%";
+        if (overlay) {
+            overlay.classList.add("show");
+        }
     }
 
 
-    if (text) {
-      text.textContent =
-        percent +
-        "% completed";
-    }
-  }
+    function closeSidebar() {
 
+        const sidebar = $(".sidebar");
+        const overlay = $("#sidebarOverlay");
 
-  function resetDailyManager() {
+        if (sidebar) {
+            sidebar.classList.remove("open");
+        }
 
-    const confirmed =
-      window.confirm(
-        "Reset today's manager plan?"
-      );
-
-
-    if (!confirmed) {
-      return;
+        if (overlay) {
+            overlay.classList.remove("show");
+        }
     }
 
 
-    DAILY_FIELDS.forEach(function (id) {
+    function setupMobileMenu() {
 
-      const element =
-        get(id);
+        const menuButton = $("#mobileMenuBtn");
+        const overlay = $("#sidebarOverlay");
 
-      if (element) {
-        element.value = "";
-      }
+        if (menuButton) {
 
-    });
+            menuButton.addEventListener("click", function () {
 
+                const sidebar = $(".sidebar");
 
-    try {
+                if (!sidebar) return;
 
-      localStorage.removeItem(
-        DAILY_STORAGE
-      );
+                if (sidebar.classList.contains("open")) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
 
-    } catch (error) {
-
-      console.error(error);
-
+        if (overlay) {
+            overlay.addEventListener("click", function () {
+                closeSidebar();
+            });
+        }
     }
 
 
-    updateDailyProgress();
+    /* ---------------------------------------------------------
+       TODAY DATE
+    --------------------------------------------------------- */
 
-    showToast(
-      "Today's manager plan has been reset."
-    );
-  }
+    function updateTodayDate() {
+
+        const dateElement = $("#todayDate");
+
+        if (!dateElement) return;
+
+        const now = new Date();
+
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+
+        dateElement.textContent =
+            now.toLocaleDateString("en-US", options);
+    }
 
 
-  function bindDailyManager() {
+    /* ---------------------------------------------------------
+       DASHBOARD
+    --------------------------------------------------------- */
 
-    document
-      .querySelectorAll(
-        "[data-save-section]"
-      )
-      .forEach(function (button) {
+    function updateDashboard() {
 
-        button.addEventListener(
-          "click",
-          function () {
+        const target = 500;
+        const actual = 385;
 
-            saveDailyManager();
+        const achievement =
+            target > 0
+                ? (actual / target) * 100
+                : 0;
 
-            showToast(
-              "Manager information saved."
+        const gap =
+            Math.max(target - actual, 0);
+
+
+        const targetElement = $("#kpiTarget");
+        const actualElement = $("#kpiActual");
+        const achievementElement = $("#kpiAchievement");
+        const gapElement = $("#kpiGap");
+
+
+        if (targetElement) {
+            targetElement.textContent =
+                target.toFixed(1) + " L";
+        }
+
+        if (actualElement) {
+            actualElement.textContent =
+                actual.toFixed(1) + " L";
+        }
+
+        if (achievementElement) {
+            achievementElement.textContent =
+                Math.round(achievement) + "%";
+        }
+
+        if (gapElement) {
+            gapElement.textContent =
+                gap.toFixed(1) + " L";
+        }
+
+
+        /* Performance section */
+
+        const performanceActual =
+            $("#performanceActual");
+
+        const performanceTarget =
+            $("#performanceTarget");
+
+        const performanceGap =
+            $("#performanceGap");
+
+        const performancePercent =
+            $("#performancePercent");
+
+        const performanceProgress =
+            $("#performanceProgress");
+
+        const actualBar =
+            $("#actualBar");
+
+        const achievementBadge =
+            $("#achievementBadge");
+
+
+        if (performanceActual) {
+            performanceActual.textContent =
+                actual.toFixed(1) + " L";
+        }
+
+        if (performanceTarget) {
+            performanceTarget.textContent =
+                target.toFixed(1) + " L";
+        }
+
+        if (performanceGap) {
+            performanceGap.textContent =
+                gap.toFixed(1) + " L";
+        }
+
+        if (performancePercent) {
+            performancePercent.textContent =
+                Math.round(achievement) + "%";
+        }
+
+        if (performanceProgress) {
+            performanceProgress.style.width =
+                Math.min(achievement, 100) + "%";
+        }
+
+        if (actualBar) {
+            actualBar.style.width =
+                Math.min(achievement, 100) + "%";
+        }
+
+        if (achievementBadge) {
+            achievementBadge.textContent =
+                Math.round(achievement) + "% Achievement";
+        }
+    }
+
+
+    /* ---------------------------------------------------------
+       DAILY MANAGER
+    --------------------------------------------------------- */
+
+    const DAILY_KEY =
+        "aung_sales_manager_daily";
+
+
+    function getDailyData() {
+
+        try {
+
+            const data =
+                localStorage.getItem(DAILY_KEY);
+
+            return data
+                ? JSON.parse(data)
+                : {};
+
+        } catch (error) {
+
+            console.error(
+                "Daily data error:",
+                error
             );
 
-          }
+            return {};
+        }
+    }
+
+
+    function saveDailySection(section) {
+
+        const data = getDailyData();
+
+        data[section] = {
+            saved: true,
+            time: new Date().toISOString()
+        };
+
+        try {
+
+            localStorage.setItem(
+                DAILY_KEY,
+                JSON.stringify(data)
+            );
+
+            showToast(
+                "Daily Manager data saved successfully."
+            );
+
+            updateDailyProgress();
+
+        } catch (error) {
+
+            console.error(
+                "Save error:",
+                error
+            );
+
+            showToast(
+                "Data သိမ်းရာတွင် ပြဿနာရှိပါသည်။"
+            );
+        }
+    }
+
+
+    function updateDailyProgress() {
+
+        const sections = [
+            "morning",
+            "customer",
+            "team",
+            "distributor",
+            "collection",
+            "competitor",
+            "eod",
+            "action"
+        ];
+
+        const data = getDailyData();
+
+        let completed = 0;
+
+        sections.forEach(function (section) {
+
+            if (
+                data[section] &&
+                data[section].saved
+            ) {
+                completed++;
+            }
+        });
+
+        const percent =
+            Math.round(
+                (completed / sections.length) * 100
+            );
+
+
+        const progress =
+            $("#dailyProgress");
+
+        const text =
+            $("#dailyCompletionText");
+
+
+        if (progress) {
+            progress.style.width =
+                percent + "%";
+        }
+
+        if (text) {
+            text.textContent =
+                completed +
+                " / " +
+                sections.length +
+                " completed";
+        }
+    }
+
+
+    function resetDailyManager() {
+
+        try {
+
+            localStorage.removeItem(
+                DAILY_KEY
+            );
+
+            updateDailyProgress();
+
+            showToast(
+                "Today's plan has been reset."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+        }
+    }
+
+
+    function setupDailyManager() {
+
+        $all("[data-save-section]").forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        const section =
+                            button.getAttribute(
+                                "data-save-section"
+                            );
+
+                        if (section) {
+                            saveDailySection(section);
+                        }
+                    }
+                );
+            }
         );
 
-      });
 
+        const resetButton =
+            $("#resetDailyBtn");
 
-    const resetButton =
-      get("resetDailyBtn");
+        if (resetButton) {
 
+            resetButton.addEventListener(
+                "click",
+                function (event) {
 
-    if (resetButton) {
+                    event.preventDefault();
 
-      resetButton.addEventListener(
-        "click",
-        resetDailyManager
-      );
-
+                    resetDailyManager();
+                }
+            );
+        }
     }
 
 
-    DAILY_FIELDS.forEach(function (id) {
+    /* ---------------------------------------------------------
+       SEARCH
+    --------------------------------------------------------- */
 
-      const element =
-        get(id);
+    function setupSearch() {
 
-      if (!element) {
-        return;
-      }
+        const search =
+            $("#globalSearch");
 
+        if (!search) return;
 
-      element.addEventListener(
-        "input",
-        updateDailyProgress
-      );
+        search.addEventListener(
+            "keydown",
+            function (event) {
 
-    });
-  }
+                if (event.key !== "Enter") {
+                    return;
+                }
 
+                const query =
+                    search.value
+                        .trim()
+                        .toLowerCase();
 
-  /* =========================================================
-     SEARCH
-  ========================================================= */
-
-  function bindSearch() {
-
-    const search =
-      get("globalSearch");
+                if (!query) return;
 
 
-    if (!search) {
-      return;
+                let foundPage = null;
+
+
+                Object.keys(PAGE_NAMES).forEach(
+                    function (page) {
+
+                        const name =
+                            PAGE_NAMES[page]
+                                .toLowerCase();
+
+                        if (
+                            !foundPage &&
+                            name.includes(query)
+                        ) {
+                            foundPage = page;
+                        }
+                    }
+                );
+
+
+                if (foundPage) {
+
+                    openPage(foundPage);
+
+                    showToast(
+                        "Opened: " +
+                        PAGE_NAMES[foundPage]
+                    );
+
+                } else {
+
+                    showToast(
+                        "No matching page found."
+                    );
+                }
+            }
+        );
     }
 
 
-    search.addEventListener(
-      "keydown",
-      function (event) {
+    /* ---------------------------------------------------------
+       NOTIFICATION
+    --------------------------------------------------------- */
 
-        if (
-          event.key !== "Enter"
-        ) {
-          return;
-        }
+    function setupNotification() {
 
+        const button =
+            $("#notificationBtn");
 
-        const query =
-          search.value
-            .trim()
-            .toLowerCase();
+        if (!button) return;
 
+        button.addEventListener(
+            "click",
+            function () {
 
-        if (!query) {
-          return;
-        }
-
-
-        const matches =
-          Object.keys(PAGE_NAMES)
-            .filter(function (key) {
-
-              return (
-                key
-                  .toLowerCase()
-                  .includes(query) ||
-
-                PAGE_NAMES[key]
-                  .toLowerCase()
-                  .includes(query)
-              );
-
-            });
-
-
-        if (matches.length) {
-
-          openPage(
-            matches[0]
-          );
-
-          search.value = "";
-
-        } else {
-
-          showToast(
-            "No matching page found."
-          );
-
-        }
-
-      }
-    );
-  }
-
-
-  /* =========================================================
-     NOTIFICATION
-  ========================================================= */
-
-  function bindNotification() {
-
-    const button =
-      get("notificationBtn");
-
-
-    if (!button) {
-      return;
+                showToast(
+                    "No new notifications."
+                );
+            }
+        );
     }
 
 
-    button.addEventListener(
-      "click",
-      function () {
+    /* ---------------------------------------------------------
+       PROFILE
+    --------------------------------------------------------- */
 
-        showToast(
-          "No new notifications."
+    function setupProfile() {
+
+        const profile =
+            $(".top-profile");
+
+        if (!profile) return;
+
+        profile.addEventListener(
+            "click",
+            function () {
+
+                showToast(
+                    "Aung Zar Ni Win • Sales Manager"
+                );
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       KEYBOARD SHORTCUTS
+    --------------------------------------------------------- */
+
+    function setupKeyboardShortcuts() {
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                /* Alt + D = Dashboard */
+                if (
+                    event.altKey &&
+                    event.key.toLowerCase() === "d"
+                ) {
+
+                    event.preventDefault();
+
+                    openPage("dashboard");
+                }
+
+
+                /* Alt + E = Professional Email */
+                if (
+                    event.altKey &&
+                    event.key.toLowerCase() === "e"
+                ) {
+
+                    event.preventDefault();
+
+                    openPage(
+                        "professional-email"
+                    );
+                }
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       PROFESSIONAL EMAIL SAFETY CHECK
+    --------------------------------------------------------- */
+
+    function checkProfessionalEmailPage() {
+
+        const page =
+            document.getElementById(
+                "page-professional-email"
+            );
+
+        if (!page) {
+
+            console.warn(
+                "Professional Email page not found."
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /* ---------------------------------------------------------
+       INITIAL PAGE
+    --------------------------------------------------------- */
+
+    function initializePages() {
+
+        const pages =
+            $all(".page");
+
+        if (!pages.length) {
+
+            console.error(
+                "No .page elements found."
+            );
+
+            return;
+        }
+
+
+        /* Hide all first */
+
+        pages.forEach(
+            function (page) {
+
+                page.classList.remove(
+                    "active"
+                );
+
+                page.style.display =
+                    "none";
+            }
         );
 
-      }
-    );
-  }
+
+        /* Dashboard first */
+
+        const dashboard =
+            document.getElementById(
+                "page-dashboard"
+            );
+
+        if (dashboard) {
+
+            dashboard.classList.add(
+                "active"
+            );
+
+            dashboard.style.display =
+                "block";
+        }
 
 
-  /* =========================================================
-     PROFILE
-  ========================================================= */
+        /* Dashboard nav active */
 
-  function bindProfile() {
+        $all(
+            ".nav-item[data-page]"
+        ).forEach(
+            function (item) {
 
-    const profile =
-      document.querySelector(
-        ".top-profile"
-      );
+                item.classList.remove(
+                    "active"
+                );
 
+                if (
+                    item.getAttribute(
+                        "data-page"
+                    ) === "dashboard"
+                ) {
 
-    if (!profile) {
-      return;
-    }
-
-
-    profile.addEventListener(
-      "click",
-      function () {
-
-        openPage(
-          "settings"
+                    item.classList.add(
+                        "active"
+                    );
+                }
+            }
         );
 
-      }
-    );
-  }
 
+        const breadcrumb =
+            $("#breadcrumbCurrent");
 
-  /* =========================================================
-     KEYBOARD SHORTCUT
-  ========================================================= */
+        if (breadcrumb) {
 
-  function bindKeyboardShortcuts() {
-
-    document.addEventListener(
-      "keydown",
-      function (event) {
-
-        /*
-          Alt + E
-          = Professional Email
-        */
-
-        if (
-          event.altKey &&
-          event.key.toLowerCase() === "e"
-        ) {
-
-          event.preventDefault();
-
-          openPage(
-            "professional-email"
-          );
-
+            breadcrumb.textContent =
+                "Dashboard";
         }
-
-
-        /*
-          Alt + D
-          = Dashboard
-        */
-
-        if (
-          event.altKey &&
-          event.key.toLowerCase() === "d"
-        ) {
-
-          event.preventDefault();
-
-          openPage(
-            "dashboard"
-          );
-
-        }
-
-      }
-    );
-  }
-
-
-  /* =========================================================
-     FIX PAGE STATE
-  ========================================================= */
-
-  function initializePages() {
-
-    const pages =
-      document.querySelectorAll(
-        ".page"
-      );
-
-
-    pages.forEach(function (page) {
-
-      page.classList.remove(
-        "active"
-      );
-
-    });
-
-
-    const dashboard =
-      get("page-dashboard");
-
-
-    if (dashboard) {
-
-      dashboard.classList.add(
-        "active"
-      );
-
     }
-  }
 
 
-  /* =========================================================
-     APP INIT
-  ========================================================= */
+    /* ---------------------------------------------------------
+       MAIN INITIALIZATION
+    --------------------------------------------------------- */
 
-  function init() {
+    function init() {
 
-    console.log(
-      "Aung Sales Manager Pro initializing..."
-    );
-
-
-    initializePages();
-
-    bindNavigation();
-
-    bindMobileMenu();
-
-    bindDailyManager();
-
-    bindSearch();
-
-    bindNotification();
-
-    bindProfile();
-
-    bindKeyboardShortcuts();
-
-    updateDate();
-
-    updateDashboard();
-
-    loadDailyManager();
+        console.log(
+            "Aung Sales Manager Pro starting..."
+        );
 
 
-    console.log(
-      "Aung Sales Manager Pro ready."
-    );
+        initializePages();
 
-    console.log(
-      "Professional Email navigation ready."
-    );
-  }
+        setupNavigation();
 
+        setupMobileMenu();
 
-  /* =========================================================
-     START
-  ========================================================= */
+        setupDailyManager();
 
-  if (
-    document.readyState === "loading"
-  ) {
+        setupSearch();
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      init
-    );
+        setupNotification();
 
-  } else {
+        setupProfile();
 
-    init();
+        setupKeyboardShortcuts();
 
-  }
+        updateTodayDate();
+
+        updateDashboard();
+
+        updateDailyProgress();
+
+        checkProfessionalEmailPage();
 
 
-  /* =========================================================
-     PUBLIC API
-  ========================================================= */
+        console.log(
+            "Aung Sales Manager Pro ready."
+        );
+    }
 
-  window.AungSalesManager = {
 
-    openPage: openPage,
+    /* ---------------------------------------------------------
+       START
+    --------------------------------------------------------- */
 
-    showToast: showToast,
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
-    updateDashboard:
-      updateDashboard,
+        document.addEventListener(
+            "DOMContentLoaded",
+            init
+        );
 
-    saveDailyManager:
-      saveDailyManager
+    } else {
 
-  };
+        init();
+    }
+
+
+    /* ---------------------------------------------------------
+       GLOBAL ACCESS
+    --------------------------------------------------------- */
+
+    window.AungSalesManager = {
+
+        openPage: openPage,
+
+        updateDashboard:
+            updateDashboard,
+
+        updateDailyProgress:
+            updateDailyProgress,
+
+        showToast:
+            showToast
+    };
 
 })();
