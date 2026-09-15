@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>Aung Sales Manager Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-logo">ASM</div>
+        <div>
+          <h1>Aung Sales Manager</h1>
+          <span>PROFESSIONAL EDITION</span>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="avatar">AZ</div>
+        <div>
+          <strong>Aung Zar Ni Win</strong>
+          <small>Sales Manager</small>
+        </div>
+      </div>
+
+      <nav class="navigation">
+
+        <div class="nav-title">MANAGEMENT</div>
+
+        <button class="nav-item active" data-page="dashboard">
+          <span>🏠</span>
+          <span>Command Center</span>
+        </button>
+
+        <button class="nav-item" data-page="daily">
+          <span>📅</span>
+          <span>Daily Manager</span>
+        </button>
+
+        <button class="nav-item" data-page="targets">
+          <span>🎯</span>
+          <span>Target & Forecast</span>
+        </button>
+
+        <button class="nav-item" data-page="team">
+          <span>👥</span>
+          <span>Team Performance</span>
+        </button>
+
+        <button class="nav-item" data-page="kpi">
+          <span>📊</span>
+          <span>KPI Center</span>
+        </button>
+
+        <div class="nav-title">CUSTOMER & SALES</div>
+
+        <button class="nav-item" data-page="territory">
+          <span>🗺️</span>
+          <span>Territory</span>
+        </button>
+
+        <button class="nav-item" data-page="customers">
+          <span>🤝</span>
+          <span>Customers</span>
+        </button>
+
+        <button class="nav-item" data-page="distributor">
+          <span>🏢</span>
+          <span>Distributor</span>
+        </button>
+
+        <button class="nav-item" data-page="ar">
+          <span>💰</span>
+          <span>AR & Collection</span>
+        </button>
+
+        <div class="nav-title">MANAGER TOOLS</div>
+
+        <button class="nav-item" data-page="problems">
+          <span>🧠</span>
+          <span>Problem Solver</span>
+        </button>
+
+        <button class="nav-item" data-page="coach">
+          <span>🤖</span>
+          <span>AI Sales Coach</span>
+        </button>
+
+        <button class="nav-item" data-page="tools">
+          <span>🧮</span>
+          <span>Sales Tools</span>
+        </button>
+
+        <button class="nav-item" data-page="academy">
+          <span>📚</span>
+          <span>Manager Academy</span>
+        </button>
+
+        <button class="nav-item" data-page="reports">
+          <span>📑</span>
+          <span>Reports</span>
+        </button>
+
+        <div class="nav-title">SYSTEM</div>
+
+        <button class="nav-item" data-page="settings">
+          <span>⚙️</span>
+          <span>Settings</span>
+        </button>
+
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Version 1.0</span>
+        <span>© Aung Business</span>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <header class="topbar">
+
+        <button class="mobile-menu" id="mobileMenu">☰</button>
+
+        <div>
+          <div class="breadcrumb">Sales Management / <strong id="pageTitle">Command Center</strong></div>
+          <h2 id="headerTitle">Good morning, Manager 👋</h2>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-button" id="notificationBtn">🔔</button>
+          <div class="date-box" id="currentDate"></div>
+        </div>
+
+      </header>
+
+
+      <!-- PAGE CONTENT -->
+      <section id="appContent" class="content"></section>
+
+    </main>
+
+  </div>
+
+
+  <!-- MODAL -->
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
